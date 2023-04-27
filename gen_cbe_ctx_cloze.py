@@ -21,7 +21,7 @@ if not exists(output):
 
 # reading char_map.
 cbe_api = CBEApi()
-cbe_api.read("data/charembench/data/chr_map.json")
+cbe_api.read()
 
 # reading pg-19 metadata.
 pg19_api = PG19Api()
