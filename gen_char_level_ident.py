@@ -51,11 +51,11 @@ for fp in quiz_paths:
                     # Join character information.
                     ' and '.join([
                         "Character `{chr_name}` from the `{book_title}`".format(
-                            chr_name=cbe_api.get_char_name(speaker_ids[index]),
+                            chr_name=cbe_api.get_char_name(speaker_ids[index], index),
                             book_title=book_titles[index])
                         for index in range(len(speaker_ids))
                     ]),
-                    ", are they identical? Yes or no?",
+                    ", are they same? Yes or no?",
                     "Yes" if is_male else "No"
                 ])
 

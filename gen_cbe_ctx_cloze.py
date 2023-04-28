@@ -15,6 +15,10 @@ quiz_paths = [
 
 output = "./data/charemberch-prepared"
 
+prompt = "We consider the book ``{book_title}''." \
+         "You're given a task to replace ___ with the particular character in following context: {text} " \
+         "Select the from the following list: {char_list}."
+
 # Create target directory if the latter does not exist.
 if not exists(output):
     makedirs(output)
@@ -39,18 +43,19 @@ for fp in quiz_paths:
             for task in tqdm(content["data"]):
                 task_data, speaker_id = task
                 text, choice_ids = task_data
+
                 book_id = speaker_id.split('_')[0]
-                choice_ids = [cbe_api.get_char_name(choice_id) for choice_id in choice_ids]
+                speaker_choice = [cbe_api.get_char_name(choice_id) for choice_id in choice_ids]
 
                 # extracting book title
                 book_title = pg19_api.find_book_title(book_id)
                 if book_title is None:
                     continue
 
-                line = '\t'.join([
-                    text,
-                    " ".join(choice_ids),
-                    cbe_api.get_char_name(speaker_id),
-                ])
+                line = prompt.format(book_title=book_title,
+                                     text=cbe_api.replace_characters_in_text(text),
+                                     char_list=", ".join(speaker_choice))
+
+                line += " The correct answer is {}".format(cbe_api.get_char_name(speaker_id))
 
                 output_file.write("{}\n".format(line))
