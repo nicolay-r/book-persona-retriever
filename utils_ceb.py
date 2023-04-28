@@ -17,6 +17,12 @@ class CEBApi:
                 book_id = char_id.split('_')[0]
                 self.__book_by_char[char_id] = book_id
 
+    def book_ids(self):
+        books_ids = set()
+        for char_id in self.__chars.keys():
+            books_ids.add(int(self.__book_by_char[char_id]))
+        return books_ids
+
     def __get_char_name(self, char_id, try_index=0):
         """ ind: int
                 there might be many variations of how characters are mentioned,

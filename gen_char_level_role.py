@@ -4,7 +4,7 @@ from os.path import basename, join, exists
 
 from tqdm import tqdm
 
-from utils_cbe import CBEApi
+from utils_ceb import CEBApi
 from utils_pg19 import PG19Api
 
 quiz_paths = [
@@ -17,8 +17,8 @@ if not exists(output):
     makedirs(output)
 
 # reading char_map
-cbe_api = CBEApi()
-cbe_api.read()
+ceb_api = CEBApi()
+ceb_api.read()
 
 # reading pg-19 metadata.
 pg19_api = PG19Api()
@@ -47,7 +47,7 @@ for fp in quiz_paths:
                     continue
 
                 line = '\t'.join([
-                    "{char_name} from {book_title}".format(char_name=cbe_api.get_char_name(speaker_id),
+                    "{char_name} from {book_title}".format(char_name=ceb_api.get_char_name(speaker_id),
                                                            book_title=book_title),
                     " ".join(candidates),
                     answer

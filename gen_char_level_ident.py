@@ -4,7 +4,7 @@ from os.path import basename, join, exists
 
 from tqdm import tqdm
 
-from utils_cbe import CBEApi
+from utils_ceb import CEBApi
 from utils_pg19 import PG19Api
 
 quiz_paths = [
@@ -17,7 +17,7 @@ if not exists(output):
     makedirs(output)
 
 # reading char_map
-cbe_api = CBEApi()
+cbe_api = CEBApi()
 cbe_api.read()
 
 # reading pg-19 metadata.
