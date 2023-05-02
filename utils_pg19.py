@@ -1,7 +1,14 @@
+from os.path import realpath, dirname, join
+
 import pandas as pd
 
 
 class PG19Api:
+    """ Books from Project Gutenberg for 19th Century.
+    """
+
+    __current_dir = dirname(realpath(__file__))
+    books_storage = join(__current_dir, "./data/pg-19")
 
     def __init__(self):
         self.__pg19_titles = None

@@ -1,5 +1,7 @@
-import json
 import os
+import json
+from utils_ceb import CEBApi
+from utils_pg19 import PG19Api
 from os.path import join, basename
 from tqdm import tqdm
 
@@ -10,9 +12,9 @@ from tqdm import tqdm
 # The result of filtering is copied in to a separated folder.
 #############################################################
 
-list_of_characters_path = "./data/charembench/data/chr_map.json"
-pg_19_root_path = "./data/pg19"
-pg_19_filtered_root_path = "./data/pg19-filtered"
+source_path = PG19Api.books_storage
+target_path = CEBApi.books_storage_en
+list_of_characters_path = CEBApi.character_map
 
 book_ids = set()
 
@@ -28,7 +30,7 @@ print("Total documents count:")
 print(len(book_ids))
 books_non_considered = []
 books_to_be_keeped = []
-for root, dir, files in os.walk(pg_19_root_path):
+for root, dir, files in os.walk(source_path):
     print(root, dir, len(files))
     for f in files:
         if '.txt' not in f:
@@ -47,12 +49,12 @@ print("Docs to be removed:")
 print(len(books_to_be_keeped))
 
 # Create target directory if the latter does not exist.
-if not os.path.exists(pg_19_filtered_root_path):
-    os.makedirs(pg_19_filtered_root_path)
+if not os.path.exists(target_path):
+    os.makedirs(target_path)
 
 # Copy the contents.
 print("Copying files:")
 for source_path in tqdm(books_to_be_keeped):
-    target_path = join(pg_19_filtered_root_path, basename(source_path))
+    target_path = join(target_path, basename(source_path))
     copy_cmd = 'cp {} {}'.format(source_path, target_path)
     os.system(copy_cmd)

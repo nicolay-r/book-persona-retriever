@@ -1,15 +1,24 @@
 import json
+from os.path import dirname, realpath, join
 
 
 class CEBApi:
+    """ Character embedding benchmark API
+    """
+
+    __current_dir = dirname(realpath(__file__))
+    books_storage = join(__current_dir, "./data/ceb_books")
+    books_storage_en = join(__current_dir, books_storage, "./en")
+    character_map = join(__current_dir, "./data/charembench/data/chr_map.json")
 
     def __init__(self):
         self.__book_by_char = None
         self.__chars = None
 
-    def read(self, path="./data/charembench/data/chr_map.json"):
+    def read(self, path=None):
         """ reading char_map
         """
+        path = path if path is not None else self.character_map
         self.__book_by_char = {}
         with open(path, "r") as f:
             self.__chars = json.load(f)
