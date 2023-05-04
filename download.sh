@@ -11,6 +11,5 @@ gsutil -m cp -r \
   "gs://deepmind-gutenberg/validation_$folder$" \
   ./data/pg19
 
-
 # wikiplots
 https://www.dropbox.com/s/24pa44w7u7wvtma/plots.zip?dl=1
