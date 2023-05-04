@@ -29,7 +29,7 @@ print('---')
 print("Total documents count:")
 print(len(book_ids))
 books_non_considered = []
-books_to_be_keeped = []
+books_to_be_kept = []
 for root, dir, files in os.walk(source_path):
     print(root, dir, len(files))
     for f in files:
@@ -38,15 +38,15 @@ for root, dir, files in os.walk(source_path):
         complete_filepath = join(root, f)
         f_id = f.replace('.txt', '')
         if f_id in book_ids:
-            books_to_be_keeped.append(complete_filepath)
+            books_to_be_kept.append(complete_filepath)
         else:
             books_non_considered.append(complete_filepath)
 
 print("---")
 print("Total books:")
-print(len(books_to_be_keeped) + len(books_non_considered))
+print(len(books_to_be_kept) + len(books_non_considered))
 print("Docs to be removed:")
-print(len(books_to_be_keeped))
+print(len(books_to_be_kept))
 
 # Create target directory if the latter does not exist.
 if not os.path.exists(target_path):
@@ -54,7 +54,6 @@ if not os.path.exists(target_path):
 
 # Copy the contents.
 print("Copying files:")
-for source_path in tqdm(books_to_be_keeped):
-    target_path = join(target_path, basename(source_path))
-    copy_cmd = 'cp {} {}'.format(source_path, target_path)
+for source_path in tqdm(books_to_be_kept):
+    copy_cmd = 'cp {} {}'.format(source_path, join(target_path, basename(source_path)))
     os.system(copy_cmd)
