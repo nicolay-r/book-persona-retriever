@@ -1,15 +1,24 @@
-from os.path import join
+import os
 from pathlib import Path
-from sklearn.model_selection import train_test_split
-from torch.utils.data import DataLoader
 
 import utils
 import torch
+
+from os.path import join
+from sklearn.model_selection import train_test_split
+from torch.utils.data import DataLoader
+
 from transformers import AdamW, BertTokenizer
 from models.mono_bert.model import MonoBERT
 
 
-model = MonoBERT.from_pretrained("bert-base-uncased", cache_dir=join(utils.PROJECT_DIR, '.transformers'), num_labels=2)
+#######################################################
+# This flag is for debugging and force launching on CPU
+#######################################################
+# os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
+
+model = MonoBERT.from_pretrained("bert-base-uncased", cache_dir=join(utils.PROJECT_DIR, '.transformers'),
+                                 num_labels=2)
 tokenizer = BertTokenizer.from_pretrained("bert-base-uncased", cache_dir=join(utils.PROJECT_DIR, '.transformers'))
 optimizer = AdamW(model.parameters(), lr=1e-5, eps=1e-8)
 
@@ -34,9 +43,10 @@ def read_raw_texts_and_labels(root_dir):
 
 train_texts, train_labels = read_raw_texts_and_labels(utils.RANK_DATASET_DIR)
 test_texts, test_labels = read_raw_texts_and_labels(utils.RANK_DATASET_DIR)
-train_texts, val_texts, train_labels, val_labels = train_test_split(
-    train_texts, train_labels, test_size=.2)
+train_texts, val_texts, train_labels, val_labels = train_test_split(train_texts, train_labels, test_size=.2)
 
+print(test_texts)
+print(test_labels)
 
 ###################################################################################
 # Declaring dataset.
@@ -56,9 +66,10 @@ class CustomDataset(torch.utils.data.Dataset):
         return len(self.labels)
 
 
-train_encodings = tokenizer(train_texts, truncation=True, padding=True)
-val_encodings = tokenizer(val_texts, truncation=True, padding=True)
-test_encodings = tokenizer(test_texts, truncation=True, padding=True)
+max_input_length = 512
+train_encodings = tokenizer(train_texts, truncation=True, padding=True, max_length=max_input_length)
+val_encodings = tokenizer(val_texts, truncation=True, padding=True, max_length=max_input_length)
+test_encodings = tokenizer(test_texts, truncation=True, padding=True, max_length=max_input_length)
 
 train_dataset = CustomDataset(train_encodings, train_labels)
 val_dataset = CustomDataset(val_encodings, val_labels)
@@ -73,18 +84,29 @@ model.train()
 
 train_loader = DataLoader(train_dataset, batch_size=2, shuffle=True)
 
-for epoch in range(3):
+epoch_size = 2
+for epoch in range(epoch_size):
+    total_loss = 0
     for batch in train_loader:
         optimizer.zero_grad()
         input_ids = batch['input_ids'].to(device)
-        print(input_ids)
+        token_type_ids = batch['token_type_ids'].to(device)
         attention_mask = batch['attention_mask'].to(device)
         labels = batch['labels'].to(device)
-        outputs = model(input_ids,
-                        attention_mask=attention_mask,
-                        token_type_ids=input_ids)
-        loss = outputs[0]
+        loss = model(input_ids, attention_mask=attention_mask, token_type_ids=token_type_ids)
         loss.backward()
         optimizer.step()
+        total_loss += loss.item()
+    print("Epoch: {e}, total-loss: {l}".format(e=epoch, l=total_loss))
 
 model.eval()
+
+# Model Inference
+test_loader = DataLoader(test_dataset, batch_size=1)
+for batch in test_loader:
+    input_ids = batch['input_ids'].to(device)
+    token_type_ids = batch['token_type_ids'].to(device)
+    attention_mask = batch['attention_mask'].to(device)
+    outputs = model(input_ids, attention_mask=attention_mask, token_type_ids=token_type_ids)
+    probs = torch.softmax(outputs, dim=1)
+    print(probs)
