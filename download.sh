@@ -13,5 +13,3 @@ gsutil -m cp -r \
 
 # wikiplots
 https://www.dropbox.com/s/24pa44w7u7wvtma/plots.zip?dl=1
-
-pip install git+https://github.com/nicolay-r/AREkit.git@0.23.1-rc
