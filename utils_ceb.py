@@ -1,4 +1,5 @@
 import json
+import os
 from os.path import dirname, realpath, join
 
 
@@ -7,7 +8,7 @@ class CEBApi:
     """
 
     __current_dir = dirname(realpath(__file__))
-    books_storage = join(__current_dir, "./data/ceb_books")
+    books_storage = join(__current_dir, "./data/ceb_books_test")
     books_storage_en = join(__current_dir, books_storage, "./en")
     character_map = join(__current_dir, "./data/charembench/data/chr_map.json")
 
@@ -26,10 +27,21 @@ class CEBApi:
                 book_id = char_id.split('_')[0]
                 self.__book_by_char[char_id] = book_id
 
-    def book_ids(self):
+    def book_ids_from_metadata(self):
         books_ids = set()
         for char_id in self.__chars.keys():
             books_ids.add(int(self.__book_by_char[char_id]))
+        return books_ids
+
+    def book_ids_from_directory(self):
+        """ Files are named XXX.txt, where XXX is an index of integer type
+        """
+        books_ids = set()
+        for _, _, files in os.walk(self.books_storage_en):
+            for f in files:
+                upd_name = f.replace('.txt', '')
+                books_ids.add(int(upd_name))
+
         return books_ids
 
     def __get_char_name(self, char_id, try_index=0):

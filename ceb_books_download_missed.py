@@ -8,7 +8,9 @@ from utils_pg19 import PG19Api
 
 ceb_api = CEBApi()
 ceb_api.read()
-ceb_books = ceb_api.book_ids()
+ceb_books = ceb_api.book_ids_from_metadata()
+ceb_books_downloaded = ceb_api.book_ids_from_directory()
+ceb_books = ceb_books.difference(ceb_books_downloaded)
 
 pg19_api = PG19Api()
 pg19_api.read()
