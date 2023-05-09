@@ -18,7 +18,7 @@ if not exists(output):
 
 # reading char_map
 cbe_api = CEBApi()
-cbe_api.read()
+cbe_api.read_char_map()
 
 # reading pg-19 metadata.
 pg19_api = PG19Api()
