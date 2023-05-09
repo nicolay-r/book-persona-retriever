@@ -7,7 +7,7 @@ from utils_ceb import CEBApi
 from utils_pg19 import PG19Api
 
 ceb_api = CEBApi()
-ceb_api.read()
+ceb_api.read_char_map()
 ceb_books = ceb_api.book_ids_from_metadata()
 ceb_books_downloaded = ceb_api.book_ids_from_directory()
 ceb_books = ceb_books.difference(ceb_books_downloaded)
