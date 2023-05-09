@@ -9,6 +9,5 @@ class MonoBERT(BertPreTrainedModel):
         self.init_weights()
 
     def forward(self, input_ids, attention_mask, token_type_ids):
-        outputs = self.bert(input_ids, attention_mask, token_type_ids)
-        logits = outputs[0]
-        return logits
+        hidden, _ = self.bert(input_ids, attention_mask, token_type_ids)
+        return hidden

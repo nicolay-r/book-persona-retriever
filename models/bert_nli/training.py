@@ -12,7 +12,7 @@ max_input_length = 512
 output_dim = 2
 model = BertModel.from_pretrained("bert-base-uncased", cache_dir=join(utils.PROJECT_DIR, '.transformers'))
 tokenizer = BertTokenizer.from_pretrained("bert-base-uncased", cache_dir=join(utils.PROJECT_DIR, '.transformers'))
-nli_model = BERTNLIModel(model, hidden_dim=max_input_length, output_dim=output_dim)
+nli_model = BERTNLIModel(model, output_dim=output_dim)
 
 ###################################################################################
 # Reading raw texts.
