@@ -1,15 +1,14 @@
-from os.path import join
-
 from tqdm import tqdm
 
 from utils_ceb import CEBApi
+from utils_my import MyAPI
 
 ceb_api = CEBApi()
 ceb_api.read_char_map()
 
 found = 0
 missed = 0
-ceb_api_annot = CEBApi(books_root=join(CEBApi.books_storage, "../ceb_books_annot/en"))
+ceb_api_annot = CEBApi(books_root=MyAPI.books_storage)
 
 for book_id in tqdm(ceb_api.book_ids_from_directory(), desc="Annotating characters"):
     with open(ceb_api.get_book_path(book_id)) as f:
