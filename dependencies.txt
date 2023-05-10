@@ -1,4 +1,5 @@
 torch==1.6.0
 transformers==3.4.0
 gutenberg_dialog @ git+https://github.com/nicolay-r/gutenberg-dialog
+arekit @ git+https://github.com/nicolay-r/AREkit.git@0.23.1-rc
 pandas
