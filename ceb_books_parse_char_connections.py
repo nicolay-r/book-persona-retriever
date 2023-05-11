@@ -1,6 +1,7 @@
 from os import listdir
 from os.path import join, isfile
 
+from arekit.common.data import const
 from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.data.input.providers.rows.samples import BaseSampleRowProvider
 from arekit.common.data.input.providers.text.single import BaseSingleTextProvider
@@ -108,7 +109,6 @@ class CEBTextEntitiesParser(BasePipelineItem):
 in_dir = MyAPI.books_storage_en
 out_dir = MyAPI.books_storage
 #########################################
-
 terms_mapper = BertDefaultStringTextTermsMapper(
     entity_formatter=StringEntitiesDisplayValueFormatter())
 
@@ -127,7 +127,7 @@ pipeline = BasePipeline([
         samples_io=samples_io,
         save_labels_func=lambda data_type: True,
         balance_func=lambda _: False,
-        storage=RowCacheStorage())
+        storage=RowCacheStorage(force_collect_columns=[const.SENT_IND]))
 ])
 
 #####
