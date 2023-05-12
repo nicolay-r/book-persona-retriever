@@ -13,12 +13,16 @@ from arekit.common.labels.base import NoLabel
 from arekit.common.labels.provider.constant import ConstantLabelProvider
 from arekit.common.labels.scaler.single import SingleLabelScaler
 from arekit.common.news.base import News
+from arekit.common.news.parsed.base import ParsedNews
+from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider
+from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.news.sentence import BaseNewsSentence
 from arekit.common.opinions.annot.algo.pair_based import PairBasedOpinionAnnotationAlgorithm
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.pipeline.base import BasePipeline
 from arekit.common.pipeline.items.base import BasePipelineItem
 from arekit.common.text.parser import BaseTextParser
+from arekit.common.text_opinions.base import TextOpinion
 from arekit.contrib.bert.terms.mapper import BertDefaultStringTextTermsMapper
 from arekit.contrib.utils.data.storages.row_cache import RowCacheStorage
 from arekit.contrib.utils.data.writers.csv_native import NativeCsvWriter
@@ -28,6 +32,7 @@ from arekit.contrib.utils.pipelines.items.sampling.bert import BertExperimentInp
 from arekit.contrib.utils.pipelines.items.text.terms_splitter import TermsSplitterParser
 from arekit.contrib.utils.pipelines.text_opinion.annot.algo_based import AlgorithmBasedTextOpinionAnnotator
 from arekit.contrib.utils.pipelines.text_opinion.extraction import text_opinion_extraction_pipeline
+from arekit.contrib.utils.pipelines.text_opinion.filters.base import TextOpinionFilter
 from arekit.contrib.utils.pipelines.text_opinion.filters.distance_based import DistanceLimitedTextOpinionFilter
 from arekit.contrib.utils.synonyms.simple import SimpleSynonymCollection
 
@@ -103,6 +108,25 @@ class CEBTextEntitiesParser(BasePipelineItem):
         return [self.__process_word(w) for w in input_data]
 
 
+class DirectionFilter(TextOpinionFilter):
+
+    def filter(self, text_opinion, parsed_news, entity_service_provider):
+        assert(isinstance(text_opinion, TextOpinion))
+        assert(isinstance(parsed_news, ParsedNews))
+        assert(isinstance(entity_service_provider, EntityServiceProvider))
+        s = entity_service_provider.get_entity_position(text_opinion.SourceId)
+        t = entity_service_provider.get_entity_position(text_opinion.TargetId)
+
+        s_s = s.get_index(TermPositionTypes.SentenceIndex)
+        t_s = s.get_index(TermPositionTypes.SentenceIndex)
+        if t_s < s_s:
+            return False
+
+        s_t = s.get_index(TermPositionTypes.IndexInSentence)
+        t_t = t.get_index(TermPositionTypes.IndexInSentence)
+        return t_t > s_t
+
+
 #########################################
 # Input parameters
 #########################################
@@ -154,7 +178,10 @@ train_pipeline = text_opinion_extraction_pipeline(
             get_doc_existed_opinions_func=lambda _: OpinionCollection(synonyms),
             create_empty_collection_func=lambda: OpinionCollection(synonyms))
     ],
-    text_opinion_filters=[DistanceLimitedTextOpinionFilter(terms_per_context=100)],
+    text_opinion_filters=[
+        DistanceLimitedTextOpinionFilter(terms_per_context=100),
+        DirectionFilter()
+    ],
     get_doc_func=lambda doc_id: doc_ops.get_doc(doc_id),
     text_parser=text_parser)
 #####
