@@ -36,6 +36,7 @@ from arekit.contrib.utils.pipelines.text_opinion.filters.base import TextOpinion
 from arekit.contrib.utils.pipelines.text_opinion.filters.distance_based import DistanceLimitedTextOpinionFilter
 from arekit.contrib.utils.synonyms.simple import SimpleSynonymCollection
 
+from utils_ceb import CEBApi
 from utils_my import MyAPI
 
 
@@ -60,7 +61,7 @@ class DirectoryFilesDocOperations(DocumentOperations):
         self.__file_names = file_names
 
         # Line-split sentence parser by default.
-        self.__sentence_parser = lambda text: [t.strip() for t in text.split('\n')] \
+        self.__sentence_parser = (lambda text: [t.strip() for t in text.split('\n')]) \
             if sentence_parser is None else sentence_parser
 
     def __read_doc(self, doc_id, contents):
@@ -157,8 +158,11 @@ pipeline = BasePipeline([
 #####
 # Declaring pipeline related context parameters.
 #####
+ceb_api = CEBApi()
 doc_ops = DirectoryFilesDocOperations(
-    dir_path=in_dir, file_names=[f for f in listdir(in_dir) if isfile(join(in_dir, f))])
+    dir_path=in_dir,
+    file_names=[f for f in listdir(in_dir) if isfile(join(in_dir, f))],
+    sentence_parser=lambda t: ceb_api.iter_book_paragraphs(t))
 
 no_folding = NoFolding(doc_ids=range(len(doc_ops)), supported_data_type=DataType.Train)
 
