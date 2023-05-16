@@ -49,12 +49,12 @@ class CEBApi:
             # Paragraphs are separated by new line.
             # Usually one paragraph contains a single speaker.
             if len(line.strip()) == 0:
-                yield paragraph.Text
+                yield paragraph
                 paragraph = Paragraph(line_ind)
             else:
                 paragraph.extend(line=line.strip('\n') + ' ', line_ind=line_ind)
 
-        yield " "
+        yield paragraph
         return
 
     def read_char_map(self):
