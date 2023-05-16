@@ -46,6 +46,7 @@ ceb_api = CEBApi()
 bs = BookService()
 
 dialogs_corrupted = 0
+ok = 0
 with open(join(__current_dir, "./data/filtered/en/dialogs.txt"), "r") as f:
     for l in f.readlines():
         if l.strip() == '~':
@@ -66,19 +67,35 @@ with open(join(__current_dir, "./data/filtered/en/dialogs.txt"), "r") as f:
 
             e_b_index = 0
             e_e_index = 0
+            corrupted = False
+            for i, utt_segment in enumerate(utt_segments):
+                next_entry_index = p_text.index(utt_segment, e_b_index) if utt_segment in p_text else None
 
-            for i, us in enumerate(utt_segments):
-                next_entry_index = p_text.index(us, e_b_index) if us in p_text else None
+                print("[UTT]", utt_segment)
 
-                if i > 0:
-                    print(p_text[e_e_index+1:next_entry_index-1].strip())
+                if i > 0 and next_entry_index is not None:
+                    print("[BREAK]", p_text[e_e_index+1:next_entry_index-1].strip())
+                    pass
 
                 if next_entry_index is None:
                     dialogs_corrupted += 1
+                    corrupted = True
                     break
                 else:
                     e_b_index = next_entry_index
-                    e_e_index = e_b_index + len(us)
+                    e_e_index = e_b_index + len(utt_segment)
+                    ok += 1
 
-print("done")
+            # After dialog section extraction.
+            if e_e_index is not None and not corrupted:
+                try:
+                    text_after = p_text[e_e_index + 1:p_text.index('.', e_e_index + 1)].strip()
+                    print("[AFTER]", text_after.strip())
+                except ValueError:
+                    pass
+                print("---")
+
+print("-----------------")
+print('ok: {}'.format(ok))
 print('corrupted: {}'.format(dialogs_corrupted))
+print("correct: {}\%".format(round(100*ok/(ok+dialogs_corrupted), 2)))
