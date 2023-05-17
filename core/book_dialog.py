@@ -140,10 +140,7 @@ class BookDialogueService:
 
                 # Filter non significant cases.
                 text = self.__paragraph[text_start:text_end].strip()
-                if len(text) < 5:
-                    continue
-
-                if text[0] == "\"":
+                if len(text) < 2:
                     continue
 
                 # Annotate text.
