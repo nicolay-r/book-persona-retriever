@@ -12,7 +12,7 @@ class BookService:
         self.__l_from = None
         self.__l_to = None
         self.__paragraph = None
-        self.dialog_utterances = []
+        self.__dialog_utterances = []
 
         # map (utt_id => segments)
         self.__segment_bounds = {}
@@ -41,14 +41,14 @@ class BookService:
         # Reinit from scratch and clear dependencies.
         self.__l_from = l_from
         self.__l_to = l_to
-        self.__paragraph = ' '.join([l.strip() for l in self.__lines[int(l_from):int(l_to) + 5]])
-        self.dialog_utterances.clear()
+        self.__paragraph = ' '.join([l.strip() for l in self.__lines[int(l_from):int(l_to)+1]])
+        self.__dialog_utterances.clear()
 
     def register_utterance(self, utt, l_from, l_to):
         """ Add one utterance during the reading stage.
         """
         assert(l_from == self.__l_from and l_to == self.__l_to)
-        self.dialog_utterances.append(utt)
+        self.__dialog_utterances.append(utt)
 
     def __reg_segment(self, u_ind, segment, b_ind):
         """register utterance segment with index `u_ind`, entered at `b_ind`"""
@@ -62,12 +62,13 @@ class BookService:
             annotation considering an already extracted paragraphs with the
             list of utterances mentioned in it.
         """
+        self.__segment_bounds.clear()
 
         # index from which we will seek for the upcomming entry.
         curr_index = 0
 
         # for each utterance.
-        for utt_ind, utterance in enumerate(self.dialog_utterances):
+        for utt_ind, utterance in enumerate(self.__dialog_utterances):
 
             # to segments.
             segments = [u.strip() for u in utterance.split("[USEP]")]
@@ -98,7 +99,7 @@ class BookService:
 
                 # add UTT.
                 annot_data.append(
-                    "UTT{utt_id}: {text}".format(utt_id=utt_id, text=self.__paragraph[seg_bounds[0]:seg_bounds[1]]))
+                    ">{utt_id}: {text}".format(utt_id=utt_id, text=self.__paragraph[seg_bounds[0]:seg_bounds[1]]))
 
                 is_after = False
                 text_start = seg_bounds[1] + 1
@@ -111,7 +112,7 @@ class BookService:
                     if utt_ind < len(utt_ids) - 1:
                         # Yes, there is a next utterance.
                         utt_id = utt_ids[utt_ind + 1]
-                        text_end = self.__segment_bounds[utt_id][0][0]
+                        text_end = self.__segment_bounds[utt_id][0][0] - 1
                     else:
                         # Seek for seek for the end of sentence.
                         is_after = True
@@ -121,12 +122,17 @@ class BookService:
                             # Considering the rest of paragraph.
                             text_end = len(self.__paragraph)
 
-                # annotate text
+                # Filter non significant cases.
+                text = self.__paragraph[text_start:text_end].strip()
+                if len(text) < 5:
+                    continue
+
+                # Annotate text.
                 annot_data.append(
                     "{t}{utt_id}: {text}".format(
-                        t="AFTER" if is_after else "BETWEEN",
+                        t="." if is_after else "#",
                         utt_id=utt_id,
-                        text=self.__paragraph[text_start:text_end]))
+                        text=text))
 
         return annot_data
 
@@ -147,8 +153,8 @@ with open(join(__current_dir, "./data/filtered/en/dialogs.txt"), "r") as f:
             next_dialog = True
             annot = bs.annotate_dialog()
             for a in annot:
-                print(a)
-            exit(0)
+                print(book_id, a)
+            print()
         elif l != '\n':
             # actual utterance.
             l = l.strip()
