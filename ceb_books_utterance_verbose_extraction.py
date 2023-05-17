@@ -26,7 +26,7 @@ with open(join(__current_dir, "./data/filtered/en/dialogs.txt"), "r") as f:
             l = l.strip()
             meta, utt = l.split('line:')
             book_id, dialog_region = meta.split('.txt')
-            bs.set_book(book_id=book_id)
+            bs.set_book(book_id=book_id, ceb_api=ceb_api)
             # Span of paragraphs.
             l_from, l_to = dialog_region[1:-1].split(":")
             bs.set_paragraphs(l_from=l_from, l_to=l_to)
