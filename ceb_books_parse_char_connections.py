@@ -6,17 +6,14 @@ from arekit.common.data.input.providers.label.multiple import MultipleLabelProvi
 from arekit.common.data.input.providers.rows.samples import BaseSampleRowProvider
 from arekit.common.data.input.providers.text.single import BaseSingleTextProvider
 from arekit.common.entities.base import Entity
-from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.nofold import NoFolding
 from arekit.common.labels.base import NoLabel
 from arekit.common.labels.provider.constant import ConstantLabelProvider
 from arekit.common.labels.scaler.single import SingleLabelScaler
-from arekit.common.news.base import News
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider
 from arekit.common.news.parsed.term_position import TermPositionTypes
-from arekit.common.news.sentence import BaseNewsSentence
 from arekit.common.opinions.annot.algo.pair_based import PairBasedOpinionAnnotationAlgorithm
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.pipeline.base import BasePipeline
@@ -24,6 +21,7 @@ from arekit.common.pipeline.items.base import BasePipelineItem
 from arekit.common.text.parser import BaseTextParser
 from arekit.common.text_opinions.base import TextOpinion
 from arekit.contrib.bert.terms.mapper import BertDefaultStringTextTermsMapper
+from arekit.contrib.utils.data.doc_ops.dir_based import DirectoryFilesDocOperations
 from arekit.contrib.utils.data.storages.row_cache import RowCacheStorage
 from arekit.contrib.utils.data.writers.csv_native import NativeCsvWriter
 from arekit.contrib.utils.entities.formatters.str_display import StringEntitiesDisplayValueFormatter
@@ -38,52 +36,6 @@ from arekit.contrib.utils.synonyms.simple import SimpleSynonymCollection
 
 from utils_ceb import CEBApi
 from utils_my import MyAPI
-
-
-class DirectoryFilesDocOperations(DocumentOperations):
-    """ Document Operations based on the list of provided file paths
-        for the particular directory.
-    """
-
-    def __init__(self, dir_path, file_names=None, sentence_parser=None):
-        """
-            file_paths: list
-                list of file paths related to documents.
-            sentence_splitter: object
-                how data is suppose to be separated onto sentences.
-                str -> list(str)
-        """
-        assert(isinstance(dir_path, str))
-        assert(isinstance(file_names, list) or file_names is None)
-        assert(callable(sentence_parser) or sentence_parser is None)
-
-        self.__dir_path = dir_path
-        self.__file_names = file_names
-
-        # Line-split sentence parser by default.
-        self.__sentence_parser = (lambda text: [t.strip() for t in text.split('\n')]) \
-            if sentence_parser is None else sentence_parser
-
-    def __read_doc(self, doc_id, contents):
-        """ Parse a single document.
-        """
-        # setup input data.
-        sentences = self.__sentence_parser(contents)
-        sentences = list(map(lambda text: BaseNewsSentence(text), sentences))
-
-        # Parse text.
-        return News(doc_id=doc_id, sentences=sentences)
-
-    def get_doc(self, doc_id):
-        """ Perform reading operation of the document.
-        """
-        file_name = self.__file_names[doc_id]
-        with open(join(self.__dir_path, file_name), "r") as f:
-            contents = f.read()
-            return self.__read_doc(doc_id=file_name, contents=contents)
-
-    def __len__(self):
-        return len(self.__file_names)
 
 
 class CEBTextEntitiesParser(BasePipelineItem):
@@ -162,7 +114,7 @@ ceb_api = CEBApi()
 doc_ops = DirectoryFilesDocOperations(
     dir_path=in_dir,
     file_names=[f for f in listdir(in_dir) if isfile(join(in_dir, f))],
-    sentence_parser=lambda t: ceb_api.iter_book_paragraphs(t))
+    sentence_parser=lambda t: [p.Text for p in ceb_api.iter_book_paragraphs(t)])
 
 no_folding = NoFolding(doc_ids=range(len(doc_ops)), supported_data_type=DataType.Train)
 
@@ -171,7 +123,7 @@ text_parser = BaseTextParser(pipeline=[
     CEBTextEntitiesParser(),
     ])
 
-synonyms = SimpleSynonymCollection(iter_group_values_lists=[], is_read_only=False, debug=False)
+synonyms = SimpleSynonymCollection(iter_group_values_lists=[], is_read_only=False)
 train_pipeline = text_opinion_extraction_pipeline(
     annotators=[
         AlgorithmBasedTextOpinionAnnotator(
@@ -179,14 +131,13 @@ train_pipeline = text_opinion_extraction_pipeline(
                 dist_in_terms_bound=200,
                 label_provider=ConstantLabelProvider(NoLabel())),
             value_to_group_id_func=lambda value: '_'.join(value.split('_')[:2]),  # doc_char_var -> doc_char
-            get_doc_existed_opinions_func=lambda _: OpinionCollection(synonyms),
             create_empty_collection_func=lambda: OpinionCollection(synonyms))
     ],
     text_opinion_filters=[
         DistanceLimitedTextOpinionFilter(terms_per_context=100),
         DirectionFilter()
     ],
-    get_doc_func=lambda doc_id: doc_ops.get_doc(doc_id),
+    get_doc_by_id_func=doc_ops.get_doc,
     text_parser=text_parser)
 #####
 
