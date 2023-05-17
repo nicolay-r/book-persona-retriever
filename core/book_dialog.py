@@ -1,5 +1,4 @@
-from ceb_books_annot_chars import ceb_api
-
+from utils_ceb import CEBApi
 
 class BookDialogueService:
 
@@ -11,11 +10,15 @@ class BookDialogueService:
         self.__l_to = None
         self.__paragraph = None
         self.__dialog_utterances = []
+        self.__missed = 0
+        self.__found = 0
 
         # map (utt_id => segments)
         self.__segment_bounds = {}
 
-    def set_book(self, book_id):
+    def set_book(self, book_id, ceb_api):
+        assert(isinstance(ceb_api, CEBApi))
+
         # If already read this book and it is cached.
         if self.__book_id == book_id:
             return
@@ -26,6 +29,9 @@ class BookDialogueService:
             text = b.read()
 
         self.__lines = text.split('\n')
+
+    def stat(self):
+        return self.__missed, self.__found
 
     def set_paragraphs(self, l_from, l_to):
 
@@ -40,7 +46,11 @@ class BookDialogueService:
         self.__l_from = l_from
         self.__l_to = l_to
         self.__paragraph = ' '.join([l.strip() for l in self.__lines[int(l_from):int(l_to)+1]])
+        self.__paragraph = ' '.join(self.__paragraph.split())
+
         self.__dialog_utterances.clear()
+        self.__missed = 0
+        self.__found = 0
 
     def register_utterance(self, utt, l_from, l_to):
         """ Add one utterance during the reading stage.
@@ -78,6 +88,14 @@ class BookDialogueService:
 
                 if b_ind is not None:
                     self.__reg_segment(u_ind=utt_ind, segment=utt_segment, b_ind=b_ind)
+                    curr_index = b_ind
+                    self.__found += 1
+                else:
+                    self.__missed += 1
+                    print(">>>")
+                    print(self.__book_id)
+                    print(utt_segment)
+                    print(utt_segment in self.__paragraph)
 
         # Clear empty bounds and utterances.
         s_inds = list(self.__segment_bounds.keys())
@@ -109,8 +127,8 @@ class BookDialogueService:
                     # We need to check whether the next utterance is on a way.
                     if utt_ind < len(utt_ids) - 1:
                         # Yes, there is a next utterance.
-                        utt_id = utt_ids[utt_ind + 1]
-                        text_end = self.__segment_bounds[utt_id][0][0] - 1
+                        utt_id_next = utt_ids[utt_ind + 1]
+                        text_end = self.__segment_bounds[utt_id_next][0][0] - 1
                     else:
                         # Seek for seek for the end of sentence.
                         is_after = True
@@ -123,6 +141,9 @@ class BookDialogueService:
                 # Filter non significant cases.
                 text = self.__paragraph[text_start:text_end].strip()
                 if len(text) < 5:
+                    continue
+
+                if text[0] == "\"":
                     continue
 
                 # Annotate text.
