@@ -49,24 +49,35 @@ class GuttenbergDialogApi:
                 if not (segment[0] in ['#', '.']):
                     continue
 
-                # Crop metainformation.
-                words = segment.split()[1:]
+                # Crop meta-information.
+                terms = segment.split()[1:]
 
                 # Get rid o punctuation.
-                segment = ' '.join(tokenizer.tokenize(segment))
+                tokenized_terms = tokenizer.tokenize(' '.join(terms))
 
-                # Select k.
+                ######################################################
+                # Check speaker at position K and no speakers behind.
+                ######################################################
+                is_ok = True
+                is_char = lambda term: term[0] == '{' and term[-1] == '}'
                 if k is not None:
-                    if k < len(words) and words[k][0] == '{':
-                        ok = True
+                    if k < len(terms):
+                        for i in range(k):
+                            if is_char(terms[i]):
+                                is_ok = False
+                                break
+                        is_ok = is_ok and is_char(terms[k])
                     else:
-                        ok = False
+                        is_ok = False
                 else:
-                    ok = True
+                    is_ok = True
+                ######################################################
+
+                if not is_ok:
+                    continue
 
                 # Collect utterance.
-                if ok:
-                    filtered.append(segment)
+                filtered.append(' '.join(tokenized_terms))
 
             if len(filtered) > 0:
                 yield book_id, filtered
