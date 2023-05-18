@@ -8,7 +8,7 @@ ceb_api.read_char_map()
 
 found = 0
 missed = 0
-ceb_api_annot = CEBApi(books_root=MyAPI.books_storage)
+ceb_api_annot = CEBApi(books_root=MyAPI.books_storage_en)
 
 for book_id in tqdm(ceb_api.book_ids_from_directory(), desc="Annotating characters"):
     with open(ceb_api.get_book_path(book_id)) as f:

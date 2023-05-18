@@ -1,8 +1,10 @@
 from os.path import realpath, dirname, join
 
+from gutenberg_dialog.pipeline.utils import DialogMetaHelper
+
 from core.book_dialog import BookDialogueService
 from utils_ceb import CEBApi
-
+from utils_gd import GuttenbergDialogApi
 
 next_dialog = True
 ceb_api = CEBApi()
@@ -14,7 +16,7 @@ bs = BookDialogueService()
 __current_dir = dirname(realpath(__file__))
 total_m = 0
 total_f = 0
-with open(join(__current_dir, "./data/filtered/en/dialogs.txt"), "r") as f:
+with open(join(__current_dir, GuttenbergDialogApi.dialogs_en), "r") as f:
 
     for l in f.readlines():
         if l.strip() == '~':
@@ -36,11 +38,15 @@ with open(join(__current_dir, "./data/filtered/en/dialogs.txt"), "r") as f:
             m, f = bs.stat()
             total_m += m
             total_f += f
-
         elif l != '\n':
             # actual utterance.
             l = l.strip()
-            meta, utt = l.split('line:')
+
+            args = l.split(DialogMetaHelper._sep)
+            if len(args) == 1:
+                continue
+
+            meta, utt = args
             book_id, dialog_region = meta.split('.txt')
             bs.set_book(book_id=book_id, ceb_api=ceb_api)
             # Span of paragraphs.
