@@ -59,7 +59,7 @@ class GuttenbergDialogApi:
                 # Check speaker at position K and no speakers behind.
                 ######################################################
                 is_ok = True
-                is_char = lambda term: term[0] == '{' and term[-1] == '}'
+                is_char = lambda term: term[0] == '{'
                 if k is not None:
                     if k < len(terms):
                         for i in range(k):
