@@ -8,6 +8,9 @@ class TermsStat:
         self.__terms_in_doc = {}
         self.__doc_ids = set()
 
+    def iter_terms(self):
+        return self.__terms_total.keys()
+
     def docs_count(self):
         return len(self.__doc_ids)
 
@@ -20,19 +23,26 @@ class TermsStat:
         if doc_id in self.__doc_ids:
             return
 
+        self.__doc_ids.add(doc_id)
+
+        used = set()
         for term in terms:
 
-            used = set()
-            for term in terms:
-                if term in used:
-                    continue
-                self.__terms_in_doc[term] = 1
-                used.add(term)
-
+            # Register in total.
             if term not in self.__terms_total:
                 self.__terms_total[term] = 1
             else:
                 self.__terms_total[term] += 1
+
+            # Register in doc-related.
+            if term in used:
+                continue
+            used.add(term)
+
+            if term not in self.__terms_in_doc:
+                self.__terms_in_doc[term] = 1
+            else:
+                self.__terms_in_doc[term] += 1
 
     def tfa_idf(self, term):
         """ sum(tf,d){1..d} - idf
@@ -40,3 +50,6 @@ class TermsStat:
         tfa = self.__terms_total[term]*1.0/sum(self.__terms_total.values())
         idf = math.log(len(self.__doc_ids) * 1.0 / self.__terms_in_doc[term])
         return tfa * idf
+
+    def df(self, term):
+        return self.__terms_in_doc[term]
