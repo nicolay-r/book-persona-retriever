@@ -1,6 +1,3 @@
-from utils_ceb import CEBApi
-
-
 class BookDialogueService:
 
     def __init__(self):
