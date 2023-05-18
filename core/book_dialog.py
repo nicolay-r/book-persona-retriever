@@ -17,15 +17,13 @@ class BookDialogueService:
         # map (utt_id => segments)
         self.__segment_bounds = {}
 
-    def set_book(self, book_id, ceb_api):
-        assert(isinstance(ceb_api, CEBApi))
+    def set_book(self, book_id, book_path):
 
         # If already read this book and it is cached.
         if self.__book_id == book_id:
             return
 
         self.__book_id = book_id
-        book_path = ceb_api.get_book_path(book_id)
         with open(book_path, "r") as b:
             text = b.read()
 
@@ -93,10 +91,7 @@ class BookDialogueService:
                     self.__found += 1
                 else:
                     self.__missed += 1
-                    print(">>>")
-                    print(self.__book_id)
-                    print(utt_segment)
-                    print(utt_segment in self.__paragraph)
+                    raise Exception("!")
 
         # Clear empty bounds and utterances.
         s_inds = list(self.__segment_bounds.keys())
@@ -113,6 +108,13 @@ class BookDialogueService:
             # [SPAN#1] [BETWEEN#1] [SPAN#2] [BETWEEN#2] ... [SPAN#N] [AFTER#N]
             segments = self.__segment_bounds[utt_id]
             for seg_ind, seg_bounds in enumerate(segments):
+
+                # In the case of the very first utterance.
+                if utt_ind == 0 and seg_ind == 0:
+                    if seg_bounds[0] < 2:
+                        continue
+                    annot_data.append(
+                        "!{utt_id}: {text}".format(utt_id=utt_id, text=self.__paragraph[:seg_bounds[0]]))
 
                 # add UTT.
                 annot_data.append(
