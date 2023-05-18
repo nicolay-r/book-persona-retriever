@@ -44,10 +44,23 @@ class TermsStat:
             else:
                 self.__terms_in_doc[term] += 1
 
-    def tfa_idf(self, term):
+    def tfa_idf(self, term, p_threshold=None):
         """ sum(tf,d){1..d} - idf
         """
-        tfa = self.__terms_total[term]*1.0/sum(self.__terms_total.values())
+        assert(p_threshold < 1.0)
+
+        t_count = self.__terms_total[term]
+        tfa = t_count * 1.0 / sum(self.__terms_total.values())
+
+        # Calculate the threshold in percentage.
+        mn = min(self.__terms_total.values())
+        mx = max(self.__terms_total.values())
+        threshold = mn + (mx - mn) * p_threshold
+
+        # Filtering.
+        if p_threshold is not None and t_count < threshold:
+            return 0
+
         idf = math.log(len(self.__doc_ids) * 1.0 / self.__terms_in_doc[term])
         return tfa * idf
 
