@@ -2,6 +2,8 @@ import json
 import os
 from os.path import dirname, realpath, join
 
+from utils import Paragraph
+
 
 class CEBApi:
     """ Character embedding benchmark API for Gutenberg books.
@@ -10,7 +12,7 @@ class CEBApi:
     """
 
     __current_dir = dirname(realpath(__file__))
-    books_storage = join(__current_dir, "./data/ceb_books_test")
+    books_storage = join(__current_dir, "./data/ceb_books")
     books_storage_en = join(__current_dir, books_storage, "./en")
     character_map = join(__current_dir, "./data/charembench/data/chr_map.json")
 
@@ -35,6 +37,25 @@ class CEBApi:
         target_filepath = join(self.__book_storage_root, "{}.txt".format(str(book_id)))
         with open(target_filepath, "w") as f:
             f.write(text)
+
+    def iter_book_paragraphs(self, text):
+        """ paragraphs extraction from `text`
+            proposed by following project:
+            https://github.com/ricsinaruto/gutenberg-dialog
+        """
+        assert(isinstance(text, str))
+        paragraph = Paragraph(0)
+        for line_ind, line in enumerate(text.split('\n')):
+            # Paragraphs are separated by new line.
+            # Usually one paragraph contains a single speaker.
+            if len(line.strip()) == 0:
+                yield paragraph
+                paragraph = Paragraph(line_ind)
+            else:
+                paragraph.extend(line=line.strip('\n') + ' ', line_ind=line_ind)
+
+        yield paragraph
+        return
 
     def read_char_map(self):
         """ reading char_map, which has been composed by.
