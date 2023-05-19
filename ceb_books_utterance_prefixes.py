@@ -13,14 +13,15 @@ def prefix_analysis(k, p_threshold, books_path_func, filter_func):
     gd_api = GuttenbergDialogApi()
 
     book_dialogs = {}
-    for book_id, lines in gd_api.filter_utt_with_speaker_at_k(book_path_func=books_path_func, k=k):
+    for book_id, lines in gd_api.filter_comment_with_speaker_at_k(book_path_func=books_path_func, k=k):
         if book_id not in book_dialogs:
             book_dialogs[book_id] = []
 
         # We crop part that before speaker.
         for i in range(len(lines)):
-            bound = k if k > 0 else k+2
-            cropped = lines[i].split()[:bound]
+
+            words = lines[i].split()
+            cropped = words[:k] if k > 0 else words[1:3]
 
             if k < len(cropped):
                 cropped[k] = '[C]'
@@ -54,17 +55,28 @@ def filter_non_addressed_cases(line):
 
     # We remove `to` in the case of 3 words.
     if len(words) == 3:
-        return words[-1] not in ["to", "at"]
+        if words[-1] in ["to", "at"]:
+            return False
+        if words[0] not in result_sets[1]:
+            return False
 
     return True
 
 
 my_api = MyAPI()
-with open(my_api.prefixes_storage, "w") as out:
-    for k in [1, 2, 3]:
+
+# Collected results.
+result_sets = {}
+
+target = "{}-b{}.txt".format(my_api.prefixes_storage, my_api.books_count())
+with open(target, "w") as out:
+    for k in [0, 1, 2, 3]:
         tfa_idf = prefix_analysis(k=k, p_threshold=0.01, books_path_func=my_api.get_book_path,
                                   filter_func=filter_non_addressed_cases)
         sorted_list = sorted(tfa_idf, key=lambda item: item[1], reverse=False)
 
-        for key, v in sorted_list:
-            out.write("{prefix},{value}\n".format(prefix=key, value=round(v, 2)))
+        if k > 0:
+            for key, v in sorted_list:
+                out.write("{prefix},{value}\n".format(prefix=key, value=round(v, 2)))
+
+        result_sets[k] = set([k for k, _ in sorted_list])
