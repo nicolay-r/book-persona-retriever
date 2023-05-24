@@ -49,6 +49,7 @@ class MyAPI:
         recognized = 0
         dialogs = 0
         utterances = 0
+        speaker_stat = {}
         for dialog, recognized_speakers in tqdm(iter_dialogs_and_speakers):
             assert(isinstance(dialog, OrderedDict))
 
@@ -57,6 +58,13 @@ class MyAPI:
 
                 if speaker_id in recognized_speakers:
                     recognized += 1
+
+                    # register speaker
+                    speaker = recognized_speakers[speaker_id]
+                    if speaker not in speaker_stat:
+                        speaker_stat[speaker] = 0
+                    speaker_stat[speaker] += 1
+
                 utterances += 1
 
             dialogs += 1
@@ -64,7 +72,8 @@ class MyAPI:
         return {
             "recognized": recognized,
             "utterances": utterances,
-            "dialogs": dialogs
+            "dialogs": dialogs,
+            "utterances_per_speaker": sum(speaker_stat.values()) / len(speaker_stat)
         }
 
     def write_annotated_dialogs(self, iter_dialogs_and_speakers, filepath=None, print_sep=True):
@@ -95,7 +104,7 @@ class MyAPI:
             # We consider only positions 0, 1, 2, and 3
             # according to the related preliminary analysis.
             for k in tqdm([0, 1, 2, 3], desc="For each position of the character in comment"):
-                tfa_idf = analysis_func(k=k, p_threshold=0.01,
+                tfa_idf = analysis_func(k=k, p_threshold=0.01 if k > 1 else None,
                                         books_path_func=self.get_book_path,
                                         filter_func=lambda value: line_filter(value, result_sets))
                 sorted_list = sorted(tfa_idf, key=lambda item: item[1], reverse=False)
