@@ -31,6 +31,7 @@ class MyAPI:
         with open(filepath, "r") as f:
             for line in f.readlines():
                 # split n-gramms.
+                line = line.strip()
                 entries.add(line.replace('~', ' '))
         return entries
 
@@ -84,3 +85,23 @@ class MyAPI:
                     file.write("{speaker}: {utterance}\n".format(speaker=speaker, utterance=utterance))
 
                 file.write('\n')
+
+    def write_lexicon(self, analysis_func, line_filter):
+        assert(callable(analysis_func))
+
+        result_sets = {}
+        with open("{}-b{}.txt".format(self.prefixes_storage, self.books_count()), "w") as out:
+
+            # We consider only positions 0, 1, 2, and 3
+            # according to the related preliminary analysis.
+            for k in tqdm([0, 1, 2, 3], desc="For each position of the character in comment"):
+                tfa_idf = analysis_func(k=k, p_threshold=0.01,
+                                        books_path_func=self.get_book_path,
+                                        filter_func=lambda value: line_filter(value, result_sets))
+                sorted_list = sorted(tfa_idf, key=lambda item: item[1], reverse=False)
+
+                if k > 0:
+                    for key, v in sorted_list:
+                        out.write("{prefix}\n".format(prefix=key, value=round(v, 2)))
+
+                result_sets[k] = set([k for k, _ in sorted_list])
