@@ -47,7 +47,9 @@ class TermsStat:
     def tfa_idf(self, term, p_threshold=None):
         """ sum(tf,d){1..d} - idf
         """
-        assert(p_threshold < 1.0)
+        assert((isinstance(p_threshold, float) and p_threshold < 1.0) or p_threshold is None)
+
+        p_threshold = 0.0 if p_threshold is None else p_threshold
 
         t_count = self.__terms_total[term]
         tfa = t_count * 1.0 / sum(self.__terms_total.values())
