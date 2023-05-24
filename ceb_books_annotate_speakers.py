@@ -32,27 +32,26 @@ def iter_speaker_annotated_dialogs(book_path_func, prefix_lexicon=None):
             terms = gd_api.normalize_terms(text)
 
             ########################################################
-            # Case 1.
-            # For the case when first term is a mentioned character.
+            # Annotation algorithm.
             ########################################################
+            recognized = False
             if len(terms) > 0 and gd_api.is_character(terms[0]):
                 # Provide info.
                 recognized_speakers[speaker_id] = terms[0]
+                recognized = True
 
-            ########################################################
-            # Case 2.
-            # Separation with the one word mentioned in between.
-            ########################################################
-            if prefix_lexicon is not None:
-                if len(terms) > 1 and gd_api.is_character(terms[1]):
-                    if terms[0] in prefix_lexicon:
-                        # Provide info.
-                        recognized_speakers[speaker_id] = terms[1]
+            # Annotation based on lexicon and prefix.
+            for k in [1, 2, 3]:
+                if prefix_lexicon is not None:
+                    if len(terms) > k and gd_api.is_character(terms[k]):
+                        if ' '.join(terms[:k]) in prefix_lexicon:
+                            # Provide info.
+                            recognized_speakers[speaker_id] = terms[k]
+                            recognized = True
+                            break
 
-            ########################################################
-            # Case 3.
-            # TODO.
-            ########################################################
+            #if not recognized:
+            #    print(terms)
 
         # Compose to format of actual dialog between speakers
         dialog = OrderedDict()
@@ -93,3 +92,4 @@ stat = my_api.calc_annotated_dialogs_stat(
 print(stat)
 print("recognized/utt: {}%".format(str(round(100.0 * stat["recognized"]/stat["utterances"], 2))))
 print("recognized speakers per dialogs: {}".format(str(round(stat["recognized"]/stat["dialogs"], 2))))
+print("utterances per speaker: {}".format(str(round(stat["utterances_per_speaker"], 2))))
