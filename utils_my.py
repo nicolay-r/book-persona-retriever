@@ -43,6 +43,29 @@ class MyAPI:
                 count += 1
         return count
 
+    @staticmethod
+    def calc_annotated_dialogs_stat(iter_dialogs_and_speakers):
+        recognized = 0
+        dialogs = 0
+        utterances = 0
+        for dialog, recognized_speakers in tqdm(iter_dialogs_and_speakers):
+            assert(isinstance(dialog, OrderedDict))
+
+            for speaker_id in dialog.keys():
+                assert(isinstance(recognized_speakers, dict))
+
+                if speaker_id in recognized_speakers:
+                    recognized += 1
+                utterances += 1
+
+            dialogs += 1
+
+        return {
+            "recognized": recognized,
+            "utterances": utterances,
+            "dialogs": dialogs
+        }
+
     def write_annotated_dialogs(self, iter_dialogs_and_speakers, filepath=None, print_sep=True):
         filepath = self.dialogs_filepath if filepath is None else filepath
 

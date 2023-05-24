@@ -9,7 +9,6 @@ def iter_speaker_annotated_dialogs(book_path_func, prefix_lexicon=None):
 
     gd_api = GuttenbergDialogApi()
 
-    found = 0
     for b_id, dialog_segments in gd_api.iter_dialog_segments(book_path_func):
 
         speakers = set()
@@ -39,17 +38,16 @@ def iter_speaker_annotated_dialogs(book_path_func, prefix_lexicon=None):
             if len(terms) > 0 and gd_api.is_character(terms[0]):
                 # Provide info.
                 recognized_speakers[speaker_id] = terms[0]
-                found += 1
 
             ########################################################
             # Case 2.
             # Separation with the one word mentioned in between.
             ########################################################
             if prefix_lexicon is not None:
-                if len(terms) > 1 and gd_api.is_character(terms[1]) and terms[0] in prefix_lexicon:
-                    # Provide info.
-                    recognized_speakers[speaker_id] = terms[1]
-                    found += 1
+                if len(terms) > 1 and gd_api.is_character(terms[1]):
+                    if terms[0] in prefix_lexicon:
+                        # Provide info.
+                        recognized_speakers[speaker_id] = terms[1]
 
             ########################################################
             # Case 3.
@@ -79,7 +77,19 @@ def iter_speaker_annotated_dialogs(book_path_func, prefix_lexicon=None):
 
 
 my_api = MyAPI()
-# We consider prefix lexicon for recognition of the speakers in texts.
-data_iter = iter_speaker_annotated_dialogs(book_path_func=my_api.get_book_path,
-                                           prefix_lexicon=my_api.load_prefix_lexicon_en())
-my_api.write_annotated_dialogs(iter_dialogs_and_speakers=data_iter)
+
+my_api.write_annotated_dialogs(
+    iter_dialogs_and_speakers=iter_speaker_annotated_dialogs(
+        book_path_func=my_api.get_book_path,
+        prefix_lexicon=my_api.load_prefix_lexicon_en())
+)
+
+stat = my_api.calc_annotated_dialogs_stat(
+    iter_dialogs_and_speakers=iter_speaker_annotated_dialogs(
+        book_path_func=my_api.get_book_path,
+        prefix_lexicon=my_api.load_prefix_lexicon_en())
+)
+
+print(stat)
+print("recognized/utt: {}%".format(str(round(100.0 * stat["recognized"]/stat["utterances"], 2))))
+print("recognized speakers per dialogs: {}".format(str(round(stat["recognized"]/stat["dialogs"], 2))))
