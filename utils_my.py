@@ -21,19 +21,6 @@ class MyAPI:
     def get_book_path(self, book_id):
         return join(self.__book_storage_root, "{book_id}.txt".format(book_id=book_id))
 
-    @staticmethod
-    def load_prefix_lexicon_en(default_suffix="b500", filepath=None):
-        """ Loading the aux lexicon which allow us recognize characters in text.
-            default suffix is an amount of considered books.
-        """
-        entries = set()
-        filepath = "{}-{}.txt".format(MyAPI.prefixes_storage, default_suffix) if filepath is None else filepath
-        with open(filepath, "r") as f:
-            for line in f.readlines():
-                # split n-gramms.
-                line = line.strip()
-                entries.add(line.replace('~', ' '))
-        return entries
 
     def books_count(self):
         count = 0
@@ -94,6 +81,18 @@ class MyAPI:
                     file.write("{speaker}: {utterance}\n".format(speaker=speaker, utterance=utterance))
 
                 file.write('\n')
+
+    def load_prefix_lexicon_en(self):
+        """ Loading the aux lexicon which allow us recognize characters in text.
+            default suffix is an amount of considered books.
+        """
+        entries = set()
+        with open("{}-b{}.txt".format(self.prefixes_storage, self.books_count()), "r") as f:
+            for line in f.readlines():
+                # split n-gramms.
+                line = line.strip()
+                entries.add(line.replace('~', ' '))
+        return entries
 
     def write_lexicon(self, analysis_func, line_filter):
         assert(callable(analysis_func))
