@@ -38,6 +38,18 @@ class CEBApi:
         with open(target_filepath, "w") as f:
             f.write(text)
 
+    @staticmethod
+    def speaker_variant_to_speaker(speaker_variant):
+        """ removes speaker variant from the complete speaker identifier.
+            origin "BOOK_SID_VARIANT"
+            returns: str
+                of the following format: BOOK_SID
+        """
+        assert(isinstance(speaker_variant, str))
+        assert(speaker_variant.count("_") == 2)
+        book_id, speaker_id, _ = speaker_variant.split('_')
+        return "{}_{}".format(book_id, speaker_id)
+
     def iter_book_paragraphs(self, text):
         """ paragraphs extraction from `text`
             proposed by following project:
