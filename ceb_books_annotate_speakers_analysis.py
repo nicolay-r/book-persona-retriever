@@ -28,8 +28,8 @@ for k, v in stat["speakers_uc_stat"].items():
     df_dict["speaker"].append(k)
     df_dict["utts"].append(v)
 speaker_utts_df = pd.DataFrame(df_dict)
-sns.displot(speaker_utts_df, x="utts")
+g = sns.displot(speaker_utts_df, x="utts", kde=True)
 
-plt.ylim(0, 1000)
-plt.xlim(0, 100)
+#plt.ylim(0, 2500)
+plt.xlim(0, 25)
 plt.show()
