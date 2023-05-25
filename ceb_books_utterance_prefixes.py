@@ -49,8 +49,10 @@ def prefix_analysis(k, p_threshold, books_path_func, filter_func):
     return [x for x in tfa_idf.items() if x[1] > 0]
 
 
-def filter_non_addressed_cases(line):
+def filter_non_addressed_cases(line, result_sets):
     assert(isinstance(line, str))
+    assert(isinstance(result_sets, dict))
+
     words = line.split('~')
 
     # We remove `to` in the case of 3 words.
@@ -64,19 +66,5 @@ def filter_non_addressed_cases(line):
 
 
 my_api = MyAPI()
-
-# Collected results.
-result_sets = {}
-
-target = "{}-b{}.txt".format(my_api.prefixes_storage, my_api.books_count())
-with open(target, "w") as out:
-    for k in [0, 1, 2, 3]:
-        tfa_idf = prefix_analysis(k=k, p_threshold=0.01, books_path_func=my_api.get_book_path,
-                                  filter_func=filter_non_addressed_cases)
-        sorted_list = sorted(tfa_idf, key=lambda item: item[1], reverse=False)
-
-        if k > 0:
-            for key, v in sorted_list:
-                out.write("{prefix},{value}\n".format(prefix=key, value=round(v, 2)))
-
-        result_sets[k] = set([k for k, _ in sorted_list])
+my_api.write_lexicon(analysis_func=prefix_analysis,
+                     line_filter=filter_non_addressed_cases)

@@ -57,4 +57,4 @@ for k in [None] + list(range(10)):
 
     print("At least one segment in DIALOG mention author at position {k} (% of dialogs): ".format(k=k),
           round(100.0 * total_dialogs_count(k_dialogs) / total_dialogs_count(all_dialogs), 2),
-          "[{}% of books]".format(100.0 * len(k_dialogs)/ len(all_dialogs)))
+          "[{}% of books]".format(100.0 * len(k_dialogs) / len(all_dialogs)))
