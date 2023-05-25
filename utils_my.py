@@ -12,7 +12,11 @@ class MyAPI:
     __current_dir = dirname(realpath(__file__))
     books_storage = join(__current_dir, "./data/ceb_books_annot")
     prefixes_storage = join(__current_dir, "./data/ceb_books_annot/prefixes")
-    dialogs_filepath = join(__current_dir, "./data/ceb_books_annot/dialogs.txt")  # dialogs storage.
+    # Dialogs with recognized speakers.
+    dialogs_filepath = join(__current_dir, "./data/ceb_books_annot/dialogs.txt")
+    # List of the speakers considered for the dataset.
+    filtered_speakers = join(__current_dir, "./data/ceb_books_annot/filtered_speakers.txt")
+    dataset = join(__current_dir, "./data/ceb_books_annot/dataset.txt")
     books_storage_en = join(books_storage, "en")
 
     def __init__(self, books_root=None):
@@ -20,7 +24,6 @@ class MyAPI:
 
     def get_book_path(self, book_id):
         return join(self.__book_storage_root, "{book_id}.txt".format(book_id=book_id))
-
 
     def books_count(self):
         count = 0
@@ -82,6 +85,17 @@ class MyAPI:
 
                 file.write('\n')
 
+    def read_annotated_dialogs(self, filepath=None):
+        filepath = self.dialogs_filepath if filepath is None else filepath
+
+        with open(filepath, "r") as file:
+            for line in tqdm(file.readlines(), desc="handle annotated utterances"):
+                if line == "\n":
+                    # End of the dialog.
+                    yield None
+                else:
+                    yield line
+
     def load_prefix_lexicon_en(self):
         """ Loading the aux lexicon which allow us recognize characters in text.
             default suffix is an amount of considered books.
@@ -113,3 +127,49 @@ class MyAPI:
                         out.write("{prefix}\n".format(prefix=key, value=round(v, 2)))
 
                 result_sets[k] = set([k for k, _ in sorted_list])
+
+    def write_speakers(self, speaker_names_list):
+        assert(isinstance(speaker_names_list, list))
+        with open(self.filtered_speakers, "w") as f:
+            for speaker_name in speaker_names_list:
+                f.write("{}\n".format(speaker_name))
+
+    def compose_dataset(self):
+        """ Filter dialogs to the result dataset. Compose a Question->Response pair.
+            Where response is always a known speaker, so whe know who we ask.
+        """
+
+        # Read speakers to be considered first.
+        speakers_set = set()
+        with open(self.filtered_speakers, "r") as f:
+            for speaker_name in f.readlines():
+                speakers_set.add(speaker_name.strip())
+
+        pairs = 0
+        buffer = []
+        with open(self.dataset, "w") as file:
+            for line in self.read_annotated_dialogs():
+                if line is None:
+                    continue
+                line = line.strip()
+                buffer.append(line)
+
+                # Keep the size of buffer equal 2.
+                if len(buffer) > 2:
+                    buffer = buffer[1:]
+
+                if len(buffer) != 2:
+                    continue
+
+                speaker_name = line.split(': ')[0]
+
+                # We consider only such speakers that in predefined list.
+                # We know we have a response to the known speaker.
+                if "UNKN" not in speaker_name and speaker_name in speakers_set:
+                    # We release content from the buffer.
+                    for buffer_line in buffer:
+                        file.write("{}\n".format(buffer_line))
+                    file.write("\n")
+                    pairs += 1
+
+        print("Pairs written: {}".format(pairs))
