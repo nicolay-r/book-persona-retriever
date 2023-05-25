@@ -1,6 +1,33 @@
 from collections import OrderedDict
 
+from utils_ceb import CEBApi
 from utils_gd import GuttenbergDialogApi
+
+
+def try_recognize(terms, prefix_lexicon):
+    """ Annotation algorithm.
+    """
+    variant = None
+    recognized = False
+
+    if len(terms) > 0 and GuttenbergDialogApi.is_character(terms[0]):
+        # Provide info.
+        # NOTE. it is important to convert speaker variation to its book-name format.
+        # for appropriate grouping in further.
+        variant = terms[0]
+        recognized = True
+
+    # Annotation based on lexicon and prefix.
+    for k in [1, 2, 3]:
+        if prefix_lexicon is not None:
+            if len(terms) > k and GuttenbergDialogApi.is_character(terms[k]):
+                if ' '.join(terms[:k]) in prefix_lexicon:
+                    # Provide info.
+                    variant = terms[k]
+                    recognized = True
+                    break
+
+    return recognized, variant
 
 
 def iter_speaker_annotated_dialogs(book_path_func, prefix_lexicon=None):
@@ -35,27 +62,10 @@ def iter_speaker_annotated_dialogs(book_path_func, prefix_lexicon=None):
             # Do analysis.
             terms = gd_api.normalize_terms(text)
 
-            ########################################################
-            # Annotation algorithm.
-            ########################################################
-            recognized = False
-            if len(terms) > 0 and gd_api.is_character(terms[0]):
-                # Provide info.
-                recognized_speakers[speaker_id] = terms[0]
-                recognized = True
+            recognized, variant = try_recognize(terms=terms, prefix_lexicon=prefix_lexicon)
 
-            # Annotation based on lexicon and prefix.
-            for k in [1, 2, 3]:
-                if prefix_lexicon is not None:
-                    if len(terms) > k and gd_api.is_character(terms[k]):
-                        if ' '.join(terms[:k]) in prefix_lexicon:
-                            # Provide info.
-                            recognized_speakers[speaker_id] = terms[k]
-                            recognized = True
-                            break
-
-            #if not recognized:
-            #    print(terms)
+            if recognized:
+                recognized_speakers[speaker_id] = CEBApi.speaker_variant_to_speaker(variant)
 
         # Compose to format of actual dialog between speakers
         dialog = OrderedDict()
