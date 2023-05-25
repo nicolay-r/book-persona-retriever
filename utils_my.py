@@ -73,7 +73,7 @@ class MyAPI:
             "recognized": recognized,
             "utterances": utterances,
             "dialogs": dialogs,
-            "utterances_per_speaker": sum(speaker_stat.values()) / len(speaker_stat)
+            "speakers_uc_stat": speaker_stat,
         }
 
     def write_annotated_dialogs(self, iter_dialogs_and_speakers, filepath=None, print_sep=True):
