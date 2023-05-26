@@ -40,7 +40,8 @@ class MyAPI:
         dialogs = 0
         utterances = 0
         speaker_stat = {}
-        for dialog, recognized_speakers in tqdm(iter_dialogs_and_speakers):
+        it = tqdm(iter_dialogs_and_speakers, desc="calculating annotated dialogues stat")
+        for dialog, recognized_speakers in it:
             assert(isinstance(dialog, OrderedDict))
 
             for speaker_id in dialog.keys():
@@ -70,7 +71,8 @@ class MyAPI:
         filepath = self.dialogs_filepath if filepath is None else filepath
 
         with open(filepath, "w") as file:
-            for dialog, recognized_speakers in tqdm(iter_dialogs_and_speakers):
+            it = tqdm(iter_dialogs_and_speakers, desc="writing dialogues")
+            for dialog, recognized_speakers in it:
                 assert(isinstance(dialog, OrderedDict))
 
                 for speaker_id, segments in dialog.items():
