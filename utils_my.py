@@ -15,8 +15,8 @@ class MyAPI:
     # Dialogs with recognized speakers.
     dialogs_filepath = join(__current_dir, "./data/ceb_books_annot/dialogs.txt")
     # List of the speakers considered for the dataset.
-    filtered_speakers = join(__current_dir, "./data/ceb_books_annot/filtered_speakers.txt")
-    dataset = join(__current_dir, "./data/ceb_books_annot/dataset.txt")
+    filtered_speakers_filepath = join(__current_dir, "./data/ceb_books_annot/filtered_speakers.txt")
+    dataset_filepath = join(__current_dir, "./data/ceb_books_annot/dataset.txt")
     books_storage_en = join(books_storage, "en")
 
     def __init__(self, books_root=None):
@@ -130,7 +130,7 @@ class MyAPI:
 
     def write_speakers(self, speaker_names_list):
         assert(isinstance(speaker_names_list, list))
-        with open(self.filtered_speakers, "w") as f:
+        with open(self.filtered_speakers_filepath, "w") as f:
             for speaker_name in speaker_names_list:
                 f.write("{}\n".format(speaker_name))
 
@@ -141,13 +141,13 @@ class MyAPI:
 
         # Read speakers to be considered first.
         speakers_set = set()
-        with open(self.filtered_speakers, "r") as f:
+        with open(self.filtered_speakers_filepath, "r") as f:
             for speaker_name in f.readlines():
                 speakers_set.add(speaker_name.strip())
 
         pairs = 0
         buffer = []
-        with open(self.dataset, "w") as file:
+        with open(self.dataset_filepath, "w") as file:
             for line in self.read_annotated_dialogs():
                 if line is None:
                     continue
@@ -173,3 +173,8 @@ class MyAPI:
                     pairs += 1
 
         print("Pairs written: {}".format(pairs))
+
+    def read_dataset(self):
+        with open(self.dataset_filepath, "r") as file:
+            for line in file.readlines():
+                yield line if line != "\n" else None

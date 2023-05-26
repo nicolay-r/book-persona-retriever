@@ -133,3 +133,6 @@ class CEBApi:
         """ List all the name variations for the particular book character.
         """
         return self.__chars[char_id]
+
+    def characters_count(self):
+        return len(self.__book_by_char)
