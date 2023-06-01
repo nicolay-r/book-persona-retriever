@@ -18,16 +18,22 @@ gd_api = GuttenbergDialogApi()
 def annot_spectrums_in_text(texts_iter, rev_spectrums):
     assert(isinstance(spectrums, dict))
 
-    c = Counter()
-    for text in texts_iter:
+    d = {}
+    for text, speakers in texts_iter:
         norm_terms = gd_api.normalize_terms(text.split())
+
+        # We limit only for a single speaker.
+        speaker = speakers[0]
+
         for term in norm_terms:
             if term in rev_spectrums:
                 s = rev_spectrums[term]
                 bap = "{}-{}".format(s["class"], s["type"])
-                c[bap] += 1
+                if speaker not in d:
+                    d[speaker] = Counter()
+                d[speaker][bap] += 1
 
-    return c
+    return d
 
 
 def iter_paragraphs_with_n_speakers(n_speakers=1):
@@ -48,18 +54,18 @@ def iter_paragraphs_with_n_speakers(n_speakers=1):
             total += 1
             terms = p.Text.split()
 
-            chars = []
+            speakers = []
             for t in terms:
                 if GuttenbergDialogApi.is_character(t):
-                    chars.append(t)
+                    speakers.append(t)
 
-            if len(chars) != n_speakers:
+            if len(speakers) != n_speakers:
                 continue
 
             # handle paragraphs devoted to a single character.
             kept += 1
 
-            yield p
+            yield p, speakers
 
     print(kept)
     print("Filtered: {}".format(round(kept * 100.0 / total, 2)))
@@ -71,8 +77,6 @@ ceb_api = CEBApi(books_root=MyAPI.books_storage_en)
 fcp_api = FcpApi()
 spectrums = fcp_api.extract_as_lexicon()
 
-print(spectrums)
-
 # Reversed spectrums.
 rev_spectrums = {}
 for s_type, value_d in spectrums.items():
@@ -83,12 +87,19 @@ for s_type, value_d in spectrums.items():
     if h not in rev_spectrums:
         rev_spectrums[h] = {"class": s_type, "type": "high"}
 
-c = annot_spectrums_in_text(
-    texts_iter=map(lambda p: p.Text, iter_paragraphs_with_n_speakers()),
+speakers = annot_spectrums_in_text(
+    texts_iter=map(lambda t: (t[0].Text, t[1]), iter_paragraphs_with_n_speakers()),
     rev_spectrums=rev_spectrums)
 
-print(c)
+# Compose global stat.
+c = Counter()
+for s_ctr in speakers.values():
+    for k, v in s_ctr.items():
+        c[k] += v
 
+##################################################################
+# Draw count plot of all BAPS
+##################################################################
 df_dict = {'bap': [], 'cat': []}
 for k, v in c.items():
     for i in range(v):
@@ -96,9 +107,22 @@ for k, v in c.items():
         category = k.split('-')[1]
         df_dict["bap"].append(bap_index)
         df_dict["cat"].append(category)
-g = sns.displot(pd.DataFrame(df_dict), x="bap", hue="cat", kde=True)
-
-#ax = g.axes[0, 0]
-#ax.set_xticks(range(300))
-#ax.set_xticklabels(range(300))
+g = sns.countplot(pd.DataFrame(df_dict), x="bap", hue="cat")
 plt.show()
+
+print(c)
+
+# Compose global stat.
+c = Counter()
+for name, s_ctr in speakers.items():
+    if len(s_ctr) > 1:
+        c[name] = len(s_ctr)
+
+##################################################################
+# Draw count plot of all BAPS
+##################################################################
+df_dict = {'baps_per_speaker': list(c.values())}
+g = sns.displot(pd.DataFrame(df_dict), x="baps_per_speaker", kind="kde")
+plt.show()
+
+print(c)
