@@ -40,7 +40,8 @@ for s_ctr in speakers.values():
 
 draw_count_plot(c, x_name="bap", cat_name="cat",
                 val_to_x=lambda k: int(''.join([ch for ch in k if ch.isdigit()])),
-                val_to_cat=lambda k: k.split('-')[1])
+                val_to_cat=lambda k: k.split('-')[1],
+                interval=10)
 
 # Compose global stat.
 c = Counter()
