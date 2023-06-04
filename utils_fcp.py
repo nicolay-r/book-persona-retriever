@@ -27,8 +27,25 @@ class FcpApi:
             if spectrum not in lexicon:
                 lexicon[spectrum] = {"low": set([r["spectrum_low"]]), "high": set([r["spectrum_high"]])}
             else:
-                meta = lexicon[spectrum]
-                meta["low"].add(r["spectrum_low"])
-                meta["high"].add(r["spectrum_high"])
+                continue
+                #meta = lexicon[spectrum]
+                #meta["low"].add(r["spectrum_low"])
+                #meta["high"].add(r["spectrum_high"])
 
         return lexicon
+
+    def reversed_spectrums(self):
+
+        spectrums = self.extract_as_lexicon()
+
+        # Reversed spectrums.
+        rev_spectrums = {}
+        for s_type, value_d in spectrums.items():
+            l = value_d["low"].pop()
+            h = value_d["high"].pop()
+            if l not in rev_spectrums:
+                rev_spectrums[l] = {"class": s_type, "type": "low"}
+            if h not in rev_spectrums:
+                rev_spectrums[h] = {"class": s_type, "type": "high"}
+
+        return rev_spectrums
