@@ -5,10 +5,11 @@ from utils_ceb import CEBApi
 from utils_gd import GuttenbergDialogApi
 
 
-def iter_paragraphs_with_n_speakers(n_speakers=1):
+def iter_paragraphs_with_n_speakers(considered_speakers, n_speakers=1):
     """ Iterate text paragraphs which contains only N mentioned speakers
         based on the Character-based-embedding API.
     """
+    assert(isinstance(considered_speakers, set))
 
     ceb_api = CEBApi()
 
@@ -29,9 +30,11 @@ def iter_paragraphs_with_n_speakers(n_speakers=1):
             terms = p.Text.split()
 
             speakers = []
-            for t in terms:
-                if GuttenbergDialogApi.is_character(t):
-                    speakers.append(t)
+            for term in terms:
+                if GuttenbergDialogApi.is_character(term):
+                    speaker_id = CEBApi.speaker_variant_to_speaker(term)
+                    if speaker_id in considered_speakers:
+                        speakers.append(term)
 
             if len(speakers) != n_speakers:
                 continue

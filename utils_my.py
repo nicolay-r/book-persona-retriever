@@ -146,6 +146,13 @@ class MyAPI:
             for speaker_name in speaker_names_list:
                 f.write("{}\n".format(speaker_name))
 
+    def read_speakers(self):
+        speakers = []
+        with open(self.filtered_speakers_filepath, "r") as f:
+            for line in f.readlines():
+                speakers.append(line.strip())
+        return speakers
+
     def compose_dataset(self):
         """ Filter dialogs to the result dataset. Compose a Question->Response pair.
             Where response is always a known speaker, so whe know who we ask.
