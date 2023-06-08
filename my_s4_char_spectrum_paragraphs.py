@@ -4,7 +4,7 @@ from collections import Counter
 
 from matplotlib import pyplot as plt
 
-from core.plot import draw_count_plot
+from core.plot import draw_bar_plot
 from core.spectrums import annot_spectrums_in_text
 from core.utils_paragraphs import iter_paragraphs_with_n_speakers
 from utils_fcp import FcpApi
@@ -27,10 +27,10 @@ for s_ctr in speakers.values():
     for s_name, v in s_ctr.items():
         s_counter[s_name] += v
 
-draw_count_plot(s_counter, x_name="bap", cat_name="cat",
-                val_to_x=lambda k: int(''.join([ch for ch in k if ch.isdigit()])),
-                val_to_cat=lambda k: k.split('-')[1],
-                interval=10)
+draw_bar_plot(s_counter, x_name="bap", cat_name="cat",
+              val_to_x=lambda k: int(''.join([ch for ch in k if ch.isdigit()])),
+              val_to_cat=lambda k: k.split('-')[0] + ' ' + str(fcp_api.find_by_id(k.split('-')[0])),
+              top_bars=25)
 
 # Compose global stat.
 s_counter = Counter()
