@@ -1,3 +1,5 @@
+from collections import Counter
+
 from tqdm import tqdm
 
 from utils import Paragraph
@@ -13,9 +15,9 @@ def iter_paragraphs_with_n_speakers(considered_speakers, n_speakers=1):
 
     ceb_api = CEBApi()
 
-    kept = 0
-    total = 0
-    for book_id in tqdm(ceb_api.book_ids_from_directory(), desc="Reading books"):
+    s_count = Counter()
+    pbar = tqdm(ceb_api.book_ids_from_directory(), desc="Reading books")
+    for book_id in pbar:
 
         # Read book contents.
         with open(ceb_api.get_book_path(book_id), "r") as f:
@@ -26,7 +28,13 @@ def iter_paragraphs_with_n_speakers(considered_speakers, n_speakers=1):
         for p in ceb_api.iter_book_paragraphs(contents):
             assert (isinstance(p, Paragraph))
 
-            total += 1
+            pbar.set_postfix({
+                'kept': s_count["kept"],
+                'total': s_count['total']
+            })
+
+            s_count["total"] += 1
+
             terms = p.Text.split()
 
             speakers = []
@@ -40,9 +48,6 @@ def iter_paragraphs_with_n_speakers(considered_speakers, n_speakers=1):
                 continue
 
             # handle paragraphs devoted to a single character.
-            kept += 1
+            s_count["kept"] += 1
 
             yield p, speakers
-
-    print(kept)
-    print("Filtered: {}".format(round(kept * 100.0 / total, 2)))
