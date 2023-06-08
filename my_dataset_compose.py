@@ -13,8 +13,8 @@ stat_origin = my_api.calc_annotated_dialogs_stat(
 # Filtering speakers according to the particular amount.
 ########################################################
 speaker_names_list = []
-for speaker_name, entries in stat_origin["speakers_uc_stat"].items():
-    if entries >= 5:
+for speaker_name, entries in stat_origin["speakers_reply_stat"].items():
+    if entries >= MyAPI.min_utterances_per_char:
         speaker_names_list.append(speaker_name)
 
 print("Speakers origin: {}".format(len(stat_origin["speakers_uc_stat"])))

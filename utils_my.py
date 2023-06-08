@@ -1,4 +1,4 @@
-from collections import OrderedDict
+from collections import OrderedDict, Counter
 from os import listdir
 from os.path import join, dirname, realpath, isfile
 
@@ -9,6 +9,7 @@ class MyAPI:
     """ Dataset developed for this particular studies
     """
 
+    min_utterances_per_char = 5
     __current_dir = dirname(realpath(__file__))
     books_storage = join(__current_dir, "./data/ceb_books_annot")
     prefixes_storage = join(__current_dir, "./data/ceb_books_annot/prefixes")
@@ -36,15 +37,22 @@ class MyAPI:
 
     @staticmethod
     def calc_annotated_dialogs_stat(iter_dialogs_and_speakers):
-        recognized = 0
+        """ iter_dialog_and_speakers: iter
+                iter of data (dialog, recognized_speakers), where
+                    recognized_speakers (dict): {speaker_id: speaker}
+                        speaker_id: BOOK_SPEAKER_VAR,
+                        speaker: BOOK_SPEAKER.
+        """
         dialogs = 0
+        recognized = 0
         utterances = 0
-        speaker_stat = {}
+        speaker_utts_stat = Counter()       # Per every utterance
+        speaker_reply_stat = Counter()      # Per replies
         it = tqdm(iter_dialogs_and_speakers, desc="calculating annotated dialogues stat")
         for dialog, recognized_speakers in it:
             assert(isinstance(dialog, OrderedDict))
 
-            for speaker_id in dialog.keys():
+            for utt_index, speaker_id in enumerate(dialog.keys()):
                 assert(isinstance(recognized_speakers, dict))
 
                 if speaker_id in recognized_speakers:
@@ -52,9 +60,10 @@ class MyAPI:
 
                     # register speaker
                     speaker = recognized_speakers[speaker_id]
-                    if speaker not in speaker_stat:
-                        speaker_stat[speaker] = 0
-                    speaker_stat[speaker] += 1
+                    speaker_utts_stat[speaker] += 1
+
+                    if utt_index > 0:
+                        speaker_reply_stat[speaker] += 1
 
                 utterances += 1
 
@@ -64,7 +73,8 @@ class MyAPI:
             "recognized": recognized,
             "utterances": utterances,
             "dialogs": dialogs,
-            "speakers_uc_stat": speaker_stat,
+            "speakers_uc_stat": speaker_utts_stat,
+            "speakers_reply_stat": speaker_reply_stat,
         }
 
     def write_annotated_dialogs(self, iter_dialogs_and_speakers, filepath=None, print_sep=True):
@@ -175,6 +185,7 @@ class MyAPI:
                     pairs += 1
 
         print("Pairs written: {}".format(pairs))
+        print("Dataset saved: {}".format(self.dataset_filepath))
 
     def read_dataset(self):
         with open(self.dataset_filepath, "r") as file:
