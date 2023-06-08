@@ -9,7 +9,7 @@ class MyAPI:
     """ Dataset developed for this particular studies
     """
 
-    min_utterances_per_char = 5
+    min_utterances_per_char = 50
     __current_dir = dirname(realpath(__file__))
     books_storage = join(__current_dir, "./data/ceb_books_annot")
     prefixes_storage = join(__current_dir, "./data/ceb_books_annot/prefixes")
