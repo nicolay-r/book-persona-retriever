@@ -1,3 +1,4 @@
+import os
 from collections import OrderedDict, Counter
 from os import listdir
 from os.path import join, dirname, realpath, isfile
@@ -34,6 +35,17 @@ class MyAPI:
             if isfile(join(dir_path, path)):
                 count += 1
         return count
+
+    def book_ids_from_directory(self):
+        """ Files are named XXX.txt, where XXX is an index of integer type
+        """
+        books_ids = set()
+        for _, _, files in os.walk(self.__book_storage_root):
+            for f in files:
+                upd_name = f.replace('.txt', '')
+                books_ids.add(int(upd_name))
+
+        return books_ids
 
     @staticmethod
     def calc_annotated_dialogs_stat(iter_dialogs_and_speakers):

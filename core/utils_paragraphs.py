@@ -7,47 +7,41 @@ from utils_ceb import CEBApi
 from utils_gd import GuttenbergDialogApi
 
 
-def iter_paragraphs_with_n_speakers(considered_speakers, n_speakers=1):
+def iter_paragraphs_with_n_speakers(speakers, iter_paragraphs, n_speakers=1):
     """ Iterate text paragraphs which contains only N mentioned speakers
         based on the Character-based-embedding API.
     """
-    assert(isinstance(considered_speakers, set))
-
-    ceb_api = CEBApi()
+    assert(isinstance(speakers, set))
 
     s_count = Counter()
-    pbar = tqdm(ceb_api.book_ids_from_directory(), desc="Reading books")
-    for book_id in pbar:
+    pbar = tqdm(iter_paragraphs, "Iter Paragraphs")
+    for p in pbar:
+        assert(isinstance(p, Paragraph))
 
-        # Read book contents.
-        with open(ceb_api.get_book_path(book_id), "r") as f:
-            contents = f.read()
+        pbar.set_postfix({
+            'kept': s_count["kept"],
+            'total': s_count['total']
+        })
 
-        # Iterate book by paragraphs.
-        # Tip: we consider that one paragraph consist only one person discussion.
-        for p in ceb_api.iter_book_paragraphs(contents):
-            assert (isinstance(p, Paragraph))
+        s_count["total"] += 1
 
-            pbar.set_postfix({
-                'kept': s_count["kept"],
-                'total': s_count['total']
-            })
+        terms = p.Text.split()
 
-            s_count["total"] += 1
-
-            terms = p.Text.split()
-
-            speakers = []
-            for term in terms:
-                if GuttenbergDialogApi.is_character(term):
-                    speaker_id = CEBApi.speaker_variant_to_speaker(term)
-                    if speaker_id in considered_speakers:
-                        speakers.append(term)
-
-            if len(speakers) != n_speakers:
+        p_speakers = []
+        for term in terms:
+            if not GuttenbergDialogApi.is_character(term):
                 continue
 
-            # handle paragraphs devoted to a single character.
-            s_count["kept"] += 1
+            if term[0] == '{' and term[-1] == '}':
+                term = term[1:-1]
 
-            yield p, speakers
+            if CEBApi.speaker_variant_to_speaker(term) in speakers:
+                p_speakers.append(term)
+
+        if len(p_speakers) != n_speakers:
+            continue
+
+        # handle paragraphs devoted to a single character.
+        s_count["kept"] += 1
+
+        yield p, p_speakers
