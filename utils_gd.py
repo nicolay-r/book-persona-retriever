@@ -48,7 +48,14 @@ class GuttenbergDialogApi:
     def is_character(term):
         """ followed by CEB api.
         """
-        return term.count('_') == 2
+        if term.count('_') != 2:
+            return False
+        term = term.replace('_', '')
+        if len(term) <= 2:
+            return False
+        if term[0] == '{' and term[-1] == '}':
+            term = term[1:-1]
+        return term.isnumeric()
 
     def filter_comment_with_speaker_at_k(self, book_path_func, k=None):
         """ filter examples in distance from K

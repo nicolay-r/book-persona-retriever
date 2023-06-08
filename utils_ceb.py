@@ -50,7 +50,8 @@ class CEBApi:
         book_id, speaker_id, _ = speaker_variant.split('_')
         return "{}_{}".format(book_id, speaker_id)
 
-    def iter_book_paragraphs(self, text):
+    @staticmethod
+    def iter_book_paragraphs(text):
         """ paragraphs extraction from `text`
             proposed by following project:
             https://github.com/ricsinaruto/gutenberg-dialog
