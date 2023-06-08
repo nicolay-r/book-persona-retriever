@@ -43,7 +43,9 @@ for s_ctr in speakers.values():
         s_counter[s_name] += v
 
 if len(s_counter) > 0:
-    draw_bar_plot(s_counter, x_name="bap", cat_name="cat",
+    draw_bar_plot(s_counter,
+                  x_name="bap",
+                  y_name="cat",
                   val_to_x=lambda k: int(''.join([ch for ch in k if ch.isdigit()])),
                   val_to_cat=lambda k: k.split('-')[0] + ' ' + str(fcp_api.find_by_id(k.split('-')[0])),
                   top_bars=50)
