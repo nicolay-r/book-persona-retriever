@@ -29,7 +29,7 @@ class FcpApi:
             # seeking for existed.
             if spectrum not in lexicon:
                 r = row.to_dict()
-                lexicon[spectrum] = {"low": set([r["spectrum_low"]]), "high": set([r["spectrum_high"]])}
+                lexicon[spectrum] = {"low": r["spectrum_low"], "high": r["spectrum_high"]}
             else:
                 continue
 
@@ -39,7 +39,7 @@ class FcpApi:
 
     def find_by_id(self, val_id):
         spectrum_values = self._lexicon[val_id]
-        return next(iter(spectrum_values["low"])), next(iter(spectrum_values["high"]))
+        return spectrum_values["low"], spectrum_values["high"]
 
     def reversed_spectrums(self):
 
@@ -49,8 +49,8 @@ class FcpApi:
         # Reversed spectrums.
         rev_spectrums = {}
         for s_type, value_d in self._lexicon.items():
-            l = next(iter(value_d["low"]))
-            h = next(iter(value_d["high"]))
+            l = value_d["low"]
+            h = value_d["high"]
             if l not in rev_spectrums:
                 rev_spectrums[l] = {"class": s_type, "type": "low"}
             if h not in rev_spectrums:
