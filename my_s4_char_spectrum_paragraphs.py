@@ -1,10 +1,6 @@
-import seaborn as sns
-import pandas as pd
 from collections import Counter
 
-from matplotlib import pyplot as plt
-
-from core.plot import draw_bar_plot
+from core.plot import draw_bar_plot, draw_hist_plot
 from core.spectrums import annot_spectrums_in_text
 from core.utils_paragraphs import iter_paragraphs_with_n_speakers
 from utils_ceb import CEBApi
@@ -53,13 +49,6 @@ if len(s_counter) > 0:
 # Compose global stat.
 s_counter = Counter()
 for name, s_ctr in speakers.items():
-    if len(s_ctr) > 1:
-        s_counter[name] = len(s_ctr)
+    s_counter[name] = len(s_ctr)
 
-##################################################################
-# Draw count plot of all BAPS
-##################################################################
-if len(s_counter) > 0:
-    df_dict = {'baps_per_speaker': list(s_counter.values())}
-    g = sns.displot(pd.DataFrame(df_dict), x="baps_per_speaker", kde=True)
-    plt.show()
+draw_hist_plot(c=s_counter, desc='baps_per_speaker', min_val=0, max_val=50)
