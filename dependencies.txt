@@ -3,4 +3,5 @@ transformers==3.4.0
 gutenberg_dialog @ git+https://github.com/nicolay-r/gutenberg-dialog@dev
 arekit @ git+https://github.com/nicolay-r/AREkit.git@0.23.1-rc
 pandas
+scikit-learn==1.2.2
 nltk
