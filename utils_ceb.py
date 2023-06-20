@@ -70,6 +70,16 @@ class CEBApi:
         yield paragraph
         return
 
+    @staticmethod
+    def iter_paragraphs(iter_book_ids, book_by_id_func):
+        """ Iter paragramps from the iter of books.
+        """
+        for book_id in iter_book_ids:
+            with open(book_by_id_func(book_id), "r") as f:
+                contents = f.read()
+            for paragraph in CEBApi.iter_book_paragraphs(contents):
+                yield paragraph
+
     def read_char_map(self):
         """ reading char_map, which has been composed by.
             https://aclanthology.org/D15-1088.pdf
