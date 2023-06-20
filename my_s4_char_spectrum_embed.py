@@ -1,4 +1,3 @@
-from collections import Counter
 from itertools import chain
 
 from core.spectrums import annot_spectrums_in_text, annot_to_min_max_grouped
