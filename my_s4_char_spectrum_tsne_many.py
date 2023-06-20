@@ -4,6 +4,7 @@ import pandas as pd
 import seaborn as sns
 from matplotlib import pyplot as plt
 from sklearn.manifold import TSNE
+from tqdm import tqdm
 
 from core.utils_npz import NpzUtils
 from utils_my import MyAPI
@@ -12,12 +13,11 @@ X = NpzUtils.load(MyAPI.spectrum_embeddings)
 y = NpzUtils.load(MyAPI.spectrum_speakers)
 
 perplexies = [5, 10, 30, 50, 100]
-n_iter = 1000
+n_iter = 5000
 
 embs_X = []
-for p in perplexies:
-    tsne = TSNE(n_components=2, learning_rate='auto', init='random', perplexity=p,
-                n_iter=n_iter)
+for p in tqdm(perplexies, desc="Calc for perplexy"):
+    tsne = TSNE(n_components=2, learning_rate='auto', init='random', perplexity=p, n_iter=n_iter)
     emb_X = tsne.fit_transform(X)
     embs_X.append(emb_X)
 
