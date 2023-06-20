@@ -41,6 +41,15 @@ class FcpApi:
         spectrum_values = self._lexicon[val_id]
         return spectrum_values["low"], spectrum_values["high"]
 
+    @staticmethod
+    def spectrum_to_ind(val):
+        """ BAPXXX -> XXX
+            NOTE: idexing goes from 1, hence we substract 1.
+        """
+        assert(isinstance(val, str))
+        assert("BAP" in val)
+        return int(val[3:]) - 1
+
     def reversed_spectrums(self):
 
         if self._lexicon is None:

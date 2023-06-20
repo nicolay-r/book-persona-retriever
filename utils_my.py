@@ -20,6 +20,9 @@ class MyAPI:
     filtered_speakers_filepath = join(__current_dir, "./data/ceb_books_annot/filtered_speakers.txt")
     dataset_filepath = join(__current_dir, "./data/ceb_books_annot/dataset.txt")
     books_storage_en = join(books_storage, "en")
+    # spectrums-related data
+    spectrum_embeddings = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings.npz")
+    spectrum_speakers = join(__current_dir, "./data/ceb_books_annot/y.spectrum-speakers.npz")
 
     def __init__(self, books_root=None):
         self.__book_storage_root = MyAPI.books_storage_en if books_root is None else books_root
