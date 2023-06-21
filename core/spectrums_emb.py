@@ -9,7 +9,7 @@ def filter_by_non_zero(X, y, threshold):
     assert(isinstance(X, list))
     assert(isinstance(threshold, int) or threshold is None)
 
-    if None:
+    if threshold is None:
         return X, y
 
     xy = zip(X, y)
