@@ -7,6 +7,7 @@ from matplotlib import pyplot as plt
 from sklearn.manifold import TSNE
 from tqdm import tqdm
 
+from core.spectrums_emb import filter_by_non_zero
 from core.utils_npz import NpzUtils
 from utils_my import MyAPI
 
@@ -18,14 +19,11 @@ n_iter = 5000
 X = list(NpzUtils.load(MyAPI.spectrum_embeddings))
 y = list(NpzUtils.load(MyAPI.spectrum_speakers))
 # Consider book name by default.
-y = [s_name.split('_')[0] for s_name in y]
+y = [0 for s_name in y]
 print(len(X), len(y))
 
 # Filter by amount of non-zero components.
-xy = zip(X, y)
-xyf = list(filter(lambda pair: np.count_nonzero(pair[0]) > min_non_zero_params, xy))
-X, y = list(zip(*xyf))
-X = np.array(X)
+X, y = filter_by_non_zero(X=X, y=y, threshold=min_non_zero_params)
 
 # we need to filter due to the t-SNE limitation.
 perplexies = list(filter(lambda item: item < len(X), perplexies))
