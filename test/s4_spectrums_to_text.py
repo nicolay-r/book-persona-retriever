@@ -1,8 +1,9 @@
-from core.spectrums_emb import convert_to_prompts
+from core.spectrums_emb import PROMPT_PRESETS
 from core.utils_npz import NpzUtils
 from utils_fcp import FcpApi
 from utils_my import MyAPI
 
-X = list(NpzUtils.load(MyAPI.spectrum_embeddings))
-prompts = convert_to_prompts(X, FcpApi())
+
+X = list(NpzUtils.load(MyAPI.spectrum_features))
+prompts = PROMPT_PRESETS["most_imported_limited_5"](X, FcpApi())
 print(prompts)

@@ -46,5 +46,5 @@ for s_name, s_ctr in d.items():
     x.append(s_ctr)
     y.append(s_name)
 
-NpzUtils.save(data=x, target=MyAPI.spectrum_embeddings)
+NpzUtils.save(data=x, target=MyAPI.spectrum_features)
 NpzUtils.save(data=y, target=MyAPI.spectrum_speakers)
