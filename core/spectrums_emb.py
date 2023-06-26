@@ -121,7 +121,7 @@ def _convert_to_prompts_limited_ordered(X, fcp_api, limit):
 ##########################################
 PROMPT_PRESETS = {
     # This is a first revision when we keep everything.
-    "original": lambda X, fcp_api: _convert_to_prompts(X=X, fcp_api=fcp_api),
-    "most_imported_limited_10": lambda X, fcp_api: _convert_to_prompts_limited_ordered(X=X, fcp_api=fcp_api, limit=10),
-    "most_imported_limited_5": lambda X, fcp_api: _convert_to_prompts_limited_ordered(X=X, fcp_api=fcp_api, limit=5)
+    "prompt_original": lambda X, fcp_api: _convert_to_prompts(X=X, fcp_api=fcp_api),
+    "prompt_most_imported_limited_10": lambda X, fcp_api: _convert_to_prompts_limited_ordered(X=X, fcp_api=fcp_api, limit=10),
+    "prompt_most_imported_limited_5": lambda X, fcp_api: _convert_to_prompts_limited_ordered(X=X, fcp_api=fcp_api, limit=5)
 }
