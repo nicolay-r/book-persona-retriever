@@ -51,7 +51,9 @@ def draw_hist_plot(c, desc, min_val=0, max_val=100, n_bins=None):
     plt.show()
 
 
-def plot_tsne_series(X, y, perplexies=[5], n_iter=1000, alpha=0.1, palette=None):
+def plot_tsne_series(X, y=None, perplexies=[5], n_iter=1000, alpha=0.1, palette=None):
+
+    y = [0 for _ in range(len(X))] if y is None else y
 
     # we need to filter due to the t-SNE limitation.
     perplexies = list(filter(lambda item: item < len(X), perplexies))
