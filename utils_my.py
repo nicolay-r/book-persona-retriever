@@ -5,6 +5,8 @@ from os.path import join, dirname, realpath, isfile
 
 from tqdm import tqdm
 
+from core.book_dialog import BookDialogueService
+
 
 class MyAPI:
     """ Dataset developed for this particular studies
@@ -109,7 +111,7 @@ class MyAPI:
                     assert(isinstance(segments, list))
                     assert(isinstance(recognized_speakers, dict))
 
-                    sep = " " if print_sep is False else " [USEP] "
+                    sep = " " if print_sep is False else " {} ".format(BookDialogueService.utterance_sep)
                     utterance = sep.join(segments)
                     speaker = recognized_speakers[speaker_id] \
                         if speaker_id in recognized_speakers else "UNKN-{}".format(speaker_id)
@@ -214,7 +216,27 @@ class MyAPI:
         print("Pairs written: {}".format(pairs))
         print("Dataset saved: {}".format(self.dataset_filepath))
 
-    def read_dataset(self):
+    def read_dataset(self, keep_usep=True, split_meta=False):
+        """ split_meta: bool
+                whether we want to split in parts that before ":"
+        """
         with open(self.dataset_filepath, "r") as file:
             for line in tqdm(file.readlines()):
-                yield line.strip() if line != "\n" else None
+
+                if not keep_usep:
+                    # Remove this.
+                    line = line.replace(BookDialogueService.utterance_sep, "")
+
+                line = line.strip() if line != "\n" else None
+
+                if line is None:
+                    yield None
+                    continue
+
+                if split_meta:
+                    # Separate meta information from the line.
+                    meta = line.split(': ')[0]
+                    text = line[len(meta) + 2:]
+                    yield meta, text
+                else:
+                    yield line

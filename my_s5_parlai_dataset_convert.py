@@ -1,27 +1,38 @@
 import zipstream
 
 from core.utls_parlai_facebook_formatter import format_episode
+from utils_ceb import CEBApi
 from utils_my import MyAPI
 
 
 def iter_dataset_lines(my_api):
 
-    e = []
-    for line in my_api.read_dataset():
+    ceb_api = CEBApi()
+    ceb_api.read_char_map()
 
-        if line is None:
-            e.clear()
+    dialog = []
+    speakers = []
+    for args in my_api.read_dataset(keep_usep=False, split_meta=True):
+
+        if args is None:
+            dialog.clear()
             continue
 
-        # We don't keep meta information.
-        prefix = line.split(': ')[0]
-        line = line.replace('[USEP]', '')
-        e.append(line[len(prefix) + 2:])
+        speakers.append(args[0])
+        dialog.append(args[1])
 
-        if len(e) < 2:
+        if len(dialog) < 2:
             continue
 
-        yield format_episode(request=e[0], response=e[1], candidates=[e[1]]).encode()
+        # Provide information about speaker.
+        traits = [
+            ceb_api.replace_characters_in_text(speakers[1])
+        ]
+
+        yield format_episode(request=dialog[0],
+                             response=dialog[1],
+                             candidates=[dialog[1]],
+                             resp_persona_traits=traits).encode()
         yield b"\n"
 
 
