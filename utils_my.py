@@ -19,6 +19,7 @@ class MyAPI:
     # List of the speakers considered for the dataset.
     filtered_speakers_filepath = join(__current_dir, "./data/ceb_books_annot/filtered_speakers.txt")
     dataset_filepath = join(__current_dir, "./data/ceb_books_annot/dataset.txt")
+    dataset_parlai_filepath = join(__current_dir, "./data/ceb_books_annot/dataset_parlai.txt.zip")
     # Embedding visualization for querries in dataset (original texts.
     dataset_st_embedding_query = join(__current_dir, "./data/ceb_books_annot/x.dataset-query-sent-transformers.npz")
     dataset_st_embedding_response = join(__current_dir, "./data/ceb_books_annot/x.dataset-response-sent-transformers.txt")
