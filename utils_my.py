@@ -217,4 +217,4 @@ class MyAPI:
     def read_dataset(self):
         with open(self.dataset_filepath, "r") as file:
             for line in tqdm(file.readlines()):
-                yield line if line != "\n" else None
+                yield line.strip() if line != "\n" else None
