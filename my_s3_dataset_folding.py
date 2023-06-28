@@ -1,5 +1,6 @@
 from collections import Counter
 
+from utils import cat_files
 from utils_my import MyAPI
 
 
@@ -48,3 +49,10 @@ for i in range(k):
     c = my_api.check_speakers_count(filepath=my_api.dataset_fold_filepath.format(fold_index=i), pbar=False)
     print(c)
     print(sum(c.values()))
+
+# Merge foldings.
+# We select such indexes for better result balancing.
+cat_files(source_filepaths=[my_api.dataset_fold_filepath.format(fold_index=str(i)) for i in [0, 1, 3, 4]],
+          target_filepath=my_api.dataset_fold_filepath.format(fold_index="train"))
+cat_files(source_filepaths=[my_api.dataset_fold_filepath.format(fold_index=str(i)) for i in [2]],
+          target_filepath=my_api.dataset_fold_filepath.format(fold_index="valid"))
