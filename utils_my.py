@@ -30,6 +30,7 @@ class MyAPI:
     # spectrums-related data
     spectrum_features = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings.npz")
     spectrum_speakers = join(__current_dir, "./data/ceb_books_annot/y.spectrum-speakers.npz")
+    spectrum_default_preset = "prompt_most_imported_limited_5"
     spectrum_st_embeddings = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-sent-transformers-{preset}.npz")
 
     # separator in line between meta information and the actual content

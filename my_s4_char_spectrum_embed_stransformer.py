@@ -7,10 +7,10 @@ from utils_fcp import FcpApi
 from utils_my import MyAPI
 
 model_name = 'all-mpnet-base-v2'
+preset = MyAPI.spectrum_default_preset
 model = SentenceTransformer(model_name)
 
 X = list(NpzUtils.load(MyAPI.spectrum_features))
-preset = "most_imported_limited_5"
 prompts = PROMPT_PRESETS[preset](X, FcpApi())
 
 X_st = []
