@@ -2,7 +2,7 @@ import json
 import os
 from os.path import dirname, realpath, join
 
-from utils import Paragraph
+from core.paragraph import Paragraph
 
 
 class CEBApi:
