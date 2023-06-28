@@ -25,4 +25,4 @@ print("Speakers considered: {}".format(len(speaker_names_list)))
 # Where response is always a known speaker, so whe know who we ask.
 ##########################################################################
 my_api.write_speakers(speaker_names_list)
-my_api.compose_dataset()
+my_api.write_dataset()

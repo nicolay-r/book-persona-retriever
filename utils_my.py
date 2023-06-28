@@ -21,6 +21,7 @@ class MyAPI:
     # List of the speakers considered for the dataset.
     filtered_speakers_filepath = join(__current_dir, "./data/ceb_books_annot/filtered_speakers.txt")
     dataset_filepath = join(__current_dir, "./data/ceb_books_annot/dataset.txt")
+    dataset_fold_filepath = join(__current_dir, "./data/ceb_books_annot/dataset_f{fold_index}.txt")
     dataset_parlai_filepath = join(__current_dir, "./data/ceb_books_annot/dataset_parlai.txt.zip")
     # Embedding visualization for queries in dataset (original texts.
     dataset_st_embedding_query = join(__current_dir, "./data/ceb_books_annot/x.dataset-query-sent-transformers.npz")
@@ -179,19 +180,23 @@ class MyAPI:
         return speakers
 
     @staticmethod
-    def __get_meta(line):
+    def _get_meta(line):
         return line.split(MyAPI.meta_sep)[0]
 
-    def compose_dataset(self):
+    @staticmethod
+    def write_dataset_buffer(file, buffer):
+        assert(isinstance(buffer, list) and len(buffer) == 2)
+        for buffer_line in buffer:
+            file.write("{}\n".format(buffer_line))
+        file.write("\n")
+
+    def write_dataset(self):
         """ Filter dialogs to the result dataset. Compose a Question->Response pair.
             Where response is always a known speaker, so whe know who we ask.
         """
 
         # Read speakers to be considered first.
-        speakers_set = set()
-        with open(self.filtered_speakers_filepath, "r") as f:
-            for speaker_name in f.readlines():
-                speakers_set.add(speaker_name.strip())
+        speakers_set = set(self.read_speakers())
 
         pairs = 0
         buffer = []
@@ -209,26 +214,25 @@ class MyAPI:
                 if len(buffer) != 2:
                     continue
 
-                speaker_name = self.__get_meta(line)
+                speaker_name = self._get_meta(line)
 
                 # We consider only such speakers that in predefined list.
                 # We know we have a response to the known speaker.
                 if "UNKN" not in speaker_name and speaker_name in speakers_set:
                     # We release content from the buffer.
-                    for buffer_line in buffer:
-                        file.write("{}\n".format(buffer_line))
-                    file.write("\n")
+                    self.write_dataset_buffer(file=file, buffer=buffer)
                     pairs += 1
 
         print("Pairs written: {}".format(pairs))
         print("Dataset saved: {}".format(self.dataset_filepath))
 
-    def read_dataset(self, keep_usep=True, split_meta=False):
+    def read_dataset(self, keep_usep=True, split_meta=False, dataset_filepath=None, desc=None, pbar=True):
         """ split_meta: bool
                 whether we want to split in parts that before ":"
         """
-        with open(self.dataset_filepath, "r") as file:
-            for line in tqdm(file.readlines()):
+        filepath = self.dataset_filepath if dataset_filepath is None else dataset_filepath
+        with open(filepath, "r") as file:
+            for line in tqdm(file.readlines(), desc=desc, disable=not pbar):
 
                 if not keep_usep:
                     # Remove this.
@@ -242,8 +246,31 @@ class MyAPI:
 
                 if split_meta:
                     # Separate meta information from the line.
-                    meta = self.__get_meta(line)
+                    meta = self._get_meta(line)
                     text = line[len(meta) + len(self.meta_sep):]
                     yield meta, text
                 else:
                     yield line
+
+    def check_speakers_count(self, filepath, pbar=True):
+        """ Folding with the even splits of the utterances.
+        """
+        partners_count = Counter()
+
+        utt = []
+        for args in self.read_dataset(keep_usep=False, split_meta=True, dataset_filepath=filepath, pbar=pbar):
+
+            if args is None:
+                utt.clear()
+                continue
+
+            s_name, _ = args
+
+            utt.append(s_name)
+
+            # response of the partner.
+            if len(utt) == 2:
+                # Count the amount of partners.
+                partners_count[s_name] += 1
+
+        return partners_count
