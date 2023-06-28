@@ -17,11 +17,11 @@ ds_speakers = my_api.read_speakers()
 speakers = annot_spectrums_in_text(
     texts_and_speakervars_iter=map(lambda t: (t[0].Text, t[1]),
                                    iter_paragraphs_with_n_speakers(
-                       speakers=set(ds_speakers),
-                       n_speakers=1,
-                       iter_paragraphs=CEBApi.iter_paragraphs(
-                           iter_book_ids=my_api.book_ids_from_directory(),
-                           book_by_id_func=my_api.get_book_path))),
+                                       speakers=set(ds_speakers),
+                                       n_speakers=1,
+                                       iter_paragraphs=CEBApi.iter_paragraphs(
+                                           iter_book_ids=my_api.book_ids_from_directory(),
+                                           book_by_id_func=my_api.get_book_path))),
     rev_spectrums=fcp_api.reversed_spectrums())
 
 # Compose global stat.
