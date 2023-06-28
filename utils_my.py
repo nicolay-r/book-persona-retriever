@@ -22,7 +22,7 @@ class MyAPI:
     filtered_speakers_filepath = join(__current_dir, "./data/ceb_books_annot/filtered_speakers.txt")
     dataset_filepath = join(__current_dir, "./data/ceb_books_annot/dataset.txt")
     dataset_fold_filepath = join(__current_dir, "./data/ceb_books_annot/dataset_f{fold_index}.txt")
-    dataset_parlai_filepath = join(__current_dir, "./data/ceb_books_annot/dataset_parlai.txt.zip")
+    dataset_parlai_filepath = join(__current_dir, "./data/ceb_books_annot/dataset_parlai_{}.zip")
     # Embedding visualization for queries in dataset (original texts.
     dataset_st_embedding_query = join(__current_dir, "./data/ceb_books_annot/x.dataset-query-sent-transformers.npz")
     dataset_st_embedding_response = join(__current_dir, "./data/ceb_books_annot/x.dataset-response-sent-transformers.txt")
@@ -32,6 +32,9 @@ class MyAPI:
     spectrum_speakers = join(__current_dir, "./data/ceb_books_annot/y.spectrum-speakers.npz")
     spectrum_default_preset = "prompt_most_imported_limited_5"
     spectrum_st_embeddings = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-sent-transformers-{preset}.npz")
+    # intermediate file required for a quick embedding of traits into the
+    # train/validation dataset for dialogue chatbot development.
+    spectrum_prompts_filepath = "spectrum_speaker_prompts.txt"
 
     # separator in line between meta information and the actual content
     meta_sep = ": "
@@ -275,3 +278,18 @@ class MyAPI:
                 partners_count[s_name] += 1
 
         return partners_count
+
+    def save_speaker_spectrums(self, speaker_names, speaker_prompts):
+        with open(self.spectrum_prompts_filepath,  "w") as file:
+            for i, p in enumerate(speaker_prompts):
+                line = "".join([speaker_names[i], MyAPI.meta_sep, ",".join(p.split(' '))])
+                file.write(line + "\n")
+
+    def read_speaker_spectrums(self):
+        with open(self.spectrum_prompts_filepath, "r") as file:
+            spectrums = {}
+            for line in file.readlines():
+                speaker_name, args = line.split(MyAPI.meta_sep)
+                spectrums[speaker_name] = [a.strip() for a in args.split(',')]
+
+        return spectrums
