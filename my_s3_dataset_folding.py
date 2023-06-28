@@ -9,12 +9,13 @@ def write_folded_dataset(my_api, k):
     assert(isinstance(my_api, MyAPI))
     assert(isinstance(k, int))
 
-    partners_count = Counter()
-
     buffer = []
     for fold_index in range(k):
 
         with open(my_api.dataset_fold_filepath.format(fold_index=str(fold_index)), "w") as file:
+
+            partners_count = Counter()
+
             for line in my_api.read_dataset(desc="Prepare for fold {}".format(fold_index)):
 
                 if line is None:
@@ -29,7 +30,7 @@ def write_folded_dataset(my_api, k):
                 if len(buffer) == 2:
 
                     # Check whether it is a part of the current fold.
-                    if partners_count[s_name] % k == 0:
+                    if partners_count[s_name] % k == fold_index:
                         my_api.write_dataset_buffer(file=file, buffer=buffer)
 
                     # Count the amount of partners.
