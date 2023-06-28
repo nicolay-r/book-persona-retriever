@@ -22,7 +22,7 @@ class MyAPI:
     filtered_speakers_filepath = join(__current_dir, "./data/ceb_books_annot/filtered_speakers.txt")
     dataset_filepath = join(__current_dir, "./data/ceb_books_annot/dataset.txt")
     dataset_parlai_filepath = join(__current_dir, "./data/ceb_books_annot/dataset_parlai.txt.zip")
-    # Embedding visualization for querries in dataset (original texts.
+    # Embedding visualization for queries in dataset (original texts.
     dataset_st_embedding_query = join(__current_dir, "./data/ceb_books_annot/x.dataset-query-sent-transformers.npz")
     dataset_st_embedding_response = join(__current_dir, "./data/ceb_books_annot/x.dataset-response-sent-transformers.txt")
     books_storage_en = join(books_storage, "en")
@@ -30,6 +30,9 @@ class MyAPI:
     spectrum_features = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings.npz")
     spectrum_speakers = join(__current_dir, "./data/ceb_books_annot/y.spectrum-speakers.npz")
     spectrum_st_embeddings = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-sent-transformers-{preset}.npz")
+
+    # separator in line between meta information and the actual content
+    meta_sep = ": "
 
     def __init__(self, books_root=None):
         self.__book_storage_root = MyAPI.books_storage_en if books_root is None else books_root
@@ -175,6 +178,10 @@ class MyAPI:
                 speakers.append(line.strip())
         return speakers
 
+    @staticmethod
+    def __get_meta(line):
+        return line.split(MyAPI.meta_sep)[0]
+
     def compose_dataset(self):
         """ Filter dialogs to the result dataset. Compose a Question->Response pair.
             Where response is always a known speaker, so whe know who we ask.
@@ -202,7 +209,7 @@ class MyAPI:
                 if len(buffer) != 2:
                     continue
 
-                speaker_name = line.split(': ')[0]
+                speaker_name = self.__get_meta(line)
 
                 # We consider only such speakers that in predefined list.
                 # We know we have a response to the known speaker.
@@ -235,8 +242,8 @@ class MyAPI:
 
                 if split_meta:
                     # Separate meta information from the line.
-                    meta = line.split(': ')[0]
-                    text = line[len(meta) + 2:]
+                    meta = self.__get_meta(line)
+                    text = line[len(meta) + len(self.meta_sep):]
                     yield meta, text
                 else:
                     yield line
