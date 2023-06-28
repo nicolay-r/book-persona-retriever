@@ -1,7 +1,7 @@
 from collections import Counter
 
 from core.plot import draw_bar_plot, draw_hist_plot
-from core.spectrums import annot_spectrums_in_text
+from core.spectrums_annot import annot_spectrums_in_text
 from core.utils_paragraphs import iter_paragraphs_with_n_speakers
 from utils_ceb import CEBApi
 from utils_fcp import FcpApi
@@ -15,8 +15,8 @@ fcp_api = FcpApi()
 ds_speakers = my_api.read_speakers()
 
 speakers = annot_spectrums_in_text(
-    texts_iter=map(lambda t: (t[0].Text, t[1]),
-                   iter_paragraphs_with_n_speakers(
+    texts_and_speakervars_iter=map(lambda t: (t[0].Text, t[1]),
+                                   iter_paragraphs_with_n_speakers(
                        speakers=set(ds_speakers),
                        n_speakers=1,
                        iter_paragraphs=CEBApi.iter_paragraphs(

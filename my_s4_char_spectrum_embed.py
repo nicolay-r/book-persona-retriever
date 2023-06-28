@@ -1,6 +1,6 @@
 from itertools import chain
 
-from core.spectrums import annot_spectrums_in_text, annot_to_min_max_grouped
+from core.spectrums_annot import annot_spectrums_in_text, annot_to_min_max_grouped
 from core.utils_comments import iter_text_comments
 from core.utils_npz import NpzUtils
 from core.utils_paragraphs import iter_paragraphs_with_n_speakers
@@ -32,7 +32,7 @@ def iter_all(speakers):
 my_api = MyAPI()
 fcp_api = FcpApi()
 speaker_spectrums_dict = annot_spectrums_in_text(
-    texts_iter=iter_all(speakers=my_api.read_speakers()),
+    texts_and_speakervars_iter=iter_all(speakers=my_api.read_speakers()),
     rev_spectrums=fcp_api.reversed_spectrums())
 
 # Saving.

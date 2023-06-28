@@ -1,7 +1,7 @@
 from collections import Counter
 
 from core.plot import draw_bar_plot
-from core.spectrums import annot_spectrums_in_text
+from core.spectrums_annot import annot_spectrums_in_text
 from core.utils_comments import iter_text_comments
 from utils_fcp import FcpApi
 from utils_my import MyAPI
@@ -13,7 +13,7 @@ speakers = my_api.read_speakers()
 print("Speakers considered: {}".format(len(speakers)))
 
 speakers = annot_spectrums_in_text(
-    texts_iter=iter_text_comments(speakers=set(speakers), book_path_func=my_api.get_book_path),
+    texts_and_speakervars_iter=iter_text_comments(speakers=set(speakers), book_path_func=my_api.get_book_path),
     rev_spectrums=fcp_api.reversed_spectrums())
 
 
