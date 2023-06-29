@@ -25,16 +25,15 @@ def filter_responses(utterances_it):
         yield u
 
 
-my_api = MyAPI()
 model_name = 'all-mpnet-base-v2'
 model = SentenceTransformer(model_name)
 
 X_st = []
-for u in filer_query_utterances(my_api.read_dataset()):
+for u in filer_query_utterances(MyAPI.read_dataset(dataset_filepath=MyAPI.dataset_filepath)):
     X_st.append(model.encode(u))
 NpzUtils.save(X_st, MyAPI.dataset_st_embedding_query)
 
 X_st = []
-for u in filter_responses(my_api.read_dataset()):
+for u in filter_responses(MyAPI.read_dataset(dataset_filepath=MyAPI.dataset_filepath)):
     X_st.append(model.encode(u))
 NpzUtils.save(X_st, MyAPI.dataset_st_embedding_response)

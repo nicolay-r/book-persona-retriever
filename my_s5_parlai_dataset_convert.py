@@ -7,7 +7,7 @@ from utils_ceb import CEBApi
 from utils_my import MyAPI
 
 
-def iter_dataset_lines(my_api, dataset_source, traits_func, candidates_dict, candidates_limit, desc=None):
+def iter_dataset_lines(dataset_source, traits_func, candidates_dict, candidates_limit, desc=None):
     assert(isinstance(dataset_source, str))
     assert(callable(traits_func))
     assert(isinstance(candidates_dict, dict) or candidates_dict is None)
@@ -16,7 +16,7 @@ def iter_dataset_lines(my_api, dataset_source, traits_func, candidates_dict, can
     dialog = []
     speaker_ids = []
 
-    read_dataset = my_api.read_dataset(
+    read_dataset = MyAPI.read_dataset(
         keep_usep=False, split_meta=True, dataset_filepath=dataset_source, desc=desc)
 
     for args in read_dataset:
@@ -78,7 +78,7 @@ traits_provider = {
 
 candidates_provider = {
     "_no-cands": None,
-    "": create_candidates_dict(my_api, dataset_filepath=my_api.dataset_filepath, limit_per_book=1000),
+    "": create_candidates_dict(dataset_filepath=my_api.dataset_filepath, limit_per_book=1000),
 }
 
 for data_fold_type, data_fold_source in dataset_filepaths.items():
@@ -87,7 +87,6 @@ for data_fold_type, data_fold_source in dataset_filepaths.items():
             filename = '{}_{}{}.txt'.format(data_fold_type, trait_type, candidates_type)
 
             data_it = iter_dataset_lines(
-                my_api=my_api,
                 dataset_source=data_fold_source,
                 traits_func=traits_func,
                 candidates_dict=candidates_dict,

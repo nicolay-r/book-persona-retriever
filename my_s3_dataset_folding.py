@@ -4,26 +4,29 @@ from utils import cat_files
 from utils_my import MyAPI
 
 
-def write_folded_dataset(my_api, k):
+def write_folded_dataset(k):
     """ Folding with the even splits of the utterances.
     """
-    assert(isinstance(my_api, MyAPI))
     assert(isinstance(k, int))
 
     buffer = []
     for fold_index in range(k):
 
-        with open(my_api.dataset_fold_filepath.format(fold_index=str(fold_index)), "w") as file:
+        with open(MyAPI.dataset_fold_filepath.format(fold_index=str(fold_index)), "w") as file:
 
             partners_count = Counter()
 
-            for line in my_api.read_dataset(desc="Prepare for fold {}".format(fold_index)):
+            lines_it = MyAPI.read_dataset(
+                dataset_filepath=MyAPI.dataset_filepath,
+                desc="Prepare for fold {}".format(fold_index))
+
+            for line in lines_it:
 
                 if line is None:
                     buffer.clear()
                     continue
 
-                s_name = my_api._get_meta(line)
+                s_name = MyAPI._get_meta(line)
 
                 buffer.append(line)
 
@@ -32,27 +35,26 @@ def write_folded_dataset(my_api, k):
 
                     # Check whether it is a part of the current fold.
                     if partners_count[s_name] % k == fold_index:
-                        my_api.write_dataset_buffer(file=file, buffer=buffer)
+                        MyAPI.write_dataset_buffer(file=file, buffer=buffer)
 
                     # Count the amount of partners.
                     partners_count[s_name] += 1
 
 
 k = 5
-my_api = MyAPI()
-write_folded_dataset(my_api, k=k)
+write_folded_dataset(k=k)
 
 print("Original:")
-print(my_api.check_speakers_count(filepath=my_api.dataset_filepath, pbar=False))
+print(MyAPI.check_speakers_count(dataset_filepath=MyAPI.dataset_filepath, pbar=False))
 print("Folds:")
 for i in range(k):
-    c = my_api.check_speakers_count(filepath=my_api.dataset_fold_filepath.format(fold_index=i), pbar=False)
+    c = MyAPI.check_speakers_count(dataset_filepath=MyAPI.dataset_fold_filepath.format(fold_index=i), pbar=False)
     print(c)
     print(sum(c.values()))
 
 # Merge foldings.
 # We select such indexes for better result balancing.
-cat_files(source_filepaths=[my_api.dataset_fold_filepath.format(fold_index=str(i)) for i in [0, 1, 3, 4]],
-          target_filepath=my_api.dataset_fold_filepath.format(fold_index="train"))
-cat_files(source_filepaths=[my_api.dataset_fold_filepath.format(fold_index=str(i)) for i in [2]],
-          target_filepath=my_api.dataset_fold_filepath.format(fold_index="valid"))
+cat_files(source_filepaths=[MyAPI.dataset_fold_filepath.format(fold_index=str(i)) for i in [0, 1, 3, 4]],
+          target_filepath=MyAPI.dataset_fold_filepath.format(fold_index="train"))
+cat_files(source_filepaths=[MyAPI.dataset_fold_filepath.format(fold_index=str(i)) for i in [2]],
+          target_filepath=MyAPI.dataset_fold_filepath.format(fold_index="valid"))

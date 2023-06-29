@@ -1,3 +1,6 @@
+from utils_my import MyAPI
+
+
 def format_episode(request, response, candidates, req_persona_traits=None, resp_persona_traits=None):
     """ Serializer for the deprecated formatter proposed by Facebook.
     """
@@ -32,7 +35,7 @@ def format_episode(request, response, candidates, req_persona_traits=None, resp_
     return "\n".join(["{} {}".format(i+1, l) for i, l in enumerate(lines)])
 
 
-def create_candidates_dict(my_api, dataset_filepath=None, limit_per_book=1000):
+def create_candidates_dict(dataset_filepath=None, limit_per_book=1000):
     """ Random candidates selection from the dataset.
         We consider the same "random" selection approach from the ALOHA paper:
             https://arxiv.org/pdf/1910.08293.pdf
@@ -42,7 +45,7 @@ def create_candidates_dict(my_api, dataset_filepath=None, limit_per_book=1000):
     lines = []
 
     candidates = {}
-    for args in my_api.read_dataset(keep_usep=False, split_meta=True, dataset_filepath=dataset_filepath):
+    for args in MyAPI.read_dataset(keep_usep=False, split_meta=True, dataset_filepath=dataset_filepath):
         if args is None:
             lines.clear()
             continue

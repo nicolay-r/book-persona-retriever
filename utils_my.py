@@ -218,24 +218,26 @@ class MyAPI:
                 if len(buffer) != 2:
                     continue
 
-                speaker_name = self._get_meta(line)
+                speaker_name = MyAPI._get_meta(line)
 
                 # We consider only such speakers that in predefined list.
                 # We know we have a response to the known speaker.
                 if "UNKN" not in speaker_name and speaker_name in speakers_set:
                     # We release content from the buffer.
-                    self.write_dataset_buffer(file=file, buffer=buffer)
+                    MyAPI.write_dataset_buffer(file=file, buffer=buffer)
                     pairs += 1
 
         print("Pairs written: {}".format(pairs))
         print("Dataset saved: {}".format(self.dataset_filepath))
 
-    def read_dataset(self, keep_usep=True, split_meta=False, dataset_filepath=None, desc=None, pbar=True):
+    @staticmethod
+    def read_dataset(dataset_filepath, keep_usep=True, split_meta=False, desc=None, pbar=True):
         """ split_meta: bool
                 whether we want to split in parts that before ":"
         """
-        filepath = self.dataset_filepath if dataset_filepath is None else dataset_filepath
-        with open(filepath, "r") as file:
+        assert(isinstance(dataset_filepath, str))
+
+        with open(dataset_filepath, "r") as file:
             for line in tqdm(file.readlines(), desc=desc, disable=not pbar):
 
                 if not keep_usep:
@@ -250,19 +252,24 @@ class MyAPI:
 
                 if split_meta:
                     # Separate meta information from the line.
-                    meta = self._get_meta(line)
-                    text = line[len(meta) + len(self.meta_sep):]
+                    meta = MyAPI._get_meta(line)
+                    text = line[len(meta) + len(MyAPI.meta_sep):]
                     yield meta, text
                 else:
                     yield line
 
-    def check_speakers_count(self, filepath, pbar=True):
+    @staticmethod
+    def check_speakers_count(dataset_filepath, pbar=True):
         """ Folding with the even splits of the utterances.
         """
         partners_count = Counter()
 
         utt = []
-        for args in self.read_dataset(keep_usep=False, split_meta=True, dataset_filepath=filepath, pbar=pbar):
+
+        args_it = MyAPI.read_dataset(
+            keep_usep=False, split_meta=True, dataset_filepath=dataset_filepath, pbar=pbar)
+
+        for args in args_it:
 
             if args is None:
                 utt.clear()
