@@ -8,7 +8,7 @@ from utils_my import MyAPI
 
 model_name = 'all-mpnet-base-v2'
 preset = MyAPI.spectrum_default_preset
-model = SentenceTransformer(model_name)
+model = SentenceTransformer(model_name, cache_folder="./.cache")
 
 X = list(NpzUtils.load(MyAPI.spectrum_features))
 prompts = PROMPT_PRESETS[preset](X, FcpApi())
