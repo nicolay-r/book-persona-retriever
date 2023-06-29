@@ -34,7 +34,7 @@ class MyAPI:
     spectrum_st_embeddings = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-sent-transformers-{preset}.npz")
     # intermediate file required for a quick embedding of traits into the
     # train/validation dataset for dialogue chatbot development.
-    spectrum_prompts_filepath = "spectrum_speaker_prompts.txt"
+    spectrum_prompts_filepath = join(__current_dir, "./data/ceb_books_annot/spectrum_speaker_prompts.txt")
 
     # separator in line between meta information and the actual content
     meta_sep = ": "
