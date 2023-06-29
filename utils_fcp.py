@@ -50,6 +50,11 @@ class FcpApi:
         assert("BAP" in val)
         return int(val[3:]) - 1
 
+    @staticmethod
+    def ind_to_spectrum(ind):
+        assert(isinstance(ind, int) and ind >= 0)
+        return "BAP" + str((ind + 1))
+
     def reversed_spectrums(self):
 
         if self._lexicon is None:

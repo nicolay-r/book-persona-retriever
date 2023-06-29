@@ -5,6 +5,8 @@ from os.path import join, dirname, realpath, isfile
 
 from tqdm import tqdm
 
+from core.book_dialog import BookDialogueService
+
 
 class MyAPI:
     """ Dataset developed for this particular studies
@@ -19,10 +21,23 @@ class MyAPI:
     # List of the speakers considered for the dataset.
     filtered_speakers_filepath = join(__current_dir, "./data/ceb_books_annot/filtered_speakers.txt")
     dataset_filepath = join(__current_dir, "./data/ceb_books_annot/dataset.txt")
+    dataset_fold_filepath = join(__current_dir, "./data/ceb_books_annot/dataset_f{fold_index}.txt")
+    dataset_parlai_filepath = join(__current_dir, "./data/ceb_books_annot/dataset_parlai_{}.zip")
+    # Embedding visualization for queries in dataset (original texts.
+    dataset_st_embedding_query = join(__current_dir, "./data/ceb_books_annot/x.dataset-query-sent-transformers.npz")
+    dataset_st_embedding_response = join(__current_dir, "./data/ceb_books_annot/x.dataset-response-sent-transformers.txt")
     books_storage_en = join(books_storage, "en")
     # spectrums-related data
-    spectrum_embeddings = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings.npz")
+    spectrum_features = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings.npz")
     spectrum_speakers = join(__current_dir, "./data/ceb_books_annot/y.spectrum-speakers.npz")
+    spectrum_default_preset = "prompt_most_imported_limited_5"
+    spectrum_st_embeddings = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-sent-transformers-{preset}.npz")
+    # intermediate file required for a quick embedding of traits into the
+    # train/validation dataset for dialogue chatbot development.
+    spectrum_prompts_filepath = join(__current_dir, "./data/ceb_books_annot/spectrum_speaker_prompts.txt")
+
+    # separator in line between meta information and the actual content
+    meta_sep = ": "
 
     def __init__(self, books_root=None):
         self.__book_storage_root = MyAPI.books_storage_en if books_root is None else books_root
@@ -104,7 +119,7 @@ class MyAPI:
                     assert(isinstance(segments, list))
                     assert(isinstance(recognized_speakers, dict))
 
-                    sep = " " if print_sep is False else " [USEP] "
+                    sep = " " if print_sep is False else " {} ".format(BookDialogueService.utterance_sep)
                     utterance = sep.join(segments)
                     speaker = recognized_speakers[speaker_id] \
                         if speaker_id in recognized_speakers else "UNKN-{}".format(speaker_id)
@@ -168,16 +183,24 @@ class MyAPI:
                 speakers.append(line.strip())
         return speakers
 
-    def compose_dataset(self):
+    @staticmethod
+    def _get_meta(line):
+        return line.split(MyAPI.meta_sep)[0]
+
+    @staticmethod
+    def write_dataset_buffer(file, buffer):
+        assert(isinstance(buffer, list) and len(buffer) == 2)
+        for buffer_line in buffer:
+            file.write("{}\n".format(buffer_line))
+        file.write("\n")
+
+    def write_dataset(self):
         """ Filter dialogs to the result dataset. Compose a Question->Response pair.
             Where response is always a known speaker, so whe know who we ask.
         """
 
         # Read speakers to be considered first.
-        speakers_set = set()
-        with open(self.filtered_speakers_filepath, "r") as f:
-            for speaker_name in f.readlines():
-                speakers_set.add(speaker_name.strip())
+        speakers_set = set(self.read_speakers())
 
         pairs = 0
         buffer = []
@@ -195,21 +218,85 @@ class MyAPI:
                 if len(buffer) != 2:
                     continue
 
-                speaker_name = line.split(': ')[0]
+                speaker_name = MyAPI._get_meta(line)
 
                 # We consider only such speakers that in predefined list.
                 # We know we have a response to the known speaker.
                 if "UNKN" not in speaker_name and speaker_name in speakers_set:
                     # We release content from the buffer.
-                    for buffer_line in buffer:
-                        file.write("{}\n".format(buffer_line))
-                    file.write("\n")
+                    MyAPI.write_dataset_buffer(file=file, buffer=buffer)
                     pairs += 1
 
         print("Pairs written: {}".format(pairs))
         print("Dataset saved: {}".format(self.dataset_filepath))
 
-    def read_dataset(self):
-        with open(self.dataset_filepath, "r") as file:
-            for line in tqdm(file.readlines()):
-                yield line if line != "\n" else None
+    @staticmethod
+    def read_dataset(dataset_filepath, keep_usep=True, split_meta=False, desc=None, pbar=True):
+        """ split_meta: bool
+                whether we want to split in parts that before ":"
+        """
+        assert(isinstance(dataset_filepath, str))
+
+        with open(dataset_filepath, "r") as file:
+            for line in tqdm(file.readlines(), desc=desc, disable=not pbar):
+
+                if not keep_usep:
+                    # Remove this.
+                    line = line.replace(BookDialogueService.utterance_sep, "")
+
+                line = line.strip() if line != "\n" else None
+
+                if line is None:
+                    yield None
+                    continue
+
+                if split_meta:
+                    # Separate meta information from the line.
+                    meta = MyAPI._get_meta(line)
+                    text = line[len(meta) + len(MyAPI.meta_sep):]
+                    yield meta, text
+                else:
+                    yield line
+
+    @staticmethod
+    def check_speakers_count(dataset_filepath, pbar=True):
+        """ Folding with the even splits of the utterances.
+        """
+        partners_count = Counter()
+
+        utt = []
+
+        args_it = MyAPI.read_dataset(
+            keep_usep=False, split_meta=True, dataset_filepath=dataset_filepath, pbar=pbar)
+
+        for args in args_it:
+
+            if args is None:
+                utt.clear()
+                continue
+
+            s_name, _ = args
+
+            utt.append(s_name)
+
+            # response of the partner.
+            if len(utt) == 2:
+                # Count the amount of partners.
+                partners_count[s_name] += 1
+
+        return partners_count
+
+    def save_speaker_spectrums(self, speaker_names, speaker_prompts):
+        with open(self.spectrum_prompts_filepath,  "w") as file:
+            for i, p in enumerate(speaker_prompts):
+                line = "".join([speaker_names[i], MyAPI.meta_sep, ",".join(p.split(' '))])
+                file.write(line + "\n")
+
+    def read_speaker_spectrums(self):
+        with open(self.spectrum_prompts_filepath, "r") as file:
+            spectrums = {}
+            for line in file.readlines():
+                speaker_name, args = line.split(MyAPI.meta_sep)
+                spectrums[speaker_name] = [a.strip() for a in args.split(',')]
+
+        return spectrums

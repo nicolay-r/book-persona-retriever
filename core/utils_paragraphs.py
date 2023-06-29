@@ -2,7 +2,7 @@ from collections import Counter
 
 from tqdm import tqdm
 
-from utils import Paragraph
+from core.paragraph import Paragraph
 from utils_ceb import CEBApi
 from utils_gd import GuttenbergDialogApi
 

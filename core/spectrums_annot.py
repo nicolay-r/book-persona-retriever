@@ -2,11 +2,12 @@ from collections import Counter
 
 import numpy as np
 
+from utils_ceb import CEBApi
 from utils_fcp import FcpApi
 from utils_gd import GuttenbergDialogApi
 
 
-def annot_spectrums_in_text(texts_iter, rev_spectrums):
+def annot_spectrums_in_text(texts_and_speakervars_iter, rev_spectrums):
     """ returns: dictionary of character names,
             where value per every character is a Counter of spectrums
         {
@@ -17,11 +18,14 @@ def annot_spectrums_in_text(texts_iter, rev_spectrums):
     gd_api = GuttenbergDialogApi()
 
     d = {}
-    for text, speakers in texts_iter:
+    for text, speakers in texts_and_speakervars_iter:
+        assert(isinstance(text, str))
+        assert(isinstance(speakers, list))
+
         norm_terms = gd_api.normalize_terms(text.split())
 
         # We limit only for a single speaker.
-        speaker = speakers[0]
+        speaker = CEBApi.speaker_variant_to_speaker(speakers[0])
 
         for term in norm_terms:
             if term in rev_spectrums:

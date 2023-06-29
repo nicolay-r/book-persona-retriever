@@ -4,10 +4,8 @@ from matplotlib import pyplot as plt
 
 from utils_my import MyAPI
 
-my_api = MyAPI()
-
 u_lens = []
-for line in my_api.read_dataset():
+for line in MyAPI.read_dataset(MyAPI.dataset_filepath):
 
     if line is None:
         continue

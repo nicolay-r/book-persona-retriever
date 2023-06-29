@@ -1,9 +1,12 @@
 from collections import Counter
+from itertools import chain
 
 import numpy as np
 import pandas as pd
 import seaborn as sns
 from matplotlib import pyplot as plt, ticker
+from sklearn.manifold import TSNE
+from tqdm import tqdm
 
 
 def draw_bar_plot(c, x_name, y_name, val_to_x=lambda v: v,
@@ -45,4 +48,34 @@ def draw_hist_plot(c, desc, min_val=0, max_val=100, n_bins=None):
                      x=desc,
                      bins=n_bins,
                      binrange=(min_val, max_val))
+    plt.show()
+
+
+def plot_tsne_series(X, y=None, perplexies=[5], n_iter=1000, alpha=0.1, palette=None):
+
+    y = [0 for _ in range(len(X))] if y is None else y
+
+    # we need to filter due to the t-SNE limitation.
+    perplexies = list(filter(lambda item: item < len(X), perplexies))
+
+    embs_X = []
+    for p in tqdm(perplexies, desc="Calc for perplexy"):
+        tsne = TSNE(n_components=2, learning_rate='auto', init='random', perplexity=p, n_iter=n_iter)
+        emb_X = tsne.fit_transform(X)
+        embs_X.append(emb_X)
+
+    c1 = list(chain(*[list(embs_X[i][:, 0]) for i in range(len(perplexies))]))
+    c2 = list(chain(*[list(embs_X[i][:, 1]) for i in range(len(perplexies))]))
+    arr = list(chain(*[[p] * len(embs_X[0]) for p in perplexies]))
+
+    tsne_data = pd.DataFrame()
+    tsne_data["comp-1"] = c1
+    tsne_data["comp-2"] = c2
+    tsne_data["col"] = arr
+    tsne_data["y"] = list(chain(*[y for p in perplexies]))
+
+    g = sns.FacetGrid(tsne_data, col="col", hue="y", palette=palette)
+    g.map(sns.scatterplot, "comp-1", "comp-2", alpha=alpha)
+    g.add_legend()
+
     plt.show()

@@ -1,5 +1,7 @@
 class BookDialogueService:
 
+    utterance_sep = "[USEP]"
+
     def __init__(self):
         self.__book_id = None
         self.__book_text = None
@@ -75,7 +77,7 @@ class BookDialogueService:
         for utt_ind, utterance in enumerate(self.__dialog_utterances):
 
             # to segments.
-            segments = [u.strip() for u in utterance.split("[USEP]")]
+            segments = [u.strip() for u in utterance.split(self.utterance_sep)]
 
             for i, utt_segment in enumerate(segments):
 

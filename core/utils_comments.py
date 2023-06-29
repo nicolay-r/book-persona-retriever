@@ -15,5 +15,5 @@ def iter_text_comments(speakers, book_path_func):
                 for term in comment.split():
                     if GuttenbergDialogApi.is_character(term):
                         if CEBApi.speaker_variant_to_speaker(term) in speakers:
-                            yield comment, term
+                            yield comment, [term]
                             break
