@@ -3,6 +3,7 @@ from os.path import join
 
 PROJECT_DIR = os.path.dirname(os.path.realpath(__file__))
 RANK_DATASET_DIR = join(PROJECT_DIR, "data/hla_books")
+CACHE_DIR = join(PROJECT_DIR, "./.cache")
 
 
 def cat_files(source_filepaths, target_filepath):
