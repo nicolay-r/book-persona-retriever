@@ -4,7 +4,7 @@ from core.utils_npz import NpzUtils
 from utils_my import MyAPI
 
 
-X = list(NpzUtils.load(MyAPI.spectrum_st_embeddings.format(preset="original")))
+X = list(NpzUtils.load(MyAPI.spectrum_st_embeddings.format(preset=MyAPI.spectrum_default_preset)))
 y = list(NpzUtils.load(MyAPI.spectrum_speakers))
 
 # Blank painting.
