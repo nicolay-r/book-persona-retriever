@@ -2,13 +2,14 @@ from sentence_transformers import SentenceTransformer
 from tqdm import tqdm
 
 from core.utils_npz import NpzUtils
+from utils import CACHE_DIR
 from utils_my import MyAPI
 
 
 def filer_query_utterances(utterances_it):
     """ Filer those queries from dataset that initiate the dialogue.
     """
-    for i, u in tqdm(utterances_it):
+    for u in tqdm(utterances_it):
         if u is None:
             continue
         if not u.startswith("UNKN-"):
@@ -26,7 +27,7 @@ def filter_responses(utterances_it):
 
 
 model_name = 'all-mpnet-base-v2'
-model = SentenceTransformer(model_name)
+model = SentenceTransformer(model_name, cache_folder=CACHE_DIR)
 
 X_st = []
 for u in filer_query_utterances(MyAPI.read_dataset(dataset_filepath=MyAPI.dataset_filepath)):

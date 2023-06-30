@@ -3,12 +3,13 @@ from tqdm import tqdm
 
 from core.spectrums_emb import PROMPT_PRESETS
 from core.utils_npz import NpzUtils
+from utils import CACHE_DIR
 from utils_fcp import FcpApi
 from utils_my import MyAPI
 
 model_name = 'all-mpnet-base-v2'
 preset = MyAPI.spectrum_default_preset
-model = SentenceTransformer(model_name, cache_folder="./.cache")
+model = SentenceTransformer(model_name, cache_folder=CACHE_DIR)
 
 X = list(NpzUtils.load(MyAPI.spectrum_features))
 prompts = PROMPT_PRESETS[preset](X, FcpApi())
