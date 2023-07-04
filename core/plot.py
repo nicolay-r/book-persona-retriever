@@ -67,15 +67,15 @@ def plot_tsne_series(X, y=None, perplexies=[5], n_iter=1000, alpha=0.1, palette=
 
     c1 = list(chain(*[list(embs_X[i][:, 0]) for i in range(len(perplexies))]))
     c2 = list(chain(*[list(embs_X[i][:, 1]) for i in range(len(perplexies))]))
-    arr = list(chain(*[[p] * len(embs_X[0]) for p in perplexies]))
+    perplexy_list = list(chain(*[[p] * len(embs_X[0]) for p in perplexies]))
 
     tsne_data = pd.DataFrame()
     tsne_data["comp-1"] = c1
     tsne_data["comp-2"] = c2
-    tsne_data["col"] = arr
+    tsne_data["perplexy"] = perplexy_list
     tsne_data["y"] = list(chain(*[y for p in perplexies]))
 
-    g = sns.FacetGrid(tsne_data, col="col", hue="y", palette=palette)
+    g = sns.FacetGrid(tsne_data, col="perplexy", hue="y", palette=palette)
     g.map(sns.scatterplot, "comp-1", "comp-2", alpha=alpha)
     g.add_legend()
 
@@ -83,6 +83,7 @@ def plot_tsne_series(X, y=None, perplexies=[5], n_iter=1000, alpha=0.1, palette=
         plt.show()
 
     if save_png_path is not None:
-        # crop.
+        # And saving the output image.
         plt.gcf().set_size_inches(8, 6)
+        print("Saving: {}".format(save_png_path))
         plt.savefig(save_png_path, bbox_inches='tight', dpi=200)
