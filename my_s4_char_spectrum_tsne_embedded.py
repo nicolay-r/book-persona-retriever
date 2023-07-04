@@ -1,10 +1,12 @@
+from os.path import join
+
 from core.plot import plot_tsne_series
 from core.spectrums_emb import FILTER_PRESETS
 from core.utils_npz import NpzUtils
 from utils_my import MyAPI
 
-
-X = list(NpzUtils.load(MyAPI.spectrum_st_embeddings.format(preset=MyAPI.spectrum_default_preset)))
+preset = MyAPI.spectrum_default_preset
+X = list(NpzUtils.load(MyAPI.spectrum_st_embeddings.format(preset=preset)))
 y = list(NpzUtils.load(MyAPI.spectrum_speakers))
 
 # Blank painting.
@@ -18,4 +20,11 @@ X, y = FILTER_PRESETS["all-no-color"](X, y)
 print("Filtered:", len(X))
 print("V-size: {}".format(len(X[0])))
 
-plot_tsne_series(X=X, y=y, perplexies=[5, 10, 30, 50, 100], n_iter=1000)
+perplexies=[5, 10, 30, 50, 100]
+
+png_path = join(MyAPI.books_storage, "embedded_{preset}_p{prompt}_all{total}".format(
+    preset=preset,
+    prompt='-'.join([str(p) for p in perplexies]),
+    total=len(X)))
+
+plot_tsne_series(X=X, y=y, perplexies=perplexies, n_iter=1000, save_png_path=png_path)
