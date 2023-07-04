@@ -64,6 +64,7 @@ def draw_hist_plot(c, desc, min_val=0, max_val=100, n_bins=None, show=True, save
 def plot_tsne_series(X, y=None, perplexies=[5], n_iter=1000, alpha=0.1, palette=None, show=False,
                      save_png_path=None):
 
+    draw_legend = y is not None
     y = [0 for _ in range(len(X))] if y is None else y
 
     # we need to filter due to the t-SNE limitation.
@@ -83,11 +84,10 @@ def plot_tsne_series(X, y=None, perplexies=[5], n_iter=1000, alpha=0.1, palette=
     tsne_data["comp-1"] = c1
     tsne_data["comp-2"] = c2
     tsne_data["perplexy"] = perplexy_list
-    tsne_data["y"] = list(chain(*[y for p in perplexies]))
+    tsne_data["y"] = list(chain(*[y for _ in perplexies]))
 
-    g = sns.FacetGrid(tsne_data, col="perplexy", hue="y", palette=palette)
+    g = sns.FacetGrid(tsne_data, col="perplexy", hue="y", palette=palette, legend_out=draw_legend)
     g.map(sns.scatterplot, "comp-1", "comp-2", alpha=alpha)
-    g.add_legend()
 
     if show:
         plt.show()
