@@ -31,13 +31,12 @@ def draw_bar_plot(c, x_name, y_name, val_to_x=lambda v: v,
     plt.show()
 
 
-def draw_hist_plot(c, desc, min_val=0, max_val=100, n_bins=None):
+def draw_hist_plot(c, desc, min_val=0, max_val=100, n_bins=None, show=True, save_png_path=None, asp_hor=8, asp_ver=2):
     assert(isinstance(c, Counter))
 
     val_width = max_val - min_val
     n_bins = abs(max_val - min_val) if n_bins is None else n_bins
     bin_width = val_width/n_bins
-    #plt.xticks(np.arange(min_val + bin_width / 2, max_val + bin_width / 2, bin_width))
     plt.xticks(np.arange(min_val + bin_width, max_val + bin_width, bin_width))
 
     ##################################################################
@@ -47,8 +46,19 @@ def draw_hist_plot(c, desc, min_val=0, max_val=100, n_bins=None):
     g = sns.histplot(data=pd.DataFrame(df_dict),
                      x=desc,
                      bins=n_bins,
-                     binrange=(min_val, max_val))
-    plt.show()
+                     binrange=(min_val, max_val),
+                     legend=True)
+
+    if show:
+        plt.show()
+
+    if save_png_path is not None:
+        # And saving the output image.
+        plt.gcf().set_size_inches(asp_hor, asp_ver)
+        print("Saving: {}".format(save_png_path))
+        plt.savefig(save_png_path, bbox_inches='tight', dpi=200)
+
+    plt.clf()
 
 
 def plot_tsne_series(X, y=None, perplexies=[5], n_iter=1000, alpha=0.1, palette=None, show=False,
