@@ -51,7 +51,8 @@ def draw_hist_plot(c, desc, min_val=0, max_val=100, n_bins=None):
     plt.show()
 
 
-def plot_tsne_series(X, y=None, perplexies=[5], n_iter=1000, alpha=0.1, palette=None):
+def plot_tsne_series(X, y=None, perplexies=[5], n_iter=1000, alpha=0.1, palette=None, show=False,
+                     save_png_path=None):
 
     y = [0 for _ in range(len(X))] if y is None else y
 
@@ -78,4 +79,10 @@ def plot_tsne_series(X, y=None, perplexies=[5], n_iter=1000, alpha=0.1, palette=
     g.map(sns.scatterplot, "comp-1", "comp-2", alpha=alpha)
     g.add_legend()
 
-    plt.show()
+    if show:
+        plt.show()
+
+    if save_png_path is not None:
+        # crop.
+        plt.gcf().set_size_inches(8, 6)
+        plt.savefig(save_png_path, bbox_inches='tight', dpi=200)
