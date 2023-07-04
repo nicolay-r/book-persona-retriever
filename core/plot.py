@@ -83,6 +83,7 @@ def plot_tsne_series(X, y=None, perplexies=[5], n_iter=1000, alpha=0.1, palette=
         plt.show()
 
     if save_png_path is not None:
-        # crop.
+        # And saving the output image.
         plt.gcf().set_size_inches(8, 6)
+        print("Saving: {}".format(save_png_path))
         plt.savefig(save_png_path, bbox_inches='tight', dpi=200)
