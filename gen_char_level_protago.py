@@ -35,7 +35,7 @@ for fp in quiz_paths:
         with open(ofp, 'w') as output_file:
 
             for task in tqdm(content["data"]):
-                speaker_id, is_male = task
+                speaker_id, is_protago = task
                 book_id = speaker_id.split('_')[0]
                 # extracting book title
                 book_title = pg19_api.find_book_title(book_id)
@@ -48,7 +48,7 @@ for fp in quiz_paths:
                     "{char_name} from {book_title}".format(char_name=ceb_api.get_char_name(speaker_id),
                                                            book_title=book_title),
                     "Is Protago?",
-                    "Yes" if is_male else "No"
+                    "Yes" if is_protago else "No"
                 ])
 
                 output_file.write("{}\n".format(line))
