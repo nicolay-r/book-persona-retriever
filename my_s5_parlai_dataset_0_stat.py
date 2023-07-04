@@ -33,4 +33,4 @@ for f_type, f_func in filters.items():
         draw_hist_plot(c, desc="Histogram of sentence lengths in words (`{}` dataset)".format(data_type),
                        min_val=0, n_bins=25, max_val=1000,
                        save_png_path=png_path, show=False,
-                       asp_hor=12, asp_ver=2, show_legend=True)
+                       asp_hor=12, asp_ver=2)
