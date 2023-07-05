@@ -96,7 +96,7 @@ for data_fold_type, data_fold_source in dataset_filepaths.items():
                 dataset_source=data_fold_source,
                 traits_func=traits_func,
                 candidates_dict=candidates_dict,
-                candidates_limit=6,
+                candidates_limit=MyAPI.dataset_candidates_limit,
                 desc=filename)
 
             z = zipstream.ZipFile()

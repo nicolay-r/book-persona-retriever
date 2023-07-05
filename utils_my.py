@@ -18,6 +18,7 @@ class MyAPI:
     dataset_folding_parts = 5
     dataset_train_parts = range_exclude_middle(dataset_folding_parts)
     dataset_valid_parts = range_middle(dataset_folding_parts)
+    dataset_candidates_limit = 6
 
     __current_dir = dirname(realpath(__file__))
     books_storage = join(__current_dir, "./data/ceb_books_annot")
