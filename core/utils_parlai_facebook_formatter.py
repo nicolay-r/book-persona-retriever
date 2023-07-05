@@ -18,10 +18,12 @@ def format_episode(request, response, candidates, req_persona_traits=None, resp_
 
     # Traits
     if req_persona_traits is not None:
-        traits = ["your persona: I am {}".format(__handle_line(trait)) for trait in req_persona_traits]
+        traits = ["your persona: I am {}".format(__handle_line(trait))
+                  for trait in req_persona_traits if trait is not None]
         lines.extend(traits)
     if resp_persona_traits is not None:
-        traits = ["partner's persona: I am {}".format(__handle_line(trait)) for trait in resp_persona_traits]
+        traits = ["partner's persona: I am {}".format(__handle_line(trait))
+                  for trait in resp_persona_traits if trait is not None]
         lines.extend(traits)
 
     # Main episode content. (Query - Response)

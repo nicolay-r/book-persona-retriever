@@ -2,6 +2,8 @@ import json
 import os
 from os.path import dirname, realpath, join
 
+from tqdm import tqdm
+
 from core.paragraph import Paragraph
 
 
@@ -15,6 +17,8 @@ class CEBApi:
     books_storage = join(__current_dir, "./data/ceb_books")
     books_storage_en = join(__current_dir, books_storage, "./en")
     character_map = join(__current_dir, "./data/charembench/data/chr_map.json")
+    gender_meta_path = join(__current_dir, "./data/charembench/data/char_level/gender.json")
+    role_meta_path = join(__current_dir, "./data/charembench/data/char_level/role.json")
 
     def __init__(self, books_root=None, char_map_path=None):
         """ Init API with the particular root provided for books and character mapping.
@@ -25,6 +29,31 @@ class CEBApi:
         self.__character_map_path = CEBApi.character_map if char_map_path is None else char_map_path
         self.__book_by_char = None
         self.__chars = None
+
+    def get_meta_gender(self):
+        gender_by_id = {}
+        with open(self.gender_meta_path, "r") as f:
+            content = json.load(f)
+
+            for task in content["data"]:
+                speaker_id, is_male = task
+                gender_by_id[speaker_id] = "Male" if is_male else "Female"
+
+        return gender_by_id
+
+    def get_meta_role(self):
+        d = {}
+
+        with open(CEBApi.role_meta_path, "r") as f:
+            content = json.load(f)
+
+            # output filepath.
+            for task in tqdm(content["data"]):
+                speaker_id = task["char_id"]
+                answer = task["answer"]
+                d[speaker_id] = answer
+
+        return d
 
     def save_book(self, book_id, text):
         """ Note: Used for annotated texts

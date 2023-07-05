@@ -7,18 +7,18 @@ from tqdm import tqdm
 from utils_ceb import CEBApi
 from utils_pg19 import PG19Api
 
+# reading char_map
+ceb_api = CEBApi()
+ceb_api.read_char_map()
+
 quiz_paths = [
-    "./data/charembench/data/char_level/gender.json",
+    ceb_api.gender_meta_path
 ]
 
 output = "./data/charemberch-prepared"
 # Create target directory if the latter does not exist.
 if not exists(output):
     makedirs(output)
-
-# reading char_map
-ceb_api = CEBApi()
-ceb_api.read_char_map()
 
 # reading pg-19 metadata.
 pg19_api = PG19Api()
