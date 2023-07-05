@@ -15,6 +15,7 @@ class MyAPI:
 
     # Setup parameters for the dataset generation
     dataset_min_utterances_per_char = 50
+    dataset_max_utterances_per_char = 50
     dataset_folding_parts = 5
     dataset_train_parts = range_exclude_middle(dataset_folding_parts)
     dataset_valid_parts = range_middle(dataset_folding_parts)
