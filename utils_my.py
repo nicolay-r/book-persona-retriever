@@ -6,13 +6,21 @@ from os.path import join, dirname, realpath, isfile
 from tqdm import tqdm
 
 from core.book_dialog import BookDialogueService
+from utils import range_exclude_middle, range_middle
 
 
 class MyAPI:
     """ Dataset developed for this particular studies
     """
 
-    min_utterances_per_char = 50
+    # Setup parameters for the dataset generation
+    dataset_min_utterances_per_char = 100
+    dataset_max_utterances_per_char = 100
+    dataset_folding_parts = 10
+    dataset_train_parts = range_exclude_middle(dataset_folding_parts)
+    dataset_valid_parts = range_middle(dataset_folding_parts)
+    dataset_candidates_limit = 6
+
     __current_dir = dirname(realpath(__file__))
     books_storage = join(__current_dir, "./data/ceb_books_annot")
     prefixes_storage = join(__current_dir, "./data/ceb_books_annot/prefixes")
@@ -38,6 +46,8 @@ class MyAPI:
 
     # separator in line between meta information and the actual content
     meta_sep = ": "
+
+    unknown_speaker = "UNKN-"
 
     def __init__(self, books_root=None):
         self.__book_storage_root = MyAPI.books_storage_en if books_root is None else books_root
@@ -122,7 +132,7 @@ class MyAPI:
                     sep = " " if print_sep is False else " {} ".format(BookDialogueService.utterance_sep)
                     utterance = sep.join(segments)
                     speaker = recognized_speakers[speaker_id] \
-                        if speaker_id in recognized_speakers else "UNKN-{}".format(speaker_id)
+                        if speaker_id in recognized_speakers else MyAPI.unknown_speaker+str(speaker_id)
                     file.write("{speaker}: {utterance}\n".format(speaker=speaker, utterance=utterance))
 
                 file.write('\n')
@@ -194,16 +204,17 @@ class MyAPI:
             file.write("{}\n".format(buffer_line))
         file.write("\n")
 
-    def write_dataset(self):
+    def write_dataset(self, buffer_filter_func=None):
         """ Filter dialogs to the result dataset. Compose a Question->Response pair.
             Where response is always a known speaker, so whe know who we ask.
         """
+        assert(callable(buffer_filter_func) or buffer_filter_func is None)
 
         # Read speakers to be considered first.
         speakers_set = set(self.read_speakers())
 
-        pairs = 0
         buffer = []
+        counter = Counter()
         with open(self.dataset_filepath, "w") as file:
             for line in self.read_annotated_dialogs():
                 if line is None:
@@ -220,14 +231,19 @@ class MyAPI:
 
                 speaker_name = MyAPI._get_meta(line)
 
+                # We optionally filter buffers first.
+                if buffer_filter_func is not None:
+                    if not buffer_filter_func(speaker_name, buffer):
+                        continue
+
                 # We consider only such speakers that in predefined list.
                 # We know we have a response to the known speaker.
-                if "UNKN" not in speaker_name and speaker_name in speakers_set:
+                if MyAPI.unknown_speaker not in speaker_name and speaker_name in speakers_set:
                     # We release content from the buffer.
                     MyAPI.write_dataset_buffer(file=file, buffer=buffer)
-                    pairs += 1
+                    counter["pairs"] += 1
 
-        print("Pairs written: {}".format(pairs))
+        print("Pairs written: {}".format(counter["pairs"]))
         print("Dataset saved: {}".format(self.dataset_filepath))
 
     @staticmethod

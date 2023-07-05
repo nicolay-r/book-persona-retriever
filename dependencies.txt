@@ -6,3 +6,4 @@ pandas
 scikit-learn==1.2.2
 entence_transformers==2.2.2
 nltk
+zipstream==1.1.4
