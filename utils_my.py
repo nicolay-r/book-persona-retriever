@@ -15,6 +15,7 @@ class MyAPI:
 
     # Setup parameters for the dataset generation
     dataset_min_utterances_per_char = 50
+    dataset_max_utterances_per_char = 50
     dataset_folding_parts = 5
     dataset_train_parts = range_exclude_middle(dataset_folding_parts)
     dataset_valid_parts = range_middle(dataset_folding_parts)
@@ -203,16 +204,17 @@ class MyAPI:
             file.write("{}\n".format(buffer_line))
         file.write("\n")
 
-    def write_dataset(self):
+    def write_dataset(self, buffer_filter_func=None):
         """ Filter dialogs to the result dataset. Compose a Question->Response pair.
             Where response is always a known speaker, so whe know who we ask.
         """
+        assert(callable(buffer_filter_func) or buffer_filter_func is None)
 
         # Read speakers to be considered first.
         speakers_set = set(self.read_speakers())
 
-        pairs = 0
         buffer = []
+        counter = Counter()
         with open(self.dataset_filepath, "w") as file:
             for line in self.read_annotated_dialogs():
                 if line is None:
@@ -229,14 +231,19 @@ class MyAPI:
 
                 speaker_name = MyAPI._get_meta(line)
 
+                # We optionally filter buffers first.
+                if buffer_filter_func is not None:
+                    if not buffer_filter_func(speaker_name, buffer):
+                        continue
+
                 # We consider only such speakers that in predefined list.
                 # We know we have a response to the known speaker.
                 if MyAPI.unknown_speaker not in speaker_name and speaker_name in speakers_set:
                     # We release content from the buffer.
                     MyAPI.write_dataset_buffer(file=file, buffer=buffer)
-                    pairs += 1
+                    counter["pairs"] += 1
 
-        print("Pairs written: {}".format(pairs))
+        print("Pairs written: {}".format(counter["pairs"]))
         print("Dataset saved: {}".format(self.dataset_filepath))
 
     @staticmethod

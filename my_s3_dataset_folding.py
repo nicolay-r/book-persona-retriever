@@ -57,3 +57,9 @@ cat_files(source_filepaths=[MyAPI.dataset_fold_filepath.format(fold_index=str(i)
           target_filepath=MyAPI.dataset_fold_filepath.format(fold_index="train"))
 cat_files(source_filepaths=[MyAPI.dataset_fold_filepath.format(fold_index=str(i)) for i in MyAPI.dataset_valid_parts],
           target_filepath=MyAPI.dataset_fold_filepath.format(fold_index="valid"))
+
+print("---")
+for i in ["train", "valid"]:
+    c = MyAPI.check_speakers_count(dataset_filepath=MyAPI.dataset_fold_filepath.format(fold_index=i), pbar=False)
+    print(c)
+    print(sum(c.values()))
