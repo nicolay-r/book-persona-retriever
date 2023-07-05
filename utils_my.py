@@ -39,6 +39,8 @@ class MyAPI:
     # separator in line between meta information and the actual content
     meta_sep = ": "
 
+    unknown_speaker = "UNKN-"
+
     def __init__(self, books_root=None):
         self.__book_storage_root = MyAPI.books_storage_en if books_root is None else books_root
 
@@ -122,7 +124,7 @@ class MyAPI:
                     sep = " " if print_sep is False else " {} ".format(BookDialogueService.utterance_sep)
                     utterance = sep.join(segments)
                     speaker = recognized_speakers[speaker_id] \
-                        if speaker_id in recognized_speakers else "UNKN-{}".format(speaker_id)
+                        if speaker_id in recognized_speakers else MyAPI.unknown_speaker+str(speaker_id)
                     file.write("{speaker}: {utterance}\n".format(speaker=speaker, utterance=utterance))
 
                 file.write('\n')
@@ -222,7 +224,7 @@ class MyAPI:
 
                 # We consider only such speakers that in predefined list.
                 # We know we have a response to the known speaker.
-                if "UNKN" not in speaker_name and speaker_name in speakers_set:
+                if MyAPI.unknown_speaker not in speaker_name and speaker_name in speakers_set:
                     # We release content from the buffer.
                     MyAPI.write_dataset_buffer(file=file, buffer=buffer)
                     pairs += 1
