@@ -10,7 +10,16 @@ def cat_files(source_filepaths, target_filepath):
     assert(isinstance(source_filepaths, list))
 
     with open(target_filepath, 'w') as outfile:
-        for fname in source_filepaths:
-            with open(fname) as infile:
+        for filename in source_filepaths:
+            with open(filename) as infile:
                 for line in infile:
                     outfile.write(line)
+
+
+def range_middle(n):
+    return round(n/2)
+
+
+def range_exclude_middle(n):
+    middle = range_middle(n)
+    return [i for i in range(n) if i != middle]

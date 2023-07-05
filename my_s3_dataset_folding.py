@@ -41,20 +41,19 @@ def write_folded_dataset(k):
                     partners_count[s_name] += 1
 
 
-k = 5
-write_folded_dataset(k=k)
+write_folded_dataset(k=MyAPI.dataset_folding_parts)
 
 print("Original:")
 print(MyAPI.check_speakers_count(dataset_filepath=MyAPI.dataset_filepath, pbar=False))
 print("Folds:")
-for i in range(k):
+for i in range(MyAPI.dataset_folding_parts):
     c = MyAPI.check_speakers_count(dataset_filepath=MyAPI.dataset_fold_filepath.format(fold_index=i), pbar=False)
     print(c)
     print(sum(c.values()))
 
 # Merge foldings.
 # We select such indexes for better result balancing.
-cat_files(source_filepaths=[MyAPI.dataset_fold_filepath.format(fold_index=str(i)) for i in [0, 1, 3, 4]],
+cat_files(source_filepaths=[MyAPI.dataset_fold_filepath.format(fold_index=str(i)) for i in MyAPI.dataset_train_parts],
           target_filepath=MyAPI.dataset_fold_filepath.format(fold_index="train"))
-cat_files(source_filepaths=[MyAPI.dataset_fold_filepath.format(fold_index=str(i)) for i in [2]],
+cat_files(source_filepaths=[MyAPI.dataset_fold_filepath.format(fold_index=str(i)) for i in MyAPI.dataset_valid_parts],
           target_filepath=MyAPI.dataset_fold_filepath.format(fold_index="valid"))

@@ -6,13 +6,19 @@ from os.path import join, dirname, realpath, isfile
 from tqdm import tqdm
 
 from core.book_dialog import BookDialogueService
+from utils import range_exclude_middle, range_middle
 
 
 class MyAPI:
     """ Dataset developed for this particular studies
     """
 
-    min_utterances_per_char = 50
+    # Setup parameters for the dataset generation
+    dataset_min_utterances_per_char = 50
+    dataset_folding_parts = 5
+    dataset_train_parts = range_exclude_middle(dataset_folding_parts)
+    dataset_valid_parts = range_middle(dataset_folding_parts)
+
     __current_dir = dirname(realpath(__file__))
     books_storage = join(__current_dir, "./data/ceb_books_annot")
     prefixes_storage = join(__current_dir, "./data/ceb_books_annot/prefixes")

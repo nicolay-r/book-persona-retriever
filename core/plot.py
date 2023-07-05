@@ -31,8 +31,14 @@ def draw_bar_plot(c, x_name, y_name, val_to_x=lambda v: v,
     plt.show()
 
 
-def draw_hist_plot(c, desc, min_val=0, max_val=100, n_bins=None, show=True, save_png_path=None, asp_hor=8, asp_ver=2):
+def draw_hist_plot(c, desc, min_val=None, max_val=None, n_bins=None, show=True,
+                   save_png_path=None, asp_hor=8, asp_ver=2):
     assert(isinstance(c, Counter))
+
+    if min_val is None:
+        min_val = int(min(c.keys()))
+    if max_val is None:
+        max_val = int(max(c.keys()))
 
     val_width = max_val - min_val
     n_bins = abs(max_val - min_val) if n_bins is None else n_bins
