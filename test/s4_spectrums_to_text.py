@@ -4,6 +4,6 @@ from utils_fcp import FcpApi
 from utils_my import MyAPI
 
 
-X = list(NpzUtils.load(MyAPI.spectrum_features))
+X = list(NpzUtils.load(MyAPI.spectrum_features_norm))
 prompts = PROMPT_PRESETS["most_imported_limited_5"](X, FcpApi())
 print(prompts)

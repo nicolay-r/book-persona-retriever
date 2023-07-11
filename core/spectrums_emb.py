@@ -43,19 +43,19 @@ def filter_by_non_zero(X, y, z=None, threshold=None, paint_func=None, gt=True):
 
 FILTER_PRESETS = {
     "original-no-color": lambda X, y: filter_by_non_zero(
-        X=X, y=y, z=NpzUtils.load(MyAPI.spectrum_features), threshold=50, paint_func=None, gt=True),
+        X=X, y=y, z=NpzUtils.load(MyAPI.spectrum_features_norm), threshold=50, paint_func=None, gt=True),
     "all-no-color": lambda X, y: filter_by_non_zero(
-        X=X, y=y, z=NpzUtils.load(MyAPI.spectrum_features), threshold=None, paint_func=None, gt=True),
+        X=X, y=y, z=NpzUtils.load(MyAPI.spectrum_features_norm), threshold=None, paint_func=None, gt=True),
     "z-geq10-no-color": lambda X, y: filter_by_non_zero(
-        X=X, y=y, z=NpzUtils.load(MyAPI.spectrum_features), threshold=9, paint_func=None, gt=True),
+        X=X, y=y, z=NpzUtils.load(MyAPI.spectrum_features_norm), threshold=9, paint_func=None, gt=True),
     "z-geq5-no-color": lambda X, y: filter_by_non_zero(
-        X=X, y=y, z=NpzUtils.load(MyAPI.spectrum_features), threshold=4, paint_func=None, gt=True),
+        X=X, y=y, z=NpzUtils.load(MyAPI.spectrum_features_norm), threshold=4, paint_func=None, gt=True),
     "z-ge50-no-color": lambda X, y: filter_by_non_zero(
-        X=X, y=y, z=NpzUtils.load(MyAPI.spectrum_features), threshold=50, paint_func=None, gt=True),
+        X=X, y=y, z=NpzUtils.load(MyAPI.spectrum_features_norm), threshold=50, paint_func=None, gt=True),
     "z-le2-no-color": lambda X, y: filter_by_non_zero(
-        X=X, y=y, z=NpzUtils.load(MyAPI.spectrum_features), threshold=2, paint_func=None, gt=False),
+        X=X, y=y, z=NpzUtils.load(MyAPI.spectrum_features_norm), threshold=2, paint_func=None, gt=False),
     "z-le2-color": lambda X, y: filter_by_non_zero(
-        X=X, y=y, z=NpzUtils.load(MyAPI.spectrum_features), threshold=2, paint_func=lambda nzc: str(nzc) if nzc <= 2 else "others", gt=False)
+        X=X, y=y, z=NpzUtils.load(MyAPI.spectrum_features_norm), threshold=2, paint_func=lambda nzc: str(nzc) if nzc <= 2 else "others", gt=False)
 }
 
 

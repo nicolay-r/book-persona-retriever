@@ -4,7 +4,7 @@ from core.spectrums_emb import FILTER_PRESETS
 from core.utils_npz import NpzUtils
 from utils_my import MyAPI
 
-X = list(NpzUtils.load(MyAPI.spectrum_features))
+X = list(NpzUtils.load(MyAPI.spectrum_features_norm))
 y = list(NpzUtils.load(MyAPI.spectrum_speakers))
 
 X, y = FILTER_PRESETS["original-no-color"](X, y, None)

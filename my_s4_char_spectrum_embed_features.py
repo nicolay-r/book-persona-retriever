@@ -36,15 +36,21 @@ speaker_spectrums_dict = annot_spectrums_in_text(
     rev_spectrums=fcp_api.reversed_spectrums())
 
 # Saving.
-x, y = [], []
-d = annot_to_min_max_grouped(speaker_spectrums_dict,
-                             do_norm=True,
-                             as_vectors=True,
-                             spectrums_count=len(fcp_api._lexicon)+1)
+spectrums_count = len(fcp_api._lexicon)+1
+data = {
+    MyAPI.spectrum_features_norm: lambda speakers: annot_to_min_max_grouped(
+        speakers, do_norm=True, as_vectors=True, spectrums_count=spectrums_count),
+    MyAPI.spectrum_features_count: lambda speakers: annot_to_min_max_grouped(
+        speakers, do_norm=False, as_vectors=True, spectrums_count=spectrums_count),
+}
 
-for s_name, s_ctr in d.items():
-    x.append(s_ctr)
-    y.append(s_name)
+for x_path, f in data.items():
+    x, y = [], []
+    d = f(speaker_spectrums_dict)
 
-NpzUtils.save(data=x, target=MyAPI.spectrum_features)
-NpzUtils.save(data=y, target=MyAPI.spectrum_speakers)
+    for s_name, s_ctr in d.items():
+        x.append(s_ctr)
+        y.append(s_name)
+
+    NpzUtils.save(data=x, target=x_path)
+    NpzUtils.save(data=y, target=MyAPI.spectrum_speakers)

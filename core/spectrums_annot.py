@@ -38,14 +38,15 @@ def annot_spectrums_in_text(texts_and_speakervars_iter, rev_spectrums):
     return d
 
 
-def __to_vector(d, spectrums_count):
+def __to_vector(d, spectrums_count, v_to_int):
     """ NOTE: BAPS numerated from 1
     """
     assert(isinstance(spectrums_count, int))
+    assert(callable(v_to_int))
     vector = np.zeros(shape=spectrums_count)
     for spectrum_cat_name, value in d.items():
         ind = FcpApi.spectrum_to_ind(spectrum_cat_name)
-        vector[ind] = value
+        vector[ind] = v_to_int(value)
     return vector
 
 
@@ -72,6 +73,7 @@ def annot_to_min_max_grouped(annot, do_norm=True,
 
     if as_vectors:
         for s_name, val in d.items():
-            d[s_name] = __to_vector(val, spectrums_count=spectrums_count)
+            d[s_name] = __to_vector(val, spectrums_count=spectrums_count,
+                                    v_to_int=lambda v: v if do_norm else v[1]-v[0])
 
     return d

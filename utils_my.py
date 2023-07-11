@@ -40,7 +40,8 @@ class MyAPI:
     dataset_st_embedding_response = join(__current_dir, "./data/ceb_books_annot/x.dataset-response-sent-transformers.txt")
     books_storage_en = join(books_storage, "en")
     # spectrums-related data
-    spectrum_features = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings.npz")
+    spectrum_features_norm = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-norm.npz")
+    spectrum_features_count = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-count.npz")
     spectrum_speakers = join(__current_dir, "./data/ceb_books_annot/y.spectrum-speakers.npz")
     spectrum_default_preset = "prompt_most_imported_limited_{}".format(str(traits_per_character))
     spectrum_st_embeddings = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-sent-transformers-{preset}.npz")

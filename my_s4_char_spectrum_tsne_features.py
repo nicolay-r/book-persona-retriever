@@ -4,7 +4,7 @@ from core.plot import plot_tsne_series
 from core.utils_npz import NpzUtils
 from utils_my import MyAPI
 
-X = NpzUtils.load(MyAPI.spectrum_features)
+X = NpzUtils.load(MyAPI.spectrum_features_norm)
 y = NpzUtils.load(MyAPI.spectrum_speakers)
 y = [0 for s_name in y]
 

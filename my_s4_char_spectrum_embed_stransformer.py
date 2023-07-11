@@ -11,7 +11,7 @@ model_name = 'all-mpnet-base-v2'
 preset = MyAPI.spectrum_default_preset
 model = SentenceTransformer(model_name, cache_folder=CACHE_DIR)
 
-X = list(NpzUtils.load(MyAPI.spectrum_features))
+X = list(NpzUtils.load(MyAPI.spectrum_features_norm))
 prompts = PROMPT_PRESETS[preset](X, FcpApi())
 
 X_st = []
