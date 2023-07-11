@@ -49,7 +49,8 @@ def iter_dataset_lines(dataset_source, traits_func, candidates_dict, candidates_
         yield format_episode(request=dialog[0],
                              response=dialog[1],
                              candidates=candidates,
-                             resp_persona_traits=traits_func(speaker_ids[0], speaker_ids[1])).encode()
+                             resp_persona_traits=traits_func(speaker_ids[0], speaker_ids[1]),
+                             seed=MyAPI.candidates_shuffle_seed).encode()
         yield b"\n"
 
 

@@ -1,12 +1,19 @@
+import random
 from utils_my import MyAPI
 
 
-def format_episode(request, response, candidates, resp_persona_traits=None, resp_persona_prefix=""):
+def format_episode(request, response, candidates, resp_persona_traits=None, resp_persona_prefix="", seed=42):
     """ Serializer for the deprecated formatter proposed by Facebook.
     """
     assert(isinstance(request, str))
     assert(isinstance(response, str))
     assert(isinstance(candidates, list))
+    assert(isinstance(seed, int) or seed is None)
+
+    # Performing candidates shuffling
+    if seed is not None:
+        rand = random.Random(seed)
+        rand.shuffle(candidates)
 
     def __handle_line(l):
         return l.replace('\t', ' ')
