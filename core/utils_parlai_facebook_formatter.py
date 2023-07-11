@@ -1,7 +1,7 @@
 from utils_my import MyAPI
 
 
-def format_episode(request, response, candidates, req_persona_traits=None, resp_persona_traits=None):
+def format_episode(request, response, candidates, resp_persona_traits=None, resp_persona_prefix=""):
     """ Serializer for the deprecated formatter proposed by Facebook.
     """
     assert(isinstance(request, str))
@@ -16,13 +16,8 @@ def format_episode(request, response, candidates, req_persona_traits=None, resp_
 
     lines = []
 
-    # Traits
-    if req_persona_traits is not None:
-        traits = ["your persona: I am {}".format(__handle_line(trait))
-                  for trait in req_persona_traits if trait is not None]
-        lines.extend(traits)
     if resp_persona_traits is not None:
-        traits = ["partner's persona: I am {}".format(__handle_line(trait))
+        traits = ["{p}persona: I am {t}".format(p=resp_persona_prefix, t=__handle_line(trait))
                   for trait in resp_persona_traits if trait is not None]
         lines.extend(traits)
 

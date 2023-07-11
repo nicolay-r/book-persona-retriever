@@ -19,7 +19,8 @@ class MyAPI:
     dataset_folding_parts = 10
     dataset_train_parts = range_exclude_middle(dataset_folding_parts)
     dataset_valid_parts = range_middle(dataset_folding_parts)
-    dataset_candidates_limit = 6
+    dataset_candidates_limit = 20
+    traits_per_character = 8
 
     __current_dir = dirname(realpath(__file__))
     books_storage = join(__current_dir, "./data/ceb_books_annot")
@@ -38,11 +39,13 @@ class MyAPI:
     # spectrums-related data
     spectrum_features = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings.npz")
     spectrum_speakers = join(__current_dir, "./data/ceb_books_annot/y.spectrum-speakers.npz")
-    spectrum_default_preset = "prompt_most_imported_limited_5"
+    spectrum_default_preset = "prompt_most_imported_limited_{}".format(str(traits_per_character))
     spectrum_st_embeddings = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-sent-transformers-{preset}.npz")
     # intermediate file required for a quick embedding of traits into the
     # train/validation dataset for dialogue chatbot development.
-    spectrum_prompts_filepath = join(__current_dir, "./data/ceb_books_annot/spectrum_speaker_prompts.txt")
+    spectrum_prompts_filepath = join(__current_dir,
+                                     "./data/ceb_books_annot/spectrum_speaker_prompts-{preset}.txt".format(
+                                         preset=spectrum_default_preset))
 
     # separator in line between meta information and the actual content
     meta_sep = ": "

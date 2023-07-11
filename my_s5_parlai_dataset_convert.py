@@ -64,26 +64,17 @@ dataset_filepaths = {
 
 ceb_api = CEBApi()
 ceb_api.read_char_map()
-roles = ceb_api.get_meta_role()
-genders = ceb_api.get_meta_gender()
+# roles = ceb_api.get_meta_role()
+# genders = ceb_api.get_meta_gender()
 speaker_spectrums = my_api.read_speaker_spectrums()
 
 traits_provider = {
-    "original": lambda your_id, partner_id:
-        [
-            ceb_api.replace_characters_in_text(partner_id),
-            genders[partner_id] if partner_id in genders else None,
-            roles[partner_id] if partner_id in roles else None
-        ],
-    "spectrums": lambda your_id, partner_id:
-        # original
-        traits_provider["original"](your_id, partner_id) +
-        # + spectrums
-        speaker_spectrums[partner_id]
+    "original": lambda your_id, partner_id: ["none"] * MyAPI.traits_per_character,
+    "spectrums": lambda your_id, partner_id: speaker_spectrums[partner_id]
 }
 
 candidates_provider = {
-    "_no-cands": None,
+    #"_no-cands": None,
     "": create_candidates_dict(dataset_filepath=my_api.dataset_filepath, limit_per_book=1000),
 }
 
