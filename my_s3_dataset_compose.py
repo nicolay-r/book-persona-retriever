@@ -43,9 +43,15 @@ c = Counter()
 def __filter_buffer(speaker_id, buffer):
     assert(isinstance(speaker_id, str))
     assert(isinstance(buffer, list) and len(buffer) == 2)
+
     c[speaker_id] += 1
     if c[speaker_id] > MyAPI.dataset_max_utterances_per_char:
         return False
+
+    for utterance in buffer:
+        if len(utterance.split(' ')) < MyAPI.min_words_count_in_response:
+            return False
+
     return True
 
 

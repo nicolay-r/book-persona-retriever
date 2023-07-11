@@ -14,6 +14,7 @@ class MyAPI:
     """
 
     # Setup parameters for the dataset generation
+    min_words_count_in_response = 10
     response_persona_prefix = ""
     candidates_shuffle_seed = 42
     dataset_min_utterances_per_char = 100
@@ -142,9 +143,8 @@ class MyAPI:
 
                 file.write('\n')
 
-    def read_annotated_dialogs(self, filepath=None):
-        filepath = self.dialogs_filepath if filepath is None else filepath
-
+    @staticmethod
+    def _read_annotated_dialogs(filepath=None):
         with open(filepath, "r") as file:
             for line in tqdm(file.readlines(), desc="handle annotated utterances"):
                 if line == "\n":
@@ -221,7 +221,7 @@ class MyAPI:
         buffer = []
         counter = Counter()
         with open(self.dataset_filepath, "w") as file:
-            for line in self.read_annotated_dialogs():
+            for line in self._read_annotated_dialogs(self.dialogs_filepath):
                 if line is None:
                     continue
                 line = line.strip()
