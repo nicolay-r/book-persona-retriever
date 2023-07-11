@@ -16,7 +16,7 @@ class MyAPI:
     # Setup parameters for the dataset generation
     min_words_count_in_response = 10
     response_persona_prefix = ""
-    candidates_shuffle_seed = 42
+    candidates_and_traits_shuffle_seed = 42
     dataset_min_utterances_per_char = 100
     dataset_max_utterances_per_char = 100
     dataset_folding_parts = 10

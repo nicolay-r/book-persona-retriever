@@ -51,7 +51,7 @@ def iter_dataset_lines(dataset_source, traits_func, candidates_dict, candidates_
                              candidates=candidates,
                              resp_persona_traits=traits_func(speaker_ids[0], speaker_ids[1]),
                              resp_persona_prefix=MyAPI.response_persona_prefix,
-                             seed=MyAPI.candidates_shuffle_seed).encode()
+                             seed=MyAPI.candidates_and_traits_shuffle_seed).encode()
         yield b"\n"
 
 
