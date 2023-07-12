@@ -68,7 +68,7 @@ ceb_api = CEBApi()
 ceb_api.read_char_map()
 # roles = ceb_api.get_meta_role()
 # genders = ceb_api.get_meta_gender()
-speaker_spectrums = my_api.read_speaker_spectrums()
+speaker_spectrums = MyAPI.read_speaker_spectrums(MyAPI.spectrum_prompts_filepath)
 
 traits_provider = {
     "original": lambda your_id, partner_id: ["none"] * MyAPI.traits_per_character,

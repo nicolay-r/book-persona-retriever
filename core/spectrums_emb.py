@@ -1,3 +1,5 @@
+from functools import cmp_to_key
+
 import numpy as np
 
 from core.utils_npz import NpzUtils
@@ -84,26 +86,54 @@ def _convert_to_prompts(X, fcp_api):
     return prompts
 
 
-def _convert_to_prompts_limited_ordered(X, fcp_api, limit):
-    """ This algo counts only the distinctive WITHOUT THEIR FREQUENCIES.
-    """
-    assert(isinstance(X, list))
+def _convert_to_prompts_limited_ordered(X_norm, X_diff, fcp_api, limit):
+    assert(isinstance(X_norm, list))
+    assert(isinstance(X_diff, list))
+    assert(len(X_norm) == len(X_diff))
     assert(isinstance(fcp_api, FcpApi))
     assert(isinstance(limit, int))
+
+    def __compare(a_norm, a_diff, b_norm, b_diff):
+        if a_norm < b_norm:
+            return -1
+        elif a_norm > b_norm:
+            return 1
+        else:
+            if a_diff < b_diff:
+                return -1
+            elif a_diff > b_diff:
+                return 1
+            return 0
 
     # Setup API for using lexicon.
     lexicon = fcp_api.extract_as_lexicon()
 
     prompts = []
-    for x in X:
+    for i in range(len(X_norm)):
+
+        x_norm = X_norm[i]
+        x_diff = X_diff[i]
+
+        # We invalidate traits with the small absolute difference.
+        bound = list(sorted(x_diff, reverse=True))[limit]
+        for ii in range(len(x_norm)):
+            if abs(x_diff[ii]) < bound:
+                x_norm[ii] = 0
+
         prompt = []
 
-        ix = list(sorted(enumerate(np.absolute(x)), key=lambda item: item[1], reverse=True))[:limit]
+        ix = list(sorted(enumerate(np.absolute(x_norm)),
+                         key=cmp_to_key(lambda a, b: __compare(a[1], abs(x_diff[a[0]]),
+                                                               b[1], abs(x_diff[b[0]]))),
+                         reverse=True))[:limit]
         inds, _ = list(zip(*ix))
 
+        # print('---')
         for ind in inds[:limit]:
 
-            spec_val = x[ind]
+            # print(x_norm[ind], x_diff[ind])
+
+            spec_val = x_norm[ind]
 
             if spec_val == 0:
                 continue
@@ -122,7 +152,10 @@ def _convert_to_prompts_limited_ordered(X, fcp_api, limit):
 PROMPT_PRESETS = {
     # This is a first revision when we keep everything.
     "prompt_original": lambda X, fcp_api: _convert_to_prompts(X=X, fcp_api=fcp_api),
-    "prompt_most_imported_limited_10": lambda X, fcp_api: _convert_to_prompts_limited_ordered(X=X, fcp_api=fcp_api, limit=10),
-    "prompt_most_imported_limited_8": lambda X, fcp_api: _convert_to_prompts_limited_ordered(X=X, fcp_api=fcp_api, limit=8),
-    "prompt_most_imported_limited_5": lambda X, fcp_api: _convert_to_prompts_limited_ordered(X=X, fcp_api=fcp_api, limit=5)
+    "prompt_most_imported_limited_10": lambda X_norm, X_diff, fcp_api: _convert_to_prompts_limited_ordered(
+        X_norm=X_norm, X_diff=X_diff, fcp_api=fcp_api, limit=10),
+    "prompt_most_imported_limited_8": lambda X_norm, X_diff, fcp_api: _convert_to_prompts_limited_ordered(
+        X_norm=X_norm, X_diff=X_diff, fcp_api=fcp_api, limit=8),
+    "prompt_most_imported_limited_5": lambda X_norm, X_diff, fcp_api: _convert_to_prompts_limited_ordered(
+        X_norm=X_norm, X_diff=X_diff, fcp_api=fcp_api, limit=5)
 }

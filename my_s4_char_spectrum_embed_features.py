@@ -40,7 +40,7 @@ spectrums_count = len(fcp_api._lexicon)+1
 data = {
     MyAPI.spectrum_features_norm: lambda speakers: annot_to_min_max_grouped(
         speakers, do_norm=True, as_vectors=True, spectrums_count=spectrums_count),
-    MyAPI.spectrum_features_count: lambda speakers: annot_to_min_max_grouped(
+    MyAPI.spectrum_features_diff: lambda speakers: annot_to_min_max_grouped(
         speakers, do_norm=False, as_vectors=True, spectrums_count=spectrums_count),
 }
 

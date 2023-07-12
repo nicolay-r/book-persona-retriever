@@ -41,7 +41,7 @@ class MyAPI:
     books_storage_en = join(books_storage, "en")
     # spectrums-related data
     spectrum_features_norm = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-norm.npz")
-    spectrum_features_count = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-count.npz")
+    spectrum_features_diff = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-diff.npz")
     spectrum_speakers = join(__current_dir, "./data/ceb_books_annot/y.spectrum-speakers.npz")
     spectrum_default_preset = "prompt_most_imported_limited_{}".format(str(traits_per_character))
     spectrum_st_embeddings = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-sent-transformers-{preset}.npz")
@@ -308,14 +308,16 @@ class MyAPI:
 
         return partners_count
 
-    def save_speaker_spectrums(self, speaker_names, speaker_prompts):
-        with open(self.spectrum_prompts_filepath,  "w") as file:
+    @staticmethod
+    def save_speaker_spectrums(filepath, speaker_names, speaker_prompts):
+        with open(filepath,  "w") as file:
             for i, p in enumerate(speaker_prompts):
                 line = "".join([speaker_names[i], MyAPI.meta_sep, ",".join(p.split(' '))])
                 file.write(line + "\n")
 
-    def read_speaker_spectrums(self):
-        with open(self.spectrum_prompts_filepath, "r") as file:
+    @staticmethod
+    def read_speaker_spectrums(filepath):
+        with open(filepath, "r") as file:
             spectrums = {}
             for line in file.readlines():
                 speaker_name, args = line.split(MyAPI.meta_sep)

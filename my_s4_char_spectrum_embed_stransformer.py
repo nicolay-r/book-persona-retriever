@@ -11,8 +11,9 @@ model_name = 'all-mpnet-base-v2'
 preset = MyAPI.spectrum_default_preset
 model = SentenceTransformer(model_name, cache_folder=CACHE_DIR)
 
-X = list(NpzUtils.load(MyAPI.spectrum_features_norm))
-prompts = PROMPT_PRESETS[preset](X, FcpApi())
+X_norm = list(NpzUtils.load(MyAPI.spectrum_features_norm))
+X_diff = list(NpzUtils.load(MyAPI.spectrum_features_diff))
+prompts = PROMPT_PRESETS[preset](X_norm, X_diff, FcpApi())
 
 X_st = []
 for prompt in tqdm(prompts, desc="Calculate sentence embedding [{m}-{p}]".format(m=model_name, p=preset)):
