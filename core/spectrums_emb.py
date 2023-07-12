@@ -79,7 +79,7 @@ def _convert_to_prompts(X, fcp_api):
                 continue
 
             ind = fcp_api.ind_to_spectrum(i)
-            prompt.append(lexicon[ind]["low" if spec_val < 0 else "high"])
+            prompt.append(lexicon[ind][fcp_api.float_to_spectrum_key(spec_val)])
 
         prompts.append(" ".join(prompt))
 
@@ -139,7 +139,7 @@ def _convert_to_prompts_limited_ordered(X_norm, X_diff, fcp_api, limit):
                 continue
 
             ind = fcp_api.ind_to_spectrum(ind)
-            prompt.append(lexicon[ind]["low" if spec_val < 0 else "high"])
+            prompt.append(lexicon[ind][fcp_api.float_to_spectrum_key(spec_val)])
 
         prompts.append(" ".join(prompt))
 

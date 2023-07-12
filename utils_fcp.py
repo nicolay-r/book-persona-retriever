@@ -11,6 +11,9 @@ class FcpApi:
     __current_dir = dirname(realpath(__file__))
     personalities = join(__current_dir, "./data/fictional-character-personalities/personalities.txt")
 
+    lex_low = "low"
+    lex_high = "high"
+
     def __init__(self):
         self._lexicon = None
         self._reversed = None
@@ -29,7 +32,7 @@ class FcpApi:
             # seeking for existed.
             if spectrum not in lexicon:
                 r = row.to_dict()
-                lexicon[spectrum] = {"low": r["spectrum_low"], "high": r["spectrum_high"]}
+                lexicon[spectrum] = {FcpApi.lex_low: r["spectrum_low"], FcpApi.lex_high: r["spectrum_high"]}
             else:
                 continue
 
@@ -39,7 +42,7 @@ class FcpApi:
 
     def find_by_id(self, val_id):
         spectrum_values = self._lexicon[val_id]
-        return spectrum_values["low"], spectrum_values["high"]
+        return spectrum_values[self.lex_low], spectrum_values[self.lex_high]
 
     @staticmethod
     def spectrum_to_ind(val):
@@ -49,6 +52,11 @@ class FcpApi:
         assert(isinstance(val, str))
         assert("BAP" in val)
         return int(val[3:]) - 1
+
+    @staticmethod
+    def float_to_spectrum_key(spec_val):
+        assert(isinstance(spec_val, float))
+        return FcpApi.lex_low if spec_val < 0 else FcpApi.lex_high
 
     @staticmethod
     def ind_to_spectrum(ind):
@@ -63,8 +71,8 @@ class FcpApi:
         # Reversed spectrums.
         rev_spectrums = {}
         for s_type, value_d in self._lexicon.items():
-            l = value_d["low"]
-            h = value_d["high"]
+            l = value_d[FcpApi.lex_low]
+            h = value_d[FcpApi.lex_high]
             if l not in rev_spectrums:
                 rev_spectrums[l] = {"class": s_type, "type": "low"}
             if h not in rev_spectrums:
