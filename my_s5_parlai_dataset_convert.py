@@ -23,6 +23,7 @@ def iter_dataset_lines(dataset_source, traits_func, candidates_dict, candidates_
 
         if args is None:
             dialog.clear()
+            speaker_ids.clear()
             continue
 
         speaker_id = args[0]
@@ -33,6 +34,8 @@ def iter_dataset_lines(dataset_source, traits_func, candidates_dict, candidates_
             continue
 
         book_id = int(speaker_id.split('_')[0])
+
+        assert(len(dialog) == len(speaker_ids) == 2)
 
         candidates = [dialog[1]]
         if candidates_dict is not None:
