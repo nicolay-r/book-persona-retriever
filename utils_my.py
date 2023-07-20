@@ -50,6 +50,10 @@ class MyAPI:
     spectrum_prompts_filepath = join(__current_dir,
                                      "./data/ceb_books_annot/spectrum_speaker_prompts-{preset}.txt".format(
                                          preset=spectrum_default_preset))
+    # This a models for the representation of the speakers.
+    # ALOHA chatbot paper: https://arxiv.org/abs/1910.08293
+    users_embedding_factor = join(__current_dir, "./data/ceb_books_annot/x.speakers-factor.npz")
+    users_embedding_names = join(__current_dir, "./data/ceb_books_annot/y.speakers-speakers.npz")
 
     # separator in line between meta information and the actual content
     meta_sep = ": "

@@ -1,0 +1,2 @@
+implicit==0.7.0
+scipy==1.4.1
