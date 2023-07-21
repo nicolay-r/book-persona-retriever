@@ -14,17 +14,21 @@ png_path = join(MyAPI.books_storage, "factor_users")
 clusters_path = join(MyAPI.books_storage, "clusters.jsonl")
 
 # Visualize clustering.
-limit_chars = 1
-limit_pos = 20
+limit_chars = 0
+limit_pos = 40
+cur_color = 1
 if os.path.exists(clusters_path):
     with open(clusters_path, "r") as file_in:
         for i, line in enumerate(file_in.readlines()):
             d = json.loads(line)
-            pos = d["pos"]
-            for c_id, _, _ in pos[:limit_pos]:
-                category[c_id] = i + 1
-            print("color {}".format(i))
+            for c_id, _, _ in d["pos"][:limit_pos]:
+                category[c_id] = cur_color
+            cur_color += 1
+            for c_id in d["neg"][:limit_pos]:
+                category[c_id] = cur_color
+            cur_color += 1
             if i == limit_chars:
                 break
 
-plot_tsne_series(X=X, y=category, perplexies=perplexies, n_iter=5000, show=True, alpha=0.2)
+plot_tsne_series(X=X, y=category, perplexies=perplexies, n_iter=1000, show=True, alpha=0.1,
+                 palette={0: "gray", 1: "green", 2: "red"})
