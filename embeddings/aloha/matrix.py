@@ -24,7 +24,6 @@ class MatrixWrapper:
 
         # build coo for col1, 2
         self.coo, self.cat1, self.cat2 = self.to_coo(df)
-        print(self.coo.shape)
         logger.info(repr(self.coo))
         self.model = None
 
