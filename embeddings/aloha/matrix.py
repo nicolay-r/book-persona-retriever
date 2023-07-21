@@ -10,21 +10,21 @@ logger = logging.getLogger('example_logger')
 
 class MatrixWrapper:
 
-    @staticmethod
-    def to_coo(data, col1, col2, col3):
-        cat1 = data[col1].astype('category')
-        cat2 = data[col2].astype('category')
-        coo = coo_matrix((data[col3], (cat2.cat.codes.copy(), cat1.cat.codes.copy())))
-        return coo, cat1, cat2
+    def to_coo(self, data):
+        user_cat = data[self.col1].astype('category')
+        feature_cat = data[self.col2].astype('category')
+        coo = coo_matrix((data[self.col3], (user_cat.cat.codes.copy(), feature_cat.cat.codes.copy())))
+        return coo, user_cat, feature_cat
 
-    def __init__(self, df, col1, col2, col3):
+    def __init__(self, df, user_col, feature_col, value_col):
         assert len(df) > 0
-        self.col1 = col1
-        self.col2 = col2
-        self.col3 = col3
+        self.col1 = user_col
+        self.col2 = feature_col
+        self.col3 = value_col
 
         # build coo for col1, 2
-        self.coo, self.cat1, self.cat2 = self.to_coo(df, col1=col1, col2=col2, col3=col3)
+        self.coo, self.cat1, self.cat2 = self.to_coo(df)
+        print(self.coo.shape)
         logger.info(repr(self.coo))
         self.model = None
 
@@ -56,12 +56,12 @@ class MatrixWrapper:
             else:
                 assert len(test_df) > 0
                 train_csr = self.coo
-                test_csr, _, _ = self.to_coo(test_df, col1=self.col1, col2=self.col2, col3=self.col3)
+                test_csr, _, _ = self.to_coo(test_df)
             _model = implicit.als.AlternatingLeastSquares(factors=train_config.factor,
                                                           regularization=train_config.regularization,
                                                           iterations=train_config.iterations)
             _model.fit(train_csr * train_config.conf_scale)
-            prec = precision_at_k(_model, train_csr.T, test_csr.T, K=train_config.top_n)
+            prec = precision_at_k(_model, train_csr, test_csr, K=train_config.top_n)
             logger.warning('ACCURACY REPORT at top {}: {:.5f}'.format(train_config.top_n, prec))
             if train_config.safe_pass:
                 assert prec > train_config.safe_pass
