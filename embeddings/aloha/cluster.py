@@ -26,7 +26,7 @@ class CharCluster:
 
         # expand level 1 and further level 2
         counter = Counter()
-        logger.warning('Level 1 total {}'.format(len(level1)))
+        logger.info('Level 1 total {}'.format(len(level1)))
         for char1, _ in level1:
             for char2, _ in self.mw.get_similar_user(char1, top_n=l2):
                 if limits and (char2 not in limits):
@@ -35,8 +35,7 @@ class CharCluster:
 
         # build positive / negative character set
         _pos, _neg = [], set()
-        print(len(counter))
-        logger.warning('Level 2 total {}'.format(len(counter)))
+        logger.info('Level 2 total {}'.format(len(counter)))
         for char_id, freq in counter.most_common():
             score = 1
             if weighted:
