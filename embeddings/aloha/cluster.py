@@ -44,7 +44,7 @@ class CharCluster:
                 else:
                     score = freq
             if freq >= aco:
-                _pos.append((char_id, freq, score,))
+                _pos.append((char_id, freq, round(score, 3),))
             else:
                 _neg.add(char_id)
         return _pos, _neg
