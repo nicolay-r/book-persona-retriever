@@ -11,7 +11,7 @@ category = [0] * len(X)
 perplexies = [50]
 
 png_path = join(MyAPI.books_storage, "factor_users")
-clusters_path = join(MyAPI.books_storage, "clusters.jsonl")
+clusters_path = join(MyAPI.speaker_clusters_path)
 
 # Visualize clustering.
 limit_chars = 0

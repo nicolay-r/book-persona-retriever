@@ -14,6 +14,10 @@ class MyAPI:
     """ Dataset developed for this particular studies
     """
 
+    # Main parameters.
+    __current_dir = dirname(realpath(__file__))
+    books_storage = join(__current_dir, "./data/ceb_books_annot")
+
     # Setup parameters for the dataset generation
     min_words_count_in_response = 10
     response_persona_prefix = ""
@@ -30,9 +34,8 @@ class MyAPI:
     hla_training_config = MatrixTrainingConfig(top_n=100, regularization=100, iterations=500, factor=36,
                                                conf_scale=20, random_state=649128, safe_pass=0.2)
     hla_cluster_config = ClusterConfig(perc_cutoff=10, level2_limit=30, acceptable_overlap=10, weighted=False)
+    speaker_clusters_path = join(books_storage, "clusters.jsonl")
 
-    __current_dir = dirname(realpath(__file__))
-    books_storage = join(__current_dir, "./data/ceb_books_annot")
     prefixes_storage = join(__current_dir, "./data/ceb_books_annot/prefixes")
     # Dialogs with recognized speakers.
     dialogs_filepath = join(__current_dir, "./data/ceb_books_annot/dialogs.txt")
