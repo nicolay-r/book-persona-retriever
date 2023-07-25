@@ -1,16 +1,17 @@
-import random
-
 import zipstream
 
-from core.utils_parlai_facebook_formatter import create_candidates_dict, format_episode
+from core.candidates.base import CandidatesProvider
+from core.candidates.clustering import ALOHANegBasedClusteringProvider
+from core.candidates.default import SameBookRandomCandidatesProvider
+from core.utils_parlai_facebook_formatter import format_episode
 from utils_ceb import CEBApi
 from utils_my import MyAPI
 
 
-def iter_dataset_lines(dataset_source, traits_func, candidates_dict, candidates_limit, desc=None):
+def iter_dataset_lines(dataset_source, traits_func, candidates_provider, candidates_limit, desc=None):
     assert(isinstance(dataset_source, str))
     assert(callable(traits_func))
-    assert(isinstance(candidates_dict, dict) or candidates_dict is None)
+    assert(isinstance(candidates_provider, CandidatesProvider) or candidates_provider is None)
     assert(isinstance(candidates_limit, int))
 
     dialog = []
@@ -33,21 +34,13 @@ def iter_dataset_lines(dataset_source, traits_func, candidates_dict, candidates_
         if len(dialog) < 2:
             continue
 
-        book_id = int(speaker_id.split('_')[0])
-
         assert(len(dialog) == len(speaker_ids) == 2)
 
-        candidates = [dialog[1]]
-        if candidates_dict is not None:
-            # pick a copy of the candidates.
-            related = list(iter(candidates_dict[book_id]))
-            # remove already labeled candidate.
-            if candidates[0] in related:
-                related.remove(candidates[0])
-            # shuffle candidates.
-            random.shuffle(related)
-            # select the top of the shuffled.
-            candidates.extend(related[:candidates_limit])
+        label = dialog[1]
+        if candidates_provider is not None:
+            candidates = candidates_provider.provide(speaker_id=speaker_id, label=label)
+        else:
+            candidates = [label]
 
         yield format_episode(request=dialog[0],
                              response=dialog[1],
@@ -82,7 +75,13 @@ traits_provider = {
 
 candidates_provider = {
     #"_no-cands": None,
-    "": create_candidates_dict(dataset_filepath=my_api.dataset_filepath, limit_per_book=1000),
+    "": SameBookRandomCandidatesProvider(candidates_per_book=1000,
+                                         candidates_limit=MyAPI.dataset_candidates_limit,
+                                         dataset_filepath=MyAPI.dataset_filepath),
+    # "clustered": ALOHANegBasedClusteringProvider(limit_per_char=100,
+    #                                              candidates_limit=MyAPI.dataset_candidates_limit,
+    #                                              dataset_filepath=MyAPI.dataset_filepath,
+    #                                              cluster_filepath=MyAPI.hla_cluster_config)
 }
 
 for data_fold_type, data_fold_source in dataset_filepaths.items():
@@ -93,7 +92,7 @@ for data_fold_type, data_fold_source in dataset_filepaths.items():
             data_it = iter_dataset_lines(
                 dataset_source=data_fold_source,
                 traits_func=traits_func,
-                candidates_dict=candidates_dict,
+                candidates_provider=candidates_dict,
                 candidates_limit=MyAPI.dataset_candidates_limit,
                 desc=filename)
 
