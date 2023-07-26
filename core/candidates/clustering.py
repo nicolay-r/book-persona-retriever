@@ -54,7 +54,11 @@ class ALOHANegBasedClusteringProvider(CandidatesProvider):
             sumxy += x * y
         return sumxy / math.sqrt(sumxx * sumyy)
 
-    def provide(self, speaker_id, label):
+    def provide_or_none(self, speaker_id, label):
+
+        # In some cases we may end up with the missed speaker.
+        if speaker_id not in self.__neg_clusters_per_speaker:
+            return None
 
         # Compose a SQL-request to obtain vectors and utterances.
         neg_speakers = self.__neg_clusters_per_speaker[speaker_id][self.__neg_speakers_limit]

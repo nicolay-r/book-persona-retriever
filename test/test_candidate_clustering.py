@@ -8,5 +8,5 @@ provider = ALOHANegBasedClusteringProvider(
     cluster_filepath=MyAPI.speaker_clusters_path,
     vectorized_utterances_filepath=MyAPI.dataset_responses_data_path)
 
-r = provider.provide(speaker_id="55122_0", label="Don't want to talk")
+r = provider.provide_or_none(speaker_id="55122_0", label="Don't want to talk")
 print(r)

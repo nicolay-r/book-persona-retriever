@@ -38,9 +38,12 @@ def iter_dataset_lines(dataset_source, traits_func, candidates_provider, candida
 
         label = dialog[1]
         if candidates_provider is not None:
-            candidates = candidates_provider.provide(speaker_id=speaker_id, label=label)
+            candidates = candidates_provider.provide_or_none(speaker_id=speaker_id, label=label)
         else:
             candidates = [label]
+
+        if candidates is None:
+            continue
 
         yield format_episode(request=dialog[0],
                              response=dialog[1],

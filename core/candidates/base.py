@@ -1,4 +1,4 @@
 class CandidatesProvider(object):
 
-    def provide(self, speaker_id, label):
+    def provide_or_none(self, speaker_id, label):
         pass
