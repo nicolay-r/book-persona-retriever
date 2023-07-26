@@ -52,12 +52,8 @@ class SentenceTransformerBasedHandler(object):
 my_api = MyAPI()
 s_trans_handler = SentenceTransformerBasedHandler(
     storage_filepath=MyAPI.dataset_responses_data_path)
-it = my_api.read_dataset(my_api.dataset_filepath, keep_usep=True,
+it = my_api.read_dataset(my_api.dataset_filepath, keep_usep=False,
                          split_meta=True, desc=None, pbar=True)
 
 with s_trans_handler:
     handle_responses(handle_func=s_trans_handler.handler, it=it)
-
-# s_trans_handler.dt.connect(MyAPI.dataset_responses_data_path)
-# for t in s_trans_handler.dt.select_from_table():
-#     print(t)
