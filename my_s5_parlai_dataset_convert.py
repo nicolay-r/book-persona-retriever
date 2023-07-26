@@ -78,10 +78,12 @@ candidates_provider = {
     "": SameBookRandomCandidatesProvider(candidates_per_book=1000,
                                          candidates_limit=MyAPI.dataset_candidates_limit,
                                          dataset_filepath=MyAPI.dataset_filepath),
-    # "clustered": ALOHANegBasedClusteringProvider(limit_per_char=100,
-    #                                              candidates_limit=MyAPI.dataset_candidates_limit,
-    #                                              dataset_filepath=MyAPI.dataset_filepath,
-    #                                              cluster_filepath=MyAPI.hla_cluster_config)
+    "clustered": ALOHANegBasedClusteringProvider(
+        candidates_limit=MyAPI.dataset_candidates_limit,
+        neg_speakers_limit=MyAPI.neg_set_speakers_limit,
+        dataset_filepath=MyAPI.dataset_filepath,
+        cluster_filepath=MyAPI.speaker_clusters_path,
+        vectorized_utterances_filepath=MyAPI.dataset_responses_data_path)
 }
 
 for data_fold_type, data_fold_source in dataset_filepaths.items():

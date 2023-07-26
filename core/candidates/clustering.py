@@ -18,13 +18,14 @@ class ALOHANegBasedClusteringProvider(CandidatesProvider):
     """
 
     def __init__(self, dataset_filepath, cluster_filepath, vectorized_utterances_filepath,
-                 embedding_model_name='all-mpnet-base-v2', candidates_limit=20, closest_candidates_limit=100):
+                 embedding_model_name='all-mpnet-base-v2', neg_speakers_limit=20, candidates_limit=20):
         assert(isinstance(dataset_filepath, str))
         assert(isinstance(cluster_filepath, str))
         assert(isinstance(vectorized_utterances_filepath, str))
 
         self.__candidates_limit = candidates_limit
-        self.__closest_candidates_limit = closest_candidates_limit
+        self.__neg_speakers_limit = neg_speakers_limit
+
         self.__neg_clusters_per_speaker = self.__read_cluster(cluster_filepath)
         self.__model = SentenceTransformer(embedding_model_name, cache_folder=CACHE_DIR)
 
@@ -56,7 +57,7 @@ class ALOHANegBasedClusteringProvider(CandidatesProvider):
     def provide(self, speaker_id, label):
 
         # Compose a SQL-request to obtain vectors and utterances.
-        neg_speakers = self.__neg_clusters_per_speaker[speaker_id]
+        neg_speakers = self.__neg_clusters_per_speaker[speaker_id][self.__neg_speakers_limit]
 
         # Compose WHERE clause that filters the relevant speakers.
         where_clause = 'speakerid in ({})'.format(",".join(['"{}"'.format(s) for s in neg_speakers]))
@@ -72,8 +73,7 @@ class ALOHANegBasedClusteringProvider(CandidatesProvider):
         vvv = [(i, self.cosine_similarity(label_vector, v)) for i, v in enumerate(vectors)]
         most_similar_first = sorted(vvv, key=lambda item: item[1], reverse=True)
 
-        ordered_neg_candidates = [neg_candidates[i] for i, _ in most_similar_first]
-        selected = ordered_neg_candidates[:self.__closest_candidates_limit]
+        selected = [neg_candidates[i] for i, _ in most_similar_first]
 
         if label in selected:
             selected.remove(label)
