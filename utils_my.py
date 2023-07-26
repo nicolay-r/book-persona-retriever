@@ -35,6 +35,8 @@ class MyAPI:
                                                conf_scale=20, random_state=649128, safe_pass=0.2)
     hla_cluster_config = ClusterConfig(perc_cutoff=10, level2_limit=30, acceptable_overlap=10, weighted=False)
     speaker_clusters_path = join(books_storage, "clusters.jsonl")
+    dataset_responses_data_path = join(__current_dir, "./data/ceb_books_annot/y.dataset_responses_data.jsonl")
+    dataset_responses_embeddings_path = join(__current_dir, "./data/ceb_books_annot/y.dataset_responses_embeddings.npz")
 
     prefixes_storage = join(__current_dir, "./data/ceb_books_annot/prefixes")
     # Dialogs with recognized speakers.
@@ -263,14 +265,21 @@ class MyAPI:
         print("Dataset saved: {}".format(self.dataset_filepath))
 
     @staticmethod
-    def read_dataset(dataset_filepath, keep_usep=True, split_meta=False, desc=None, pbar=True):
+    def read_dataset(dataset_filepath, keep_usep=True, split_meta=False, desc=None, pbar=True, limit=None):
         """ split_meta: bool
                 whether we want to split in parts that before ":"
         """
         assert(isinstance(dataset_filepath, str))
 
+        c = Counter()
+        c["lines_total"] = 0
+
         with open(dataset_filepath, "r") as file:
             for line in tqdm(file.readlines(), desc=desc, disable=not pbar):
+
+                c["lines_total"] += 1
+                if limit is not None and c["lines_total"] > limit:
+                    break
 
                 if not keep_usep:
                     # Remove this.
