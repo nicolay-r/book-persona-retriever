@@ -38,7 +38,6 @@ class SentenceTransformerBasedHandler(object):
     def __enter__(self):
         self.dt.connect(self.storage_filepath)
         self.dt.create_table(
-            "contents",
             column_with_types=[
                 ("speakerid", "text"),
                 ("utterance", "text"),

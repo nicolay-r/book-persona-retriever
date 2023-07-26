@@ -19,8 +19,8 @@ class NpArraySupportDatabaseTable(object):
         sqlite3.register_adapter(np.ndarray, self.adapt_array)
         # Converts TEXT to np.array when selecting
         sqlite3.register_converter(self.ARRAY_TYPE, self.convert_array)
+        self.table_name = "contents"
         self.con = None
-        self.table_name = None
         self.table_columns = None
         self.c = Counter()
         self.cur_insert = None
@@ -43,14 +43,12 @@ class NpArraySupportDatabaseTable(object):
         out.seek(0)
         return np.load(out)
 
-    def create_table(self, table_name, column_with_types, drop_if_exists=False):
-        assert(isinstance(table_name, str))
+    def create_table(self, column_with_types, drop_if_exists=False):
         assert(isinstance(column_with_types, list))
 
         params = ", ".join(["{} {}".format(c, t) for c, t in column_with_types])
         self.table_columns = [c for c, _ in column_with_types]
         cur = self.con.cursor()
-        self.table_name = table_name
         if drop_if_exists:
             cur.execute("drop table if exists {} ".format(self.table_name))
         cur.execute("create table {} ({})".format(self.table_name, params))
@@ -78,9 +76,13 @@ class NpArraySupportDatabaseTable(object):
             self.con.commit()
             self.c["rows_inserted"] = 0
 
-    def select_from_table(self):
+    def select_from_table(self, filter="*", where=None):
         cur = self.con.cursor()
-        return cur.execute("select * from {}".format(self.table_name))
+        return cur.execute("select {f} from {t}{w}".format(
+            f=filter,
+            t=self.table_name,
+            # optional where.
+            w=" WHERE {}".format(where) if where is not None else ""))
 
     def force_commit(self):
         self.con.commit()

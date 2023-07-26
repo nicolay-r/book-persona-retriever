@@ -3,9 +3,10 @@ from utils_my import MyAPI
 
 
 provider = ALOHANegBasedClusteringProvider(
-    limit_per_char=100,
     candidates_limit=MyAPI.dataset_candidates_limit,
     dataset_filepath=MyAPI.dataset_filepath,
-    cluster_filepath=MyAPI.speaker_clusters_path)
+    cluster_filepath=MyAPI.speaker_clusters_path,
+    vectorized_utterances_filepath=MyAPI.dataset_responses_data_path)
 
 r = provider.provide(speaker_id="55122_0", label="Don't want to talk")
+print(r)

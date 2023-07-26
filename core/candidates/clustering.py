@@ -1,9 +1,7 @@
 import json
 import math
 
-from tqdm import tqdm
-
-from utils_my import MyAPI
+from core.database.sqlite3_api import NpArraySupportDatabaseTable
 from utils import CACHE_DIR
 
 from sentence_transformers import SentenceTransformer
@@ -19,20 +17,19 @@ class ALOHANegBasedClusteringProvider(CandidatesProvider):
             https://arxiv.org/pdf/1910.08293.pdf
     """
 
-    def __init__(self, dataset_filepath, cluster_filepath, limit_per_char,
-                 utterances_filepath, vectors_filepath, candidates_limit,
-                 closest_candidates_limit=100):
+    def __init__(self, dataset_filepath, cluster_filepath, vectorized_utterances_filepath,
+                 embedding_model_name='all-mpnet-base-v2', candidates_limit=20, closest_candidates_limit=100):
         assert(isinstance(dataset_filepath, str))
         assert(isinstance(cluster_filepath, str))
-        assert(isinstance(utterances_filepath, str))
-        assert(isinstance(vectors_filepath, str))
+        assert(isinstance(vectorized_utterances_filepath, str))
+
         self.__candidates_limit = candidates_limit
         self.__closest_candidates_limit = closest_candidates_limit
         self.__neg_clusters_per_speaker = self.__read_cluster(cluster_filepath)
-        self.__candidates_per_speaker = self.__create_dict(
-            dataset_filepath=dataset_filepath, limit_per_char=limit_per_char)
+        self.__model = SentenceTransformer(embedding_model_name, cache_folder=CACHE_DIR)
 
-        self.__model = SentenceTransformer('all-mpnet-base-v2', cache_folder=CACHE_DIR)
+        self.__vp = NpArraySupportDatabaseTable()
+        self.__vp.connect(vectorized_utterances_filepath)
 
     @staticmethod
     def __read_cluster(cluster_filepath):
@@ -44,39 +41,6 @@ class ALOHANegBasedClusteringProvider(CandidatesProvider):
                 ids = data["neg"]
                 neg_speakers[speaker_id] = ids
         return neg_speakers
-
-    @staticmethod
-    def __create_dict(dataset_filepath=None, limit_per_char=100):
-        assert (isinstance(limit_per_char, int) and limit_per_char > 0)
-
-        lines = []
-
-        candidates = {}
-        for args in MyAPI.read_dataset(keep_usep=False, split_meta=True, dataset_filepath=dataset_filepath):
-            if args is None:
-                lines.clear()
-                continue
-
-            lines.append(args)
-
-            if len(lines) < 2:
-                continue
-
-            # Here is type of data we interested in.
-            speaker = args[0]
-
-            if speaker not in candidates:
-                candidates[speaker] = []
-            target = candidates[speaker]
-
-            if len(target) == limit_per_char:
-                # Do not register the candidate.
-                continue
-
-            # Consider the potential candidate.
-            target.append(args[1])
-
-        return candidates
 
     @staticmethod
     def cosine_similarity(v1, v2):
@@ -91,15 +55,18 @@ class ALOHANegBasedClusteringProvider(CandidatesProvider):
 
     def provide(self, speaker_id, label):
 
-        # Compose list of the NON-relevant candidates.
-        neg_candidates = []
-        for s_id in self.__neg_clusters_per_speaker[speaker_id]:
-            neg_candidates.extend(self.__candidates_per_speaker[s_id])
+        # Compose a SQL-request to obtain vectors and utterances.
+        neg_speakers = self.__neg_clusters_per_speaker[speaker_id]
 
-        # Calculate embedding vectors.
+        # Compose WHERE clause that filters the relevant speakers.
+        where_clause = 'speakerid in ({})'.format(",".join(['"{}"'.format(s) for s in neg_speakers]))
+        data_it = self.__vp.select_from_table(where=where_clause)
+
         vectors = []
-        for c in neg_candidates:
-            vectors.append(self.__model.encode(c))
+        neg_candidates = []
+        for speaker_id, utterance, vector in data_it:
+            vectors.append(vector)
+            neg_candidates.append(utterance)
 
         label_vector = self.__model.encode(label)
         vvv = [(i, self.cosine_similarity(label_vector, v)) for i, v in enumerate(vectors)]
