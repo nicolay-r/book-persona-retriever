@@ -35,8 +35,7 @@ class MyAPI:
                                                conf_scale=20, random_state=649128, safe_pass=0.2)
     hla_cluster_config = ClusterConfig(perc_cutoff=10, level2_limit=30, acceptable_overlap=10, weighted=False)
     speaker_clusters_path = join(books_storage, "clusters.jsonl")
-    dataset_responses_data_path = join(__current_dir, "./data/ceb_books_annot/y.dataset_responses_data.jsonl")
-    dataset_responses_embeddings_path = join(__current_dir, "./data/ceb_books_annot/y.dataset_responses_embeddings.npz")
+    dataset_responses_data_path = join(__current_dir, "./data/ceb_books_annot/dataset_responses_data.sqlite")
 
     prefixes_storage = join(__current_dir, "./data/ceb_books_annot/prefixes")
     # Dialogs with recognized speakers.

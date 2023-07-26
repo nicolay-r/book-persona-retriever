@@ -1,8 +1,6 @@
-import json
-
 from sentence_transformers import SentenceTransformer
 
-from core.utils_npz import NpzUtils
+from core.database.sqlite3_api import NpArraySupportDatabaseTable
 from utils import CACHE_DIR
 from utils_my import MyAPI
 
@@ -29,32 +27,38 @@ def handle_responses(it, handle_func):
 
 class SentenceTransformerBasedHandler(object):
 
-    def __init__(self, model_name='all-mpnet-base-v2', y_filepath=None):
+    def __init__(self, model_name='all-mpnet-base-v2', storage_filepath=None):
         self.model = SentenceTransformer(model_name, cache_folder=CACHE_DIR)
-        self.y_filepath = y_filepath
-        self.y_file = None
-        self.X = []
+        self.storage_filepath = storage_filepath
+        self.dt = NpArraySupportDatabaseTable(commit_after=10)
 
     def handler(self, speaker_id, utterance):
-        self.X.append(self.model.encode(utterance))
-        d = {"speaker_id": speaker_id, "utterance": utterance}
-        self.y_file.write("{}\n".format(json.dumps(d)))
+        self.dt.insert_table((speaker_id, utterance, self.model.encode(utterance)))
 
     def __enter__(self):
-        self.y_file = open(self.y_filepath, "w")
+        self.dt.connect(self.storage_filepath)
+        self.dt.create_table(
+            "contents",
+            column_with_types=[
+                ("speakerid", "text"),
+                ("utterance", "text"),
+                ("vector", NpArraySupportDatabaseTable.ARRAY_TYPE)
+            ],
+            drop_if_exists=True)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.y_file.close()
+        self.dt.close()
 
 
 my_api = MyAPI()
 s_trans_handler = SentenceTransformerBasedHandler(
-    y_filepath=MyAPI.dataset_responses_data_path)
+    storage_filepath=MyAPI.dataset_responses_data_path)
 it = my_api.read_dataset(my_api.dataset_filepath, keep_usep=True,
-                         split_meta=True, desc=None, pbar=True, limit=1000)
+                         split_meta=True, desc=None, pbar=True)
 
 with s_trans_handler:
     handle_responses(handle_func=s_trans_handler.handler, it=it)
 
-NpzUtils.save(data=s_trans_handler.X,
-              target=MyAPI.dataset_responses_embeddings_path)
+# s_trans_handler.dt.connect(MyAPI.dataset_responses_data_path)
+# for t in s_trans_handler.dt.select_from_table():
+#     print(t)

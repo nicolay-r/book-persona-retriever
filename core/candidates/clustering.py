@@ -20,9 +20,12 @@ class ALOHANegBasedClusteringProvider(CandidatesProvider):
     """
 
     def __init__(self, dataset_filepath, cluster_filepath, limit_per_char,
-                 candidates_limit, closest_candidates_limit=100):
+                 utterances_filepath, vectors_filepath, candidates_limit,
+                 closest_candidates_limit=100):
         assert(isinstance(dataset_filepath, str))
         assert(isinstance(cluster_filepath, str))
+        assert(isinstance(utterances_filepath, str))
+        assert(isinstance(vectors_filepath, str))
         self.__candidates_limit = candidates_limit
         self.__closest_candidates_limit = closest_candidates_limit
         self.__neg_clusters_per_speaker = self.__read_cluster(cluster_filepath)
@@ -90,7 +93,7 @@ class ALOHANegBasedClusteringProvider(CandidatesProvider):
 
         # Compose list of the NON-relevant candidates.
         neg_candidates = []
-        for s_id in self.__neg_clusters_per_speaker[speaker_id][:10]:
+        for s_id in self.__neg_clusters_per_speaker[speaker_id]:
             neg_candidates.extend(self.__candidates_per_speaker[s_id])
 
         # Calculate embedding vectors.
