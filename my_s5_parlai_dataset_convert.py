@@ -74,22 +74,25 @@ candidates_provider = {
         candidates_per_book=1000,
         candidates_limit=MyAPI.dataset_candidates_limit),
 
-    "clustered": ALOHANegBasedClusteringProvider(
+    CANDIDATES_HLA_CLUSTER: ALOHANegBasedClusteringProvider(
         candidates_limit=MyAPI.dataset_candidates_limit,
         neg_speakers_limit=MyAPI.neg_set_speakers_limit,
         dataset_filepath=MyAPI.dataset_filepath,
         cluster_filepath=MyAPI.speaker_clusters_path,
-        sqlite_dialog_db=MyAPI.dataset_dialog_db_path)
+        sqlite_dialog_db=MyAPI.dataset_dialog_db_fold_path.format("train"))
 }
 
 for data_fold_type, data_fold_source in dataset_filepaths.items():
     for trait_type, traits_func in traits_provider.items():
         for candidates_type, candidates_dict in candidates_provider.items():
 
-            # This type does not makes sense, so we skip such formatting.
             if trait_type == TRAITS_NO and candidates_type == CANDIDATES_HLA_CLUSTER:
+                # This type does not makes sense, so we skip such formatting.
                 continue
             if trait_type == TRAITS_SPECTRUM and candidates_type == CANDIDATES_UTTERANCE_ONLY:
+                continue
+            if candidates_type == CANDIDATES_HLA_CLUSTER and data_fold_type != "train":
+                # We consider HLA clustering and candidates selection only for training.
                 continue
 
             filename = '{}.txt'.format("_".join([data_fold_type, trait_type, candidates_type]))
