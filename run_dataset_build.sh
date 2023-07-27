@@ -6,4 +6,5 @@ python my_s5_char_save_spectrum_prompts.py
 # python my_s5_parlai_dataset_0_stat.py
 # python my_s5_parlai_dataset_1_stat.py
 python my_s5_parlai_dataset_build_candidates.py
+python my_s5_parlai_datast_3_datasets_to_sqlite.py
 python my_s5_parlai_dataset_convert.py
