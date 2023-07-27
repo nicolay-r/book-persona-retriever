@@ -13,14 +13,15 @@ def iter_formatted_dialog(dialogs_iter, traits_func, candidates_provider, candid
     assert(isinstance(candidates_provider, CandidatesProvider) or candidates_provider is None)
     assert(isinstance(candidates_limit, int))
 
-    for dialog in dialogs_iter:
+    for dialog_id, dialog in enumerate(dialogs_iter):
         assert(len(dialog) == 2)
 
         q_speaker_id, query = dialog[0]
         r_speaker_id, label = dialog[1]
 
         if candidates_provider is not None:
-            candidates = candidates_provider.provide_or_none(speaker_id=r_speaker_id, label=label)
+            candidates = candidates_provider.provide_or_none(
+                dialog_id=dialog_id, speaker_id=r_speaker_id, label=label)
         else:
             candidates = [label]
 
@@ -66,20 +67,19 @@ candidates_provider = {
 
     #"_no-cands": None,
 
-    # CANDIDATES_UTTERANCE_ONLY: SameBookRandomCandidatesProvider(
-    #     iter_dialogs=MyAPI.iter_dataset_as_dialogs(
-    #         MyAPI.read_dataset(keep_usep=False, split_meta=True, dataset_filepath=MyAPI.dataset_filepath)
-    #     ),
-    #     candidates_per_book=1000,
-    #     candidates_limit=MyAPI.dataset_candidates_limit),
+    CANDIDATES_UTTERANCE_ONLY: SameBookRandomCandidatesProvider(
+        iter_dialogs=MyAPI.iter_dataset_as_dialogs(
+            MyAPI.read_dataset(keep_usep=False, split_meta=True, dataset_filepath=MyAPI.dataset_filepath)
+        ),
+        candidates_per_book=1000,
+        candidates_limit=MyAPI.dataset_candidates_limit),
 
     "clustered": ALOHANegBasedClusteringProvider(
         candidates_limit=MyAPI.dataset_candidates_limit,
         neg_speakers_limit=MyAPI.neg_set_speakers_limit,
-        embedding_model_name=MyAPI.utterance_embedding_model_name,
         dataset_filepath=MyAPI.dataset_filepath,
         cluster_filepath=MyAPI.speaker_clusters_path,
-        vectorized_utterances_filepath=MyAPI.dataset_responses_data_path)
+        sqlite_dialog_db=MyAPI.dataset_dialog_db_path)
 }
 
 for data_fold_type, data_fold_source in dataset_filepaths.items():

@@ -77,13 +77,16 @@ class NpArraySupportDatabaseTable(object):
             self.con.commit()
             self.c["rows_inserted"] = 0
 
-    def select_from_table(self, columns="*", where=None):
+    def select_from_table(self, columns=None, where=None):
+        assert(isinstance(columns, list) or columns is None)
+
+        columns = ["*"] if columns is None else columns
 
         if self.cur_select is None:
             self.cur_select = self.con.cursor()
 
         return self.cur_select.execute("select {f} from {t}{w}".format(
-            f=columns,
+            f=",".join(columns),
             t=self.table_name,
             # optional where.
             w=" WHERE {}".format(where) if where is not None else ""))
@@ -95,7 +98,8 @@ class NpArraySupportDatabaseTable(object):
     def close(self):
 
         for c in [self.cur_select, self.cur_insert]:
-            c.close()
+            if c is not None:
+                c.close()
 
         self.force_commit()
         self.con.close()
