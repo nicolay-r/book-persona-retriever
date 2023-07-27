@@ -76,12 +76,18 @@ traits_provider = {
         else traits_provider["original"](your_id, partner_id)
 }
 
+dataset_lines_iter = MyAPI.read_dataset(
+    keep_usep=False, split_meta=True, dataset_filepath=MyAPI.dataset_filepath)
+
 candidates_provider = {
     #"_no-cands": None,
-    "": SameBookRandomCandidatesProvider(candidates_per_book=1000,
-                                         candidates_limit=MyAPI.dataset_candidates_limit,
-                                         dataset_filepath=MyAPI.dataset_filepath),
-    "clustered": ALOHANegBasedClusteringProvider(
+
+    "": SameBookRandomCandidatesProvider(
+        iter_dialogs=MyAPI.iter_dataset_as_dialogs(dataset_lines_iter),
+        candidates_per_book=1000,
+        candidates_limit=MyAPI.dataset_candidates_limit),
+
+    "_clustered": ALOHANegBasedClusteringProvider(
         candidates_limit=MyAPI.dataset_candidates_limit,
         neg_speakers_limit=MyAPI.neg_set_speakers_limit,
         embedding_model_name=MyAPI.utterance_embedding_model_name,

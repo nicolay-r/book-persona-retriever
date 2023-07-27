@@ -1,6 +1,5 @@
 import random
 from core.candidates.base import CandidatesProvider
-from utils_my import MyAPI
 
 
 class SameBookRandomCandidatesProvider(CandidatesProvider):
@@ -9,48 +8,39 @@ class SameBookRandomCandidatesProvider(CandidatesProvider):
             https://arxiv.org/pdf/1910.08293.pdf
     """
 
-    def __init__(self, dataset_filepath, candidates_limit, candidates_per_book):
+    def __init__(self, iter_dialogs, candidates_limit, candidates_per_book):
         self.__candidates_limit = candidates_limit
-        self.__candidates_per_book = self.__create_dict(dataset_filepath=dataset_filepath,
-                                                        limit_per_book=candidates_per_book)
+        self.__candidates_per_book = self.__collect_candidates_responses_per_book(
+            iter_dialogs=iter_dialogs, limit_per_book=candidates_per_book)
 
     @staticmethod
     def speaker_to_book_id(speaker_id):
         return int(speaker_id.split('_')[0])
 
     @staticmethod
-    def __create_dict(dataset_filepath, limit_per_book):
+    def __collect_candidates_responses_per_book(iter_dialogs, limit_per_book):
         assert (isinstance(limit_per_book, int) and limit_per_book > 0)
 
-        lines = []
+        candidates_per_book = {}
+        for dialog in iter_dialogs:
 
-        candidates = {}
-        for args in MyAPI.read_dataset(keep_usep=False, split_meta=True, dataset_filepath=dataset_filepath):
-            if args is None:
-                lines.clear()
-                continue
+            speaker_id, utterance = dialog[1]
 
-            lines.append(args)
-
-            if len(lines) < 2:
-                continue
-
-            # Here is type of data we interested in.
-            speaker_id = args[0]
+            # Register book ID.
             book_id = SameBookRandomCandidatesProvider.speaker_to_book_id(speaker_id)
-            if book_id not in candidates:
-                candidates[book_id] = []
+            if book_id not in candidates_per_book:
+                candidates_per_book[book_id] = []
 
-            target = candidates[book_id]
+            target = candidates_per_book[book_id]
 
             if len(target) == limit_per_book:
                 # Do not register the candidate.
                 continue
 
             # Consider the potential candidate.
-            target.append(args[1])
+            target.append(utterance)
 
-        return candidates
+        return candidates_per_book
 
     def provide_or_none(self, speaker_id, label):
         # pick a copy of the candidates.
@@ -63,5 +53,3 @@ class SameBookRandomCandidatesProvider(CandidatesProvider):
         random.shuffle(related)
         # select the top of the shuffled.
         return related[:self.__candidates_limit]
-
-
