@@ -1,6 +1,8 @@
 import json
 import math
 
+from tqdm import tqdm
+
 from core.database.sqlite3_api import NpArraySupportDatabaseTable
 from utils import CACHE_DIR
 
@@ -18,7 +20,8 @@ class ALOHANegBasedClusteringProvider(CandidatesProvider):
     """
 
     def __init__(self, dataset_filepath, cluster_filepath, vectorized_utterances_filepath,
-                 embedding_model_name, neg_speakers_limit=20, candidates_limit=20):
+                 embedding_model_name, neg_speakers_limit=20, candidates_limit=20,
+                 cache_embeddings_in_memory=False):
         assert(isinstance(dataset_filepath, str))
         assert(isinstance(cluster_filepath, str))
         assert(isinstance(vectorized_utterances_filepath, str))
@@ -31,6 +34,15 @@ class ALOHANegBasedClusteringProvider(CandidatesProvider):
 
         self.__vp = NpArraySupportDatabaseTable()
         self.__vp.connect(vectorized_utterances_filepath)
+        self.__vp_cache = None
+
+        # Caching in memory.
+        if cache_embeddings_in_memory:
+            self.__vp_cache = {}
+            for speaker_id, utterance, vector in tqdm(self.__vp.select_from_table(), desc="caching"):
+                if speaker_id not in self.__vp_cache:
+                    self.__vp_cache[speaker_id] = []
+                self.__vp_cache[speaker_id].append((utterance, vector))
 
     @staticmethod
     def __read_cluster(cluster_filepath):
@@ -54,6 +66,19 @@ class ALOHANegBasedClusteringProvider(CandidatesProvider):
             sumxy += x * y
         return sumxy / math.sqrt(sumxx * sumyy)
 
+    def __iter_from_database(self, neg_speakers):
+        where_clause = 'speakerid in ({})'.format(",".join(['"{}"'.format(s) for s in neg_speakers]))
+        return self.__vp.select_from_table(where=where_clause)
+
+    def __iter_from_cache(self, neg_speakers):
+        assert(isinstance(neg_speakers, list))
+        print(neg_speakers)
+        for speaker_id in neg_speakers:
+            if speaker_id in self.__vp_cache:
+                for info in self.__vp_cache[speaker_id]:
+                    utterance, vector = info
+                    yield (speaker_id, utterance, vector)
+
     def provide_or_none(self, speaker_id, label):
 
         # In some cases we may end up with the missed speaker.
@@ -64,8 +89,8 @@ class ALOHANegBasedClusteringProvider(CandidatesProvider):
         neg_speakers = self.__neg_clusters_per_speaker[speaker_id][:self.__neg_speakers_limit]
 
         # Compose WHERE clause that filters the relevant speakers.
-        where_clause = 'speakerid in ({})'.format(",".join(['"{}"'.format(s) for s in neg_speakers]))
-        data_it = self.__vp.select_from_table(where=where_clause)
+        data_it = self.__iter_from_database(neg_speakers) \
+            if self.__vp_cache is None else self.__iter_from_cache(neg_speakers)
 
         vectors = []
         neg_candidates = []
