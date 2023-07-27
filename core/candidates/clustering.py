@@ -18,7 +18,7 @@ class ALOHANegBasedClusteringProvider(CandidatesProvider):
     """
 
     def __init__(self, dataset_filepath, cluster_filepath, vectorized_utterances_filepath,
-                 embedding_model_name='all-mpnet-base-v2', neg_speakers_limit=20, candidates_limit=20):
+                 embedding_model_name, neg_speakers_limit=20, candidates_limit=20):
         assert(isinstance(dataset_filepath, str))
         assert(isinstance(cluster_filepath, str))
         assert(isinstance(vectorized_utterances_filepath, str))

@@ -36,6 +36,7 @@ class MyAPI:
     hla_cluster_config = ClusterConfig(perc_cutoff=10, level2_limit=30, acceptable_overlap=10, weighted=False)
     speaker_clusters_path = join(books_storage, "clusters.jsonl")
     dataset_responses_data_path = join(__current_dir, "./data/ceb_books_annot/dataset_responses_data.sqlite")
+    utterance_embedding_model_name = 'all-mpnet-base-v2'
     neg_set_speakers_limit = 20     # The overall process might take so much time is what becomes a reason
                                     # of this limit.
 
@@ -299,6 +300,28 @@ class MyAPI:
                     yield meta, text
                 else:
                     yield line
+
+    @staticmethod
+    def iter_dataset_as_dialogs(dataset_lines_iter):
+        """ This method allows to read the dataset in a form of the
+            question-response, i.e. "dialogs". It yields dialog lines in output.
+        """
+
+        lines = []
+        for line in dataset_lines_iter:
+            # End of the dialog
+
+            if line is None:
+                lines.clear()
+                continue
+
+            lines.append(line)
+
+            if len(lines) < 2:
+                continue
+
+            yield lines
+            lines.clear()
 
     @staticmethod
     def check_speakers_count(dataset_filepath, pbar=True):

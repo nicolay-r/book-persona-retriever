@@ -84,6 +84,7 @@ candidates_provider = {
     "clustered": ALOHANegBasedClusteringProvider(
         candidates_limit=MyAPI.dataset_candidates_limit,
         neg_speakers_limit=MyAPI.neg_set_speakers_limit,
+        embedding_model_name=MyAPI.utterance_embedding_model_name,
         dataset_filepath=MyAPI.dataset_filepath,
         cluster_filepath=MyAPI.speaker_clusters_path,
         vectorized_utterances_filepath=MyAPI.dataset_responses_data_path)

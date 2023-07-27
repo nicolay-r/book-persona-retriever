@@ -27,7 +27,7 @@ def handle_responses(it, handle_func):
 
 class SentenceTransformerBasedHandler(object):
 
-    def __init__(self, model_name='all-mpnet-base-v2', storage_filepath=None):
+    def __init__(self, model_name, storage_filepath=None):
         self.model = SentenceTransformer(model_name, cache_folder=CACHE_DIR)
         self.storage_filepath = storage_filepath
         self.dt = NpArraySupportDatabaseTable(commit_after=10)
@@ -51,6 +51,7 @@ class SentenceTransformerBasedHandler(object):
 
 my_api = MyAPI()
 s_trans_handler = SentenceTransformerBasedHandler(
+    model_name=MyAPI.utterance_embedding_model_name,
     storage_filepath=MyAPI.dataset_responses_data_path)
 it = my_api.read_dataset(my_api.dataset_filepath, keep_usep=False,
                          split_meta=True, desc=None, pbar=True)

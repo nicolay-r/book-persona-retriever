@@ -1,29 +1,29 @@
 from collections import Counter
 from os.path import join
-
 from core.plot import draw_hist_plot
-from core.utils_dataset import filter_responses, filter_query
 from utils_my import MyAPI
 
 
 def __count(data_type, filter_func):
-    r_it = filter_func(MyAPI.read_dataset(
+
+    lines_it = MyAPI.read_dataset(
         dataset_filepath=MyAPI.dataset_fold_filepath.format(fold_index=data_type),
-        desc="Read `{}` dataset".format(data_type)))
+        keep_usep=True,
+        split_meta=True,
+        desc="Read `{}` dataset".format(data_type))
 
-    counter = Counter()
-    for u in r_it:
-        meta = MyAPI._get_meta(u)
-        u = u[len(meta):].strip()
-        words_count = len(u.split(' '))
-        counter[words_count] += 1
+    c = Counter()
+    for dialog in MyAPI.iter_dataset_as_dialogs(lines_it):
+        meta, utterance = filter_func(dialog)
+        words_count = len(utterance.split(' '))
+        c[words_count] += 1
 
-    return counter
+    return c
 
 
 filters = {
-    "resp": lambda it: filter_responses(it),
-    "query": lambda it: filter_query(it)
+    "query": lambda dialog: dialog[0],
+    "resp": lambda dialog: dialog[1]
 }
 
 for f_type, f_func in filters.items():

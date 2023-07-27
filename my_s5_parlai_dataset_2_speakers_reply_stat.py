@@ -1,23 +1,24 @@
 from collections import Counter
-from core.utils_dataset import filter_responses
 from utils_my import MyAPI
 
 
 def __count(data_type, filter_func):
-    r_it = filter_func(MyAPI.read_dataset(
+
+    lines_it = MyAPI.read_dataset(
         dataset_filepath=MyAPI.dataset_fold_filepath.format(fold_index=data_type),
-        desc="Read `{}` dataset".format(data_type)))
+        split_meta=True,
+        desc="Read `{}` dataset".format(data_type))
 
     counter = Counter()
-    for u in r_it:
-        speaker_name = MyAPI._get_meta(u)
-        counter[speaker_name] += 1
+    for dialog in MyAPI.iter_dataset_as_dialogs(lines_it):
+        speaker_id, utterance = filter_func(dialog)
+        counter[speaker_id] += 1
 
     return counter
 
 
 filters = {
-    "resp": lambda it: filter_responses(it),
+    "resp": lambda dialog: dialog[1]
 }
 
 
