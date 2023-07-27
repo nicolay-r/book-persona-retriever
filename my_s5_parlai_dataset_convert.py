@@ -79,7 +79,7 @@ candidates_provider = {
         neg_speakers_limit=MyAPI.neg_set_speakers_limit,
         dataset_filepath=MyAPI.dataset_filepath,
         cluster_filepath=MyAPI.speaker_clusters_path,
-        sqlite_dialog_db=MyAPI.dataset_dialog_db_fold_path.format("train"))
+        sqlite_dialog_db=MyAPI.dataset_dialog_db_fold_path.format(fold_index="train"))
 }
 
 for data_fold_type, data_fold_source in dataset_filepaths.items():

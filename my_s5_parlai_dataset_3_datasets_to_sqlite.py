@@ -17,8 +17,8 @@ for fold in [None, "train", "test"]:
         source = MyAPI.dataset_filepath
         target = MyAPI.dataset_dialog_db_path
     else:
-        source = MyAPI.dataset_fold_filepath.format(fold)
-        target = MyAPI.dataset_dialog_db_fold_path.format(fold)
+        source = MyAPI.dataset_fold_filepath.format(fold_index=fold)
+        target = MyAPI.dataset_dialog_db_fold_path.format(fold_index=fold)
 
     dialog_db = DialogDatabaseWithEmbeddedTargetsHandler(
         model_name=MyAPI.utterance_embedding_model_name,
