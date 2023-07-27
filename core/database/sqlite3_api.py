@@ -25,6 +25,7 @@ class NpArraySupportDatabaseTable(object):
         self.c = Counter()
         self.cur_insert = None
         self.commit_after = commit_after
+        self.cur_select = None
 
     def connect(self, filepath):
         self.con = sqlite3.connect(filepath, detect_types=sqlite3.PARSE_DECLTYPES)
@@ -76,10 +77,13 @@ class NpArraySupportDatabaseTable(object):
             self.con.commit()
             self.c["rows_inserted"] = 0
 
-    def select_from_table(self, filter="*", where=None):
-        cur = self.con.cursor()
-        return cur.execute("select {f} from {t}{w}".format(
-            f=filter,
+    def select_from_table(self, columns="*", where=None):
+
+        if self.cur_select is None:
+            self.cur_select = self.con.cursor()
+
+        return self.cur_select.execute("select {f} from {t}{w}".format(
+            f=columns,
             t=self.table_name,
             # optional where.
             w=" WHERE {}".format(where) if where is not None else ""))
@@ -89,8 +93,9 @@ class NpArraySupportDatabaseTable(object):
         self.c["rows_inserted"] = 0
 
     def close(self):
-        self.cur_insert.close()
-        self.cur_insert = None
+
+        for c in [self.cur_select, self.cur_insert]:
+            c.close()
 
         self.force_commit()
         self.con.close()
