@@ -38,7 +38,7 @@ class MyAPI:
     dataset_dialog_db_path = join(__current_dir, "./data/ceb_books_annot/dataset_dialog.sqlite")
     dataset_dialog_db_fold_path = join(__current_dir, "./data/ceb_books_annot/dataset_dialog_{fold_index}.sqlite")
     utterance_embedding_model_name = 'all-mpnet-base-v2'
-    neg_set_speakers_limit = 20     # The overall process might take so much time is what becomes a reason
+    neg_set_speakers_limit = 10     # The overall process might take so much time is what becomes a reason
                                     # of this limit.
 
     prefixes_storage = join(__current_dir, "./data/ceb_books_annot/prefixes")
