@@ -68,7 +68,7 @@ class ALOHANegBasedClusteringProvider(CandidatesProvider):
 
     def __db_target_vector(self, dialog_id):
         where_clause = 'dialog_id in ({})'.format(dialog_id)
-        return self.__dialog_db.select_from_table(where=where_clause).fetchone()[1]
+        return self.__dialog_db.select_from_table(columns=["target_vector"], where=where_clause).fetchone()[0]
 
     def __cache_cand_vectors(self, neg_speakers):
         assert(isinstance(neg_speakers, list))
