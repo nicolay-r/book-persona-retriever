@@ -46,9 +46,7 @@ class ALOHANegBasedClusteringProvider(CandidatesProvider):
             self.__label_cache = {}
             select_request = self.__dialog_db.select_from_table(columns=["dialog_id", "target_vector"])
             for dialog_id, target_vector in tqdm(select_request, "Caching labels"):
-                if dialog_id not in self.__label_cache:
-                    self.__label_cache[dialog_id] = []
-                self.__label_cache[dialog_id].append(target_vector)
+                self.__label_cache[dialog_id] = target_vector
 
     @staticmethod
     def __read_cluster(cluster_filepath):
