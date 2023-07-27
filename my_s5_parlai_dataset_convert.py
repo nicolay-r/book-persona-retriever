@@ -75,6 +75,7 @@ candidates_provider = {
         candidates_limit=MyAPI.dataset_candidates_limit),
 
     CANDIDATES_HLA_CLUSTER: ALOHANegBasedClusteringProvider(
+        cache_embeddings_in_memory=True,
         candidates_limit=MyAPI.dataset_candidates_limit,
         neg_speakers_limit=MyAPI.neg_set_speakers_limit,
         dataset_filepath=MyAPI.dataset_filepath,
