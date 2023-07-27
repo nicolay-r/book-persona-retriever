@@ -76,14 +76,13 @@ traits_provider = {
         else traits_provider["original"](your_id, partner_id)
 }
 
-dataset_lines_iter = MyAPI.read_dataset(
-    keep_usep=False, split_meta=True, dataset_filepath=MyAPI.dataset_filepath)
-
 candidates_provider = {
     #"_no-cands": None,
 
     "": SameBookRandomCandidatesProvider(
-        iter_dialogs=MyAPI.iter_dataset_as_dialogs(dataset_lines_iter),
+        iter_dialogs=MyAPI.iter_dataset_as_dialogs(
+            MyAPI.read_dataset(keep_usep=False, split_meta=True, dataset_filepath=MyAPI.dataset_filepath)
+        ),
         candidates_per_book=1000,
         candidates_limit=MyAPI.dataset_candidates_limit),
 
@@ -99,6 +98,11 @@ candidates_provider = {
 for data_fold_type, data_fold_source in dataset_filepaths.items():
     for trait_type, traits_func in traits_provider.items():
         for candidates_type, candidates_dict in candidates_provider.items():
+
+            # This type does not makes sense, so we skip such formatting.
+            if trait_type == "spectrum" and candidates_type == "":
+                continue
+
             filename = '{}_{}{}.txt'.format(data_fold_type, trait_type, candidates_type)
 
             data_it = iter_dataset_lines(
