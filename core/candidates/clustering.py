@@ -1,10 +1,10 @@
 import json
-import math
 
 from tqdm import tqdm
 
 from core.database.sqlite3_api import NpArraySupportDatabaseTable
 from core.candidates.base import CandidatesProvider
+from core.utils_math import cosine_similarity
 
 
 class ALOHANegBasedClusteringProvider(CandidatesProvider):
@@ -50,8 +50,6 @@ class ALOHANegBasedClusteringProvider(CandidatesProvider):
                     self.__label_cache[dialog_id] = []
                 self.__label_cache[dialog_id].append(target_vector)
 
-            print(self.__label_cache.keys())
-
     @staticmethod
     def __read_cluster(cluster_filepath):
         neg_speakers = {}
@@ -63,26 +61,16 @@ class ALOHANegBasedClusteringProvider(CandidatesProvider):
                 neg_speakers[speaker_id] = ids
         return neg_speakers
 
-    @staticmethod
-    def cosine_similarity(v1, v2):
-        sumxx, sumxy, sumyy = 0, 0, 0
-        for i in range(len(v1)):
-            x = v1[i];
-            y = v2[i]
-            sumxx += x * x
-            sumyy += y * y
-            sumxy += x * y
-        return sumxy / math.sqrt(sumxx * sumyy)
-
     def __iter_from_database(self, neg_speakers):
+        columns = ["speaker_t_id", "target", "target_vector"]
         where_clause = 'speaker_t_id in ({})'.format(",".join(['"{}"'.format(s) for s in neg_speakers]))
-        return self.__dialog_db.select_from_table(where=where_clause)
+        return self.__dialog_db.select_from_table(columns=columns, where=where_clause)
 
-    def __label_vector_from_database(self, dialog_id):
-        where_clause = 'dialog_id, target_vector in ({})'.format(dialog_id)
+    def __db_target_vector(self, dialog_id):
+        where_clause = 'dialog_id in ({})'.format(dialog_id)
         return self.__dialog_db.select_from_table(where=where_clause).fetchone()[1]
 
-    def __iter_from_cache(self, neg_speakers):
+    def __cache_cand_vectors(self, neg_speakers):
         assert(isinstance(neg_speakers, list))
         for speaker_id in neg_speakers:
             if speaker_id in self.__speaker_emb_cache:
@@ -90,7 +78,7 @@ class ALOHANegBasedClusteringProvider(CandidatesProvider):
                     utterance, vector = info
                     yield (speaker_id, utterance, vector)
 
-    def __get_label_from_cache(self, dialog_id):
+    def __cache_label(self, dialog_id):
         return self.__label_cache[dialog_id]
 
     def provide_or_none(self, dialog_id, speaker_id, label):
@@ -104,7 +92,7 @@ class ALOHANegBasedClusteringProvider(CandidatesProvider):
 
         # Compose WHERE clause that filters the relevant speakers.
         data_it = self.__iter_from_database(neg_speakers) \
-            if self.__speaker_emb_cache is None else self.__iter_from_cache(neg_speakers)
+            if self.__speaker_emb_cache is None else self.__cache_cand_vectors(neg_speakers)
 
         neg_candidates = []
         vectors = []
@@ -113,9 +101,9 @@ class ALOHANegBasedClusteringProvider(CandidatesProvider):
             vectors.append(vector)
 
         label_vector = self.__label_cache[dialog_id] if self.__label_cache is not None else \
-            self.__label_vector_from_database(dialog_id)
+            self.__db_target_vector(dialog_id)
 
-        vvv = [(i, self.cosine_similarity(label_vector, v)) for i, v in enumerate(vectors)]
+        vvv = [(i, cosine_similarity(label_vector, v)) for i, v in enumerate(vectors)]
         most_similar_first = sorted(vvv, key=lambda item: item[1], reverse=True)
 
         selected = [neg_candidates[i] for i, _ in most_similar_first]
