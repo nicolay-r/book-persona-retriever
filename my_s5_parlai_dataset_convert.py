@@ -66,12 +66,12 @@ candidates_provider = {
 
     #"_no-cands": None,
 
-    CANDIDATES_UTTERANCE_ONLY: SameBookRandomCandidatesProvider(
-        iter_dialogs=MyAPI.iter_dataset_as_dialogs(
-            MyAPI.read_dataset(keep_usep=False, split_meta=True, dataset_filepath=MyAPI.dataset_filepath)
-        ),
-        candidates_per_book=1000,
-        candidates_limit=MyAPI.dataset_candidates_limit),
+    # CANDIDATES_UTTERANCE_ONLY: SameBookRandomCandidatesProvider(
+    #     iter_dialogs=MyAPI.iter_dataset_as_dialogs(
+    #         MyAPI.read_dataset(keep_usep=False, split_meta=True, dataset_filepath=MyAPI.dataset_filepath)
+    #     ),
+    #     candidates_per_book=1000,
+    #     candidates_limit=MyAPI.dataset_candidates_limit),
 
     "clustered": ALOHANegBasedClusteringProvider(
         candidates_limit=MyAPI.dataset_candidates_limit,

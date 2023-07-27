@@ -61,7 +61,7 @@ class ALOHANegBasedClusteringProvider(CandidatesProvider):
             return None
 
         # Compose a SQL-request to obtain vectors and utterances.
-        neg_speakers = self.__neg_clusters_per_speaker[speaker_id][self.__neg_speakers_limit]
+        neg_speakers = self.__neg_clusters_per_speaker[speaker_id][:self.__neg_speakers_limit]
 
         # Compose WHERE clause that filters the relevant speakers.
         where_clause = 'speakerid in ({})'.format(",".join(['"{}"'.format(s) for s in neg_speakers]))
