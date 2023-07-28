@@ -1,4 +1,3 @@
-import random
 from core.candidates.base import CandidatesProvider
 
 
@@ -8,7 +7,8 @@ class SameBookRandomCandidatesProvider(CandidatesProvider):
             https://arxiv.org/pdf/1910.08293.pdf
     """
 
-    def __init__(self, iter_dialogs, candidates_limit, candidates_per_book):
+    def __init__(self, random_gen, iter_dialogs, candidates_limit, candidates_per_book):
+        self.__random_gen = random_gen
         self.__candidates_limit = candidates_limit
         self.__candidates_per_book = self.__collect_candidates_responses_per_book(
             iter_dialogs=iter_dialogs, limit_per_book=candidates_per_book)
@@ -50,6 +50,6 @@ class SameBookRandomCandidatesProvider(CandidatesProvider):
         if label in related:
             related.remove(label)
         # shuffle candidates.
-        random.shuffle(related)
+        self.__random_gen.shuffle(related)
         # select the top of the shuffled.
         return related[:self.__candidates_limit]

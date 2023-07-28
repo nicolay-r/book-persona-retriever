@@ -1,3 +1,5 @@
+import random
+
 import zipstream
 
 from core.candidates.base import CandidatesProvider
@@ -20,7 +22,7 @@ def iter_formatted_dialog(dialogs_iter, traits_func, candidates_provider, candid
         r_speaker_id, label = dialog[1]
 
         if candidates_provider is not None:
-            candidates = candidates_provider.provide_or_none(
+            candidates = [label] + candidates_provider.provide_or_none(
                 dialog_id=dialog_id, speaker_id=r_speaker_id, label=label)
         else:
             candidates = [label]
@@ -40,6 +42,7 @@ def iter_formatted_dialog(dialogs_iter, traits_func, candidates_provider, candid
 my_api = MyAPI()
 z = zipstream.ZipFile()
 
+random_gen = random.Random(x=42)
 
 dataset_filepaths = {
     "train": my_api.dataset_fold_filepath.format(fold_index="train"),
@@ -68,15 +71,16 @@ candidates_provider = {
     #"_no-cands": None,
 
     CANDIDATES_UTTERANCE_ONLY: SameBookRandomCandidatesProvider(
+        random_gen=random_gen,
         iter_dialogs=MyAPI.iter_dataset_as_dialogs(
             MyAPI.read_dataset(keep_usep=False, split_meta=True, dataset_filepath=MyAPI.dataset_filepath)
         ),
         candidates_per_book=1000,
-        candidates_limit=MyAPI.dataset_candidates_limit),
+        candidates_limit=MyAPI.dataset_candidates_limit-1),
 
     CANDIDATES_HLA_CLUSTER: ALOHANegBasedClusteringProvider(
         cache_embeddings_in_memory=True,
-        candidates_limit=MyAPI.dataset_candidates_limit,
+        candidates_limit=MyAPI.dataset_candidates_limit-1,
         neg_speakers_limit=MyAPI.neg_set_speakers_limit,
         dataset_filepath=MyAPI.dataset_filepath,
         cluster_filepath=MyAPI.speaker_clusters_path,
