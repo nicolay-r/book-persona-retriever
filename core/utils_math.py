@@ -1,12 +1,6 @@
-import math
+from numpy import dot
+from numpy.linalg import norm
 
 
 def cosine_similarity(v1, v2):
-    sumxx, sumxy, sumyy = 0, 0, 0
-    for i in range(len(v1)):
-        x = v1[i];
-        y = v2[i]
-        sumxx += x * x
-        sumyy += y * y
-        sumxy += x * y
-    return sumxy / math.sqrt(sumxx * sumyy)
+    return dot(v1, v2) / (norm(v1) * norm(v2))
