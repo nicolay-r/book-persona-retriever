@@ -22,8 +22,10 @@ def iter_formatted_dialog(dialogs_iter, traits_func, candidates_provider, candid
         r_speaker_id, label = dialog[1]
 
         if candidates_provider is not None:
-            candidates = [label] + candidates_provider.provide_or_none(
+            other_candidates = candidates_provider.provide_or_none(
                 dialog_id=dialog_id, speaker_id=r_speaker_id, label=label)
+            other_candidates = [] if other_candidates is None else other_candidates
+            candidates = [label] + other_candidates
         else:
             candidates = [label]
 
