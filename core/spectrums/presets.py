@@ -13,7 +13,11 @@ PROMPT_PRESETS = {
     "prompt_top_k_8": lambda X_norm, X_diff, fcp_api: to_prompts_top_k(
         X_norm=X_norm, X_diff=X_diff, fcp_api=fcp_api, k=8),
     "prompt_top_k_5": lambda X_norm, X_diff, fcp_api: to_prompts_top_k(
-        X_norm=X_norm, X_diff=X_diff, fcp_api=fcp_api, k=5)
+        X_norm=X_norm, X_diff=X_diff, fcp_api=fcp_api, k=5),
+    "prompt_top_k_8_limited": lambda X_norm, X_diff, fcp_api: to_prompts_top_k(
+        X_norm=X_norm, X_diff=X_diff, fcp_api=fcp_api, k=8, limit=MyAPI.spectrums_limit),
+    "prompt_top_k_5_limited": lambda X_norm, X_diff, fcp_api: to_prompts_top_k(
+        X_norm=X_norm, X_diff=X_diff, fcp_api=fcp_api, k=5, limit=MyAPI.spectrums_limit),
 }
 
 FILTER_PRESETS = {

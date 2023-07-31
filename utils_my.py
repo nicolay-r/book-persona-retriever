@@ -38,6 +38,8 @@ class MyAPI:
     dataset_dialog_db_path = join(__current_dir, "./data/ceb_books_annot/dataset_dialog.sqlite")
     dataset_dialog_db_fold_path = join(__current_dir, "./data/ceb_books_annot/dataset_dialog_{fold_index}.sqlite")
     utterance_embedding_model_name = 'all-mpnet-base-v2'
+    spectrums_limit = 40            # ALOHA parameter which is proposes to keep the most representative
+                                    # speaker traits for prompting.
     neg_set_speakers_limit = 10     # The overall process might take so much time is what becomes a reason
                                     # of this limit.
 
@@ -57,7 +59,7 @@ class MyAPI:
     spectrum_features_norm = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-norm.npz")
     spectrum_features_diff = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-diff.npz")
     spectrum_speakers = join(__current_dir, "./data/ceb_books_annot/y.spectrum-speakers.npz")
-    spectrum_default_preset = "prompt_top_k_{}".format(str(traits_per_character))
+    spectrum_default_preset = "prompt_top_k_{}_limited".format(str(traits_per_character))
     spectrum_st_embeddings = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-sent-transformers-{preset}.npz")
     # intermediate file required for a quick embedding of traits into the
     # train/validation dataset for dialogue chatbot development.

@@ -54,14 +54,15 @@ def order_traits_by_relevance(trait_inds, x_norm, x_diff):
                 return 1
             return 0
 
+    x_inds = list(range(len(x_norm)))
     traits_and_x_sorted = list(sorted(
-        list(zip(trait_inds, list(range(len(x_norm))), np.absolute(x_norm))),
+        list(zip(trait_inds, x_inds, np.absolute(x_norm))),
         key=cmp_to_key(lambda a, b: __compare(a[2], abs(x_diff[a[1]]), b[2], abs(x_diff[b[1]]))),
         reverse=True))
 
-    x_inds, _, _ = list(zip(*traits_and_x_sorted))
+    ordered_trait_inds, ordered_x_inds, _ = list(zip(*traits_and_x_sorted))
 
-    return x_inds
+    return list(zip(ordered_trait_inds, ordered_x_inds))
 
 
 def to_prompts_top_k(X_norm, X_diff, fcp_api, k, limit=None):
@@ -80,12 +81,13 @@ def to_prompts_top_k(X_norm, X_diff, fcp_api, k, limit=None):
     assert(isinstance(fcp_api, FcpApi))
     assert(isinstance(k, int))
     assert(isinstance(limit, int) or limit is None)
+    assert(k < limit)
 
     # Setup API for using lexicon.
     lexicon = fcp_api.extract_as_lexicon()
 
     if limit is not None:
-        most_distincitve_ids = filter_most_distictive(X_norm, k)
+        most_distincitve_ids = filter_most_distictive(X_norm, limit)
         X_norm = X_norm[:, most_distincitve_ids]
         X_diff = X_diff[:, most_distincitve_ids]
         trait_inds = most_distincitve_ids
@@ -109,14 +111,14 @@ def to_prompts_top_k(X_norm, X_diff, fcp_api, k, limit=None):
         x_oridered_inds = order_traits_by_relevance(
             trait_inds=trait_inds, x_norm=x_norm, x_diff=x_diff)
 
-        for ind in x_oridered_inds[:k]:
-            spec_val = x_norm[ind]
+        for ordered_trait_ind, ordered_x_ind in x_oridered_inds[:k]:
+            spec_val = x_norm[ordered_x_ind]
 
             if spec_val == 0:
                 continue
 
-            ind = fcp_api.ind_to_spectrum(ind)
-            prompt.append(lexicon[ind][fcp_api.float_to_spectrum_key(spec_val)])
+            spectrum_ind = fcp_api.ind_to_spectrum(ordered_trait_ind)
+            prompt.append(lexicon[spectrum_ind][fcp_api.float_to_spectrum_key(spec_val)])
 
         prompts.append(" ".join(prompt))
 
