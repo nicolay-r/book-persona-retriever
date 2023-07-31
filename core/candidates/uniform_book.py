@@ -3,8 +3,6 @@ from core.candidates.base import CandidatesProvider
 
 class SameBookRandomCandidatesProvider(CandidatesProvider):
     """ Random candidates selection from the dataset.
-        We consider the same "random" selection approach from the ALOHA paper:
-            https://arxiv.org/pdf/1910.08293.pdf
     """
 
     def __init__(self, random_gen, iter_dialogs, candidates_limit, candidates_per_book):

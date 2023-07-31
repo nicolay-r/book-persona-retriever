@@ -4,7 +4,8 @@ import zipstream
 
 from core.candidates.base import CandidatesProvider
 from core.candidates.clustering import ALOHANegBasedClusteringProvider
-from core.candidates.default import SameBookRandomCandidatesProvider
+
+from core.candidates.uniform_collection import UniformCandidatesProvider
 from core.utils_parlai_facebook_formatter import format_episode
 from utils_ceb import CEBApi
 from utils_my import MyAPI
@@ -66,18 +67,17 @@ traits_provider = {
         else traits_provider[TRAITS_NO](your_id, partner_id)
 }
 
-CANDIDATES_UTTERANCE_ONLY = ""
+CANDIDATES_UNIFORM = ""
 CANDIDATES_HLA_CLUSTER = "clustered"
 candidates_provider = {
 
     #"_no-cands": None,
 
-    CANDIDATES_UTTERANCE_ONLY: SameBookRandomCandidatesProvider(
+    CANDIDATES_UNIFORM: UniformCandidatesProvider(
         random_gen=random_gen,
         iter_dialogs=MyAPI.iter_dataset_as_dialogs(
             MyAPI.read_dataset(keep_usep=False, split_meta=True, dataset_filepath=MyAPI.dataset_filepath)
         ),
-        candidates_per_book=1000,
         candidates_limit=MyAPI.dataset_candidates_limit-1),
 
     CANDIDATES_HLA_CLUSTER: ALOHANegBasedClusteringProvider(
@@ -96,7 +96,7 @@ for data_fold_type, data_fold_source in dataset_filepaths.items():
             if trait_type == TRAITS_NO and candidates_type == CANDIDATES_HLA_CLUSTER:
                 # This type does not makes sense, so we skip such formatting.
                 continue
-            if trait_type == TRAITS_SPECTRUM and candidates_type == CANDIDATES_UTTERANCE_ONLY:
+            if trait_type == TRAITS_SPECTRUM and candidates_type == CANDIDATES_UNIFORM:
                 continue
             if candidates_type == CANDIDATES_HLA_CLUSTER and data_fold_type != "train":
                 # We consider HLA clustering and candidates selection only for training.
