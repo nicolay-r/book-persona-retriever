@@ -39,6 +39,30 @@ def filter_most_distictive(X_norm, limit):
     return most_distinctive
 
 
+def order_traits_by_relevance(trait_inds, x_norm, x_diff):
+
+    def __compare(a_norm, a_diff, b_norm, b_diff):
+        if a_norm < b_norm:
+            return -1
+        elif a_norm > b_norm:
+            return 1
+        else:
+            if a_diff < b_diff:
+                return -1
+            elif a_diff > b_diff:
+                return 1
+            return
+
+    traits_and_x_sorted = list(sorted(
+        zip(trait_inds, np.absolute(x_norm)),
+        key=cmp_to_key(lambda a, b: __compare(a[1], abs(x_diff[a[0]]), b[1], abs(x_diff[b[0]]))),
+        reverse=True))
+
+    x_inds, _ = list(zip(*traits_and_x_sorted))
+
+    return x_inds
+
+
 def to_prompts_top_k(X_norm, X_diff, fcp_api, k, limit=None):
     """ k: int
             amount of the traits to be chosen per every speaker for
@@ -55,18 +79,6 @@ def to_prompts_top_k(X_norm, X_diff, fcp_api, k, limit=None):
     assert(isinstance(fcp_api, FcpApi))
     assert(isinstance(k, int))
     assert(isinstance(limit, int) or limit is None)
-
-    def __compare(a_norm, a_diff, b_norm, b_diff):
-        if a_norm < b_norm:
-            return -1
-        elif a_norm > b_norm:
-            return 1
-        else:
-            if a_diff < b_diff:
-                return -1
-            elif a_diff > b_diff:
-                return 1
-            return 0
 
     # Setup API for using lexicon.
     lexicon = fcp_api.extract_as_lexicon()
@@ -93,14 +105,10 @@ def to_prompts_top_k(X_norm, X_diff, fcp_api, k, limit=None):
 
         prompt = []
 
-        data = zip(trait_inds, np.absolute(x_norm))
-        ix = list(sorted(data,
-                         key=cmp_to_key(lambda a, b: __compare(a[1], abs(x_diff[a[0]]),
-                                                               b[1], abs(x_diff[b[0]]))),
-                         reverse=True))[:k]
-        inds, _ = list(zip(*ix))
+        x_oridered_inds = order_traits_by_relevance(
+            trait_inds=trait_inds, x_norm=x_norm, x_diff=x_diff)
 
-        for ind in inds[:k]:
+        for ind in x_oridered_inds[:k]:
             spec_val = x_norm[ind]
 
             if spec_val == 0:
