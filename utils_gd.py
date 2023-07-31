@@ -57,6 +57,15 @@ class GuttenbergDialogApi:
             term = term[1:-1]
         return term.isnumeric()
 
+    @staticmethod
+    def has_character(term):
+        """ check whether string includes a character
+        """
+        if "{" and "}" in term:
+            s = term[term.index("{"):term.index("}")+1]
+            return GuttenbergDialogApi.is_character(s)
+        return False
+
     def filter_comment_with_speaker_at_k(self, book_path_func, k=None):
         """ filter examples in distance from K
         """

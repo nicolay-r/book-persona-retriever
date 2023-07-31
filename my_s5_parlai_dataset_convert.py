@@ -6,9 +6,28 @@ from core.candidates.base import CandidatesProvider
 from core.candidates.clustering import ALOHANegBasedClusteringProvider
 
 from core.candidates.uniform_collection import UniformCandidatesProvider
+from core.utils_comments import mask_text_entities
 from core.utils_parlai_facebook_formatter import format_episode
 from utils_ceb import CEBApi
 from utils_my import MyAPI
+
+
+def common_iter_dialogs(dialogs_dataset_filepath):
+    """ We provide a common wrapping for reading because of the additional operations:
+        the issue #18: https://github.com/nicolay-r/chatbot_experiments/issues/18
+    """
+    dialogs = MyAPI.iter_dataset_as_dialogs(
+        MyAPI.read_dataset(
+            keep_usep=False, split_meta=True,
+            dataset_filepath=dialogs_dataset_filepath,
+            desc=dialogs_dataset_filepath))
+
+    for dialog in dialogs:
+        for d_ind in range(len(dialog)):
+            meta, utterance = dialog[d_ind]
+            dialog[d_ind] = (meta, mask_text_entities(utterance, mask_template=MyAPI.parlai_charmask_template))
+
+        yield dialog
 
 
 def iter_formatted_dialog(dialogs_iter, traits_func, candidates_provider, candidates_limit):
@@ -75,9 +94,7 @@ candidates_provider = {
 
     CANDIDATES_UNIFORM: UniformCandidatesProvider(
         random_gen=random_gen,
-        iter_dialogs=MyAPI.iter_dataset_as_dialogs(
-            MyAPI.read_dataset(keep_usep=False, split_meta=True, dataset_filepath=MyAPI.dataset_filepath)
-        ),
+        iter_dialogs=common_iter_dialogs(MyAPI.dataset_filepath),
         candidates_limit=MyAPI.dataset_candidates_limit-1),
 
     CANDIDATES_HLA_CLUSTER: ALOHANegBasedClusteringProvider(
@@ -102,13 +119,14 @@ for data_fold_type, data_fold_source in dataset_filepaths.items():
                 # We consider HLA clustering and candidates selection only for training.
                 continue
 
-            filename = '{}.txt'.format("_".join([data_fold_type, trait_type, candidates_type]))
+            args = [data_fold_type, trait_type]
+            if candidates_type != "":
+                args.append(candidates_type)
+
+            filename = '{}.txt'.format("_".join(args))
 
             data_it = iter_formatted_dialog(
-                dialogs_iter=MyAPI.iter_dataset_as_dialogs(
-                    MyAPI.read_dataset(
-                        keep_usep=False, split_meta=True, dataset_filepath=data_fold_source,
-                        desc=filename)),
+                dialogs_iter=common_iter_dialogs(data_fold_source),
                 traits_func=traits_func,
                 candidates_provider=candidates_dict,
                 candidates_limit=MyAPI.dataset_candidates_limit)

@@ -65,6 +65,7 @@ class MyAPI:
                                      "./data/ceb_books_annot/spectrum_speaker_prompts-{preset}.txt".format(
                                          preset=spectrum_default_preset))
     users_embedding_factor = join(__current_dir, "./data/ceb_books_annot/x.speakers-factor.npz")
+    parlai_charmask_template = "_"      # We perform character masking for the ParlAI dataset of utterances.
 
     # separator in line between meta information and the actual content
     meta_sep = ": "
