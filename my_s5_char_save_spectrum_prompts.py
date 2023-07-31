@@ -1,4 +1,4 @@
-from core.spectrums_emb import PROMPT_PRESETS
+from core.spectrums.presets import PROMPT_PRESETS
 from core.utils_npz import NpzUtils
 from utils_fcp import FcpApi
 from utils_my import MyAPI

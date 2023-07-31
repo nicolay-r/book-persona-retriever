@@ -57,7 +57,7 @@ class MyAPI:
     spectrum_features_norm = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-norm.npz")
     spectrum_features_diff = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-diff.npz")
     spectrum_speakers = join(__current_dir, "./data/ceb_books_annot/y.spectrum-speakers.npz")
-    spectrum_default_preset = "prompt_most_imported_limited_{}".format(str(traits_per_character))
+    spectrum_default_preset = "prompt_top_k_{}".format(str(traits_per_character))
     spectrum_st_embeddings = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-sent-transformers-{preset}.npz")
     # intermediate file required for a quick embedding of traits into the
     # train/validation dataset for dialogue chatbot development.

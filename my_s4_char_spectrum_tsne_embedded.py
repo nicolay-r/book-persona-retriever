@@ -1,13 +1,13 @@
 from os.path import join
 
 from core.plot import plot_tsne_series
-from core.spectrums_emb import FILTER_PRESETS
+from core.spectrums.presets import FILTER_PRESETS
 from core.utils_npz import NpzUtils
 from utils_my import MyAPI
 
 preset = MyAPI.spectrum_default_preset
-X = list(NpzUtils.load(MyAPI.spectrum_st_embeddings.format(preset=preset)))
-y = list(NpzUtils.load(MyAPI.spectrum_speakers))
+X = NpzUtils.load(MyAPI.spectrum_st_embeddings.format(preset=preset))
+y = NpzUtils.load(MyAPI.spectrum_speakers)
 
 # Blank painting.
 y = [0 for s_name in y]
