@@ -42,6 +42,7 @@ def filter_most_distictive(X_norm, limit):
 def order_traits_by_relevance(trait_inds, x_norm, x_diff):
 
     def __compare(a_norm, a_diff, b_norm, b_diff):
+
         if a_norm < b_norm:
             return -1
         elif a_norm > b_norm:
@@ -51,14 +52,14 @@ def order_traits_by_relevance(trait_inds, x_norm, x_diff):
                 return -1
             elif a_diff > b_diff:
                 return 1
-            return
+            return 0
 
     traits_and_x_sorted = list(sorted(
-        zip(trait_inds, np.absolute(x_norm)),
-        key=cmp_to_key(lambda a, b: __compare(a[1], abs(x_diff[a[0]]), b[1], abs(x_diff[b[0]]))),
+        list(zip(trait_inds, list(range(len(x_norm))), np.absolute(x_norm))),
+        key=cmp_to_key(lambda a, b: __compare(a[2], abs(x_diff[a[1]]), b[2], abs(x_diff[b[1]]))),
         reverse=True))
 
-    x_inds, _ = list(zip(*traits_and_x_sorted))
+    x_inds, _, _ = list(zip(*traits_and_x_sorted))
 
     return x_inds
 
