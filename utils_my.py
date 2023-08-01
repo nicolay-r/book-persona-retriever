@@ -210,11 +210,17 @@ class MyAPI:
             for speaker_name in speaker_names_list:
                 f.write("{}\n".format(speaker_name))
 
-    def read_speakers(self):
+    @staticmethod
+    def read_speakers(filepath=None):
+        assert(isinstance(filepath, str) or filepath is None)
+
+        filepath = MyAPI.filtered_speakers_filepath if filepath is None else filepath
+
         speakers = []
-        with open(self.filtered_speakers_filepath, "r") as f:
+        with open(filepath, "r") as f:
             for line in f.readlines():
                 speakers.append(line.strip())
+
         return speakers
 
     @staticmethod
@@ -328,30 +334,18 @@ class MyAPI:
             lines.clear()
 
     @staticmethod
-    def check_speakers_count(dataset_filepath, pbar=True):
+    def calc_speakers_count(dataset_filepath, pbar=True):
         """ Folding with the even splits of the utterances.
         """
         partners_count = Counter()
 
-        utt = []
+        dialogs_it = MyAPI.iter_dataset_as_dialogs(
+            MyAPI.read_dataset(keep_usep=False, split_meta=True,
+                               dataset_filepath=dataset_filepath, pbar=pbar))
 
-        args_it = MyAPI.read_dataset(
-            keep_usep=False, split_meta=True, dataset_filepath=dataset_filepath, pbar=pbar)
-
-        for args in args_it:
-
-            if args is None:
-                utt.clear()
-                continue
-
-            s_name, _ = args
-
-            utt.append(s_name)
-
-            # response of the partner.
-            if len(utt) == 2:
-                # Count the amount of partners.
-                partners_count[s_name] += 1
+        for dialog in dialogs_it:
+            partner_id = dialog[1][0]
+            partners_count[partner_id] += 1
 
         return partners_count
 
