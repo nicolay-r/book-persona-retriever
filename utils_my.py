@@ -234,11 +234,14 @@ class MyAPI:
             file.write("{}\n".format(buffer_line))
         file.write("\n")
 
-    def write_dataset(self, buffer_filter_func=None):
+    def write_dataset(self, dialogue_filter_func=None):
         """ Filter dialogs to the result dataset. Compose a Question->Response pair.
             Where response is always a known speaker, so whe know who we ask.
+
+            dialogue_filter_func: func (speaker_name, dialogue)
+                serves as a filtering function for a dialogue and a respose speaker name.
         """
-        assert(callable(buffer_filter_func) or buffer_filter_func is None)
+        assert(callable(dialogue_filter_func) or dialogue_filter_func is None)
 
         # Read speakers to be considered first.
         speakers_set = set(self.read_speakers())
@@ -262,8 +265,8 @@ class MyAPI:
                 speaker_name = MyAPI._get_meta(line)
 
                 # We optionally filter buffers first.
-                if buffer_filter_func is not None:
-                    if not buffer_filter_func(speaker_name, buffer):
+                if dialogue_filter_func is not None:
+                    if not dialogue_filter_func(speaker_name, buffer):
                         continue
 
                 # We consider only such speakers that in predefined list.
