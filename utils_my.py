@@ -20,8 +20,6 @@ class MyAPI:
 
     # Setup parameters for the dataset generation
     min_words_count_in_response = 10
-    response_persona_prefix = ""
-    candidates_and_traits_shuffle_seed = 42
     # Speakers filtering parameters.
     dataset_filter_speaker_total_speakers_count = 400
     dataset_filter_speaker_min_utterances_per_char = None
@@ -31,8 +29,11 @@ class MyAPI:
     dataset_folding_parts = 5
     dataset_train_parts = range_exclude_middle(dataset_folding_parts)
     dataset_valid_parts = range_middle(dataset_folding_parts)
-    dataset_candidates_limit = 20
-    traits_per_character = 8
+    # ParlAI dataset creation related parameters.
+    parlai_dataset_candidates_limit = 20
+    parlai_dataset_traits_per_character = 8
+    parlai_dataset_persona_prefix = ""
+    parlai_dataset_candidates_and_traits_shuffle_seed = 42
     # This a models for the representation of the speakers.
     # ALOHA chatbot paper: https://arxiv.org/abs/1910.08293
     hla_training_config = MatrixTrainingConfig(top_n=100, regularization=100, iterations=500, factor=36,
@@ -63,7 +64,7 @@ class MyAPI:
     spectrum_features_norm = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-norm.npz")
     spectrum_features_diff = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-diff.npz")
     spectrum_speakers = join(__current_dir, "./data/ceb_books_annot/y.spectrum-speakers.npz")
-    spectrum_default_preset = "prompt_top_k_{}_limited".format(str(traits_per_character))
+    spectrum_default_preset = "prompt_top_k_{}_limited".format(str(parlai_dataset_traits_per_character))
     spectrum_st_embeddings = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-sent-transformers-{preset}.npz")
     # intermediate file required for a quick embedding of traits into the
     # train/validation dataset for dialogue chatbot development.

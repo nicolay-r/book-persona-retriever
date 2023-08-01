@@ -4,7 +4,7 @@ from utils_my import MyAPI
 
 provider = ALOHANegBasedClusteringProvider(
     cache_embeddings_in_memory=True,
-    candidates_limit=MyAPI.dataset_candidates_limit,
+    candidates_limit=MyAPI.parlai_dataset_candidates_limit,
     dataset_filepath=MyAPI.dataset_filepath,
     cluster_filepath=MyAPI.speaker_clusters_path,
     sqlite_dialog_db=MyAPI.dataset_dialog_db_path)

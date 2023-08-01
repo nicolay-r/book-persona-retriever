@@ -56,8 +56,8 @@ def iter_formatted_dialog(dialogs_iter, traits_func, candidates_provider, candid
                              response=label,
                              candidates=candidates,
                              resp_persona_traits=traits_func(q_speaker_id, r_speaker_id),
-                             resp_persona_prefix=MyAPI.response_persona_prefix,
-                             seed=MyAPI.candidates_and_traits_shuffle_seed).encode()
+                             resp_persona_prefix=MyAPI.parlai_dataset_persona_prefix,
+                             seed=MyAPI.parlai_dataset_candidates_and_traits_shuffle_seed).encode()
         yield b"\n"
 
 
@@ -80,7 +80,7 @@ speaker_spectrums = MyAPI.read_speaker_spectrums(MyAPI.spectrum_prompts_filepath
 TRAITS_NO = "original"
 TRAITS_SPECTRUM = "spectrum"
 traits_provider = {
-    TRAITS_NO: lambda your_id, partner_id: ["none"] * MyAPI.traits_per_character,
+    TRAITS_NO: lambda your_id, partner_id: ["none"] * MyAPI.parlai_dataset_traits_per_character,
     # NOTE: In some cases (less than ~0.07%) speakers might be missed so we need to perform check.
     TRAITS_SPECTRUM: lambda your_id, partner_id: speaker_spectrums[partner_id] if partner_id in speaker_spectrums
         else traits_provider[TRAITS_NO](your_id, partner_id)
@@ -95,11 +95,11 @@ candidates_provider = {
     CANDIDATES_UNIFORM: UniformCandidatesProvider(
         random_gen=random_gen,
         iter_dialogs=common_iter_dialogs(MyAPI.dataset_filepath),
-        candidates_limit=MyAPI.dataset_candidates_limit-1),
+        candidates_limit=MyAPI.parlai_dataset_candidates_limit - 1),
 
     CANDIDATES_HLA_CLUSTER: ALOHANegBasedClusteringProvider(
         cache_embeddings_in_memory=True,
-        candidates_limit=MyAPI.dataset_candidates_limit-1,
+        candidates_limit=MyAPI.parlai_dataset_candidates_limit - 1,
         neg_speakers_limit=MyAPI.neg_set_speakers_limit,
         dataset_filepath=MyAPI.dataset_filepath,
         cluster_filepath=MyAPI.speaker_clusters_path,
@@ -129,7 +129,7 @@ for data_fold_type, data_fold_source in dataset_filepaths.items():
                 dialogs_iter=common_iter_dialogs(data_fold_source),
                 traits_func=traits_func,
                 candidates_provider=candidates_dict,
-                candidates_limit=MyAPI.dataset_candidates_limit)
+                candidates_limit=MyAPI.parlai_dataset_candidates_limit)
 
             z = zipstream.ZipFile()
             z.write_iter(filename, data_it)
