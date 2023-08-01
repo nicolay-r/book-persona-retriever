@@ -11,8 +11,8 @@ def filter_speakers(ids_and_utterances_count_iter):
 
     # Optional parameter. Keep the most frequent.
     if MyAPI.dataset_filter_speaker_total_speakers_count is not None:
-        data = sorted(data, key=lambda item: item[1], reverse=True)
-        data = data[:MyAPI.dataset_filter_speaker_total_speakers_count]
+        data_ordered = sorted(data, key=lambda item: item[1], reverse=True)
+        data = data_ordered[:MyAPI.dataset_filter_speaker_total_speakers_count]
 
     for speaker_id, entries in data:
 
@@ -24,24 +24,32 @@ def filter_speakers(ids_and_utterances_count_iter):
         yield speaker_id
 
 
-local_counter = Counter()
-def filter_dialog(speaker_id, dialogue):
-    """ This function represents a dialog filtering procedure.
+class DialogFilterFunctionObject(object):
+    """ This is a main class that corresponds to filtering dialogs.
+        We consider it as a class due to the additional parameters
+        that find their application in the __call__ method
+        (actual filtering)
     """
-    assert(isinstance(speaker_id, str))
-    assert(isinstance(dialogue, list) and len(dialogue) == 2)
 
-    # We limit by max amount of utterances per character.
-    local_counter[speaker_id] += 1
-    if local_counter[speaker_id] > MyAPI.dataset_filter_dialogue_max_utterances_per_char:
-        return False
+    def __init__(self):
+        self.local_counter = Counter()
 
-    # Limit by the minimum amount of words in the response.
-    for utterance in dialogue:
-        if len(utterance.split(' ')) < MyAPI.min_words_count_in_response:
+    def __call__(self, *args, **kwargs):
+        speaker_id, dialogue = args
+        assert(isinstance(speaker_id, str))
+        assert(isinstance(dialogue, list) and len(dialogue) == 2)
+
+        # We limit by max amount of utterances per character.
+        self.local_counter[speaker_id] += 1
+        if self.local_counter[speaker_id] > MyAPI.dataset_filter_dialogue_max_utterances_per_char:
             return False
 
-    return True
+        # Limit by the minimum amount of words in the response.
+        for utterance in dialogue:
+            if len(utterance.split(' ')) < MyAPI.min_words_count_in_response:
+                return False
+
+        return True
 
 
 my_api = MyAPI()
@@ -55,4 +63,4 @@ iter_speakers_stat = stat_origin["speakers_uc_stat"].items()
 speaker_names_list = list(filter_speakers(iter_speakers_stat))
 
 my_api.write_speakers(speaker_names_list)
-my_api.write_dataset(dialogue_filter_func=filter_dialog)
+my_api.write_dataset(dialogue_filter_func=DialogFilterFunctionObject())
