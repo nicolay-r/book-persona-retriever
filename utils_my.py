@@ -5,7 +5,7 @@ from os.path import join, dirname, realpath, isfile
 
 from tqdm import tqdm
 
-from core.book_dialog import BookDialogueService
+from core.book.book_dialog import BookDialogue
 from embeddings.aloha.cfg import MatrixTrainingConfig, ClusterConfig
 from utils import range_exclude_middle, range_middle
 
@@ -154,7 +154,7 @@ class MyAPI:
                     assert(isinstance(segments, list))
                     assert(isinstance(recognized_speakers, dict))
 
-                    sep = " " if print_sep is False else " {} ".format(BookDialogueService.utterance_sep)
+                    sep = " " if print_sep is False else " {} ".format(BookDialogue.utterance_sep)
                     utterance = sep.join(segments)
                     speaker = recognized_speakers[speaker_id] \
                         if speaker_id in recognized_speakers else MyAPI.unknown_speaker+str(speaker_id)
@@ -295,7 +295,7 @@ class MyAPI:
 
                 if not keep_usep:
                     # Remove this.
-                    line = line.replace(BookDialogueService.utterance_sep, "")
+                    line = line.replace(BookDialogue.utterance_sep, "")
 
                 line = line.strip() if line != "\n" else None
 

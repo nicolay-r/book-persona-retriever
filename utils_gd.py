@@ -2,7 +2,7 @@ from os.path import join, dirname, realpath
 from gutenberg_dialog.pipeline.utils import DialogMetaHelper
 from nltk import RegexpTokenizer
 
-from core.book_dialog import BookDialogueService
+from core.book.book_dialog import BookDialogue
 
 
 class GuttenbergDialogApi:
@@ -14,7 +14,7 @@ class GuttenbergDialogApi:
     def iter_dialog_segments(self, book_path_func):
         assert(callable(book_path_func))
 
-        bs = BookDialogueService()
+        bs = BookDialogue()
         with open(self.dialogs_en, "r") as f:
             for l in f.readlines():
                 if l.strip() == '~':

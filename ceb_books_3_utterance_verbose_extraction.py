@@ -2,13 +2,13 @@ from os.path import realpath, dirname, join
 
 from gutenberg_dialog.pipeline.utils import DialogMetaHelper
 
-from core.book_dialog import BookDialogueService
+from core.book.book_dialog import BookDialogue
 from utils_gd import GuttenbergDialogApi
 from utils_my import MyAPI
 
 next_dialog = True
 my_api = MyAPI()
-bs = BookDialogueService()
+bs = BookDialogue()
 
 __current_dir = dirname(realpath(__file__))
 with open(join(__current_dir, GuttenbergDialogApi.dialogs_en), "r") as f:

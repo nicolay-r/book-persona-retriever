@@ -1,8 +1,8 @@
 from collections import Counter
 
+from core.book.utils import iter_paragraphs_with_n_speakers
 from core.plot import draw_bar_plot, draw_hist_plot
 from core.spectrums_annot import annot_spectrums_in_text
-from core.utils_paragraphs import iter_paragraphs_with_n_speakers
 from utils_ceb import CEBApi
 from utils_fcp import FcpApi
 from utils_my import MyAPI

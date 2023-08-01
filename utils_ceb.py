@@ -4,7 +4,7 @@ from os.path import dirname, realpath, join
 
 from tqdm import tqdm
 
-from core.paragraph import Paragraph
+from core.book.paragraph import Paragraph
 
 
 class CEBApi:

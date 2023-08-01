@@ -1,4 +1,7 @@
-class BookDialogueService:
+class BookDialogue(object):
+    """ This class provides an API for interaction with dialogues extracted from books.
+        Originally represent a part of the gutenberg_dialogue project.
+    """
 
     utterance_sep = "[USEP]"
 
