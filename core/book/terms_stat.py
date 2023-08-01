@@ -5,17 +5,12 @@ class TermsStat:
 
     def __init__(self):
         self.__terms_total = {}
+        # TODO. Use counter.
         self.__terms_in_doc = {}
         self.__doc_ids = set()
 
     def iter_terms(self):
         return self.__terms_total.keys()
-
-    def docs_count(self):
-        return len(self.__doc_ids)
-
-    def get_term_in_docs_count(self, term):
-        return self.__terms_in_doc[term]
 
     def register_doc(self, doc_id, terms):
 

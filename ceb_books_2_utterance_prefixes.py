@@ -1,6 +1,6 @@
 import itertools
 
-from core.terms_stat import TermsStat
+from core.book.terms_stat import TermsStat
 from utils_gd import GuttenbergDialogApi
 from utils_my import MyAPI
 
