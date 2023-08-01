@@ -22,8 +22,12 @@ class MyAPI:
     min_words_count_in_response = 10
     response_persona_prefix = ""
     candidates_and_traits_shuffle_seed = 42
-    dataset_min_utterances_per_char = 100
-    dataset_max_utterances_per_char = 100
+    # Speakers filtering parameters.
+    dataset_filter_speaker_total_speakers_count = 400
+    dataset_filter_speaker_min_utterances_per_char = None
+    # Dialogue filtering parameters.
+    dataset_filter_dialogue_max_utterances_per_char = 100
+    # Folding parameters.
     dataset_folding_parts = 5
     dataset_train_parts = range_exclude_middle(dataset_folding_parts)
     dataset_valid_parts = range_middle(dataset_folding_parts)
