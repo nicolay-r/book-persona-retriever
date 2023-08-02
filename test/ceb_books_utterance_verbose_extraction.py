@@ -8,18 +8,20 @@ from utils_my import MyAPI
 
 next_dialog = True
 my_api = MyAPI()
-bs = BookDialogue()
+books_dialogue = BookDialogue()
 
 __current_dir = dirname(realpath(__file__))
 with open(join(__current_dir, GuttenbergDialogApi.dialogs_en), "r") as f:
 
-    for l in f.readlines():
-        if l.strip() == '~':
+    for line in f.readlines():
+
+        if line.strip() == '~':
             # break within a one dialog
             pass
-        elif l == '\n':
+
+        elif line == '\n':
             next_dialog = True
-            annot = bs.annotate_dialog()
+            annot = books_dialogue.annotate_dialog()
             print_sep = False
             for a in annot:
                 if a[0] in ['!', "#", '.', ">"]:
@@ -28,18 +30,20 @@ with open(join(__current_dir, GuttenbergDialogApi.dialogs_en), "r") as f:
 
             if print_sep:
                 print()
-        elif l != '\n':
-            # actual utterance.
-            l = l.strip()
 
-            args = l.split(DialogMetaHelper._sep)
+        elif line != '\n':
+            # actual utterance.
+            line = line.strip()
+
+            args = line.split(DialogMetaHelper._sep)
             if len(args) == 1:
                 continue
 
-            meta, utt = args
+            meta, utterance = args
             book_id, dialog_region = meta.split('.txt')
-            bs.set_book(book_id=book_id, book_path=my_api.get_book_path(book_id))
+            books_dialogue.set_book(book_id=book_id, book_path=my_api.get_book_path(book_id))
+
             # Span of paragraphs.
             l_from, l_to = dialog_region[1:-1].split(":")
-            bs.set_paragraphs(l_from=l_from, l_to=l_to)
-            bs.register_utterance(utt=utt, l_from=l_from, l_to=l_to)
+            books_dialogue.set_paragraphs(l_from=l_from, l_to=l_to)
+            books_dialogue.register_utterance(utt=utterance, l_from=l_from, l_to=l_to)

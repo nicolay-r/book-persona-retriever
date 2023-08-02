@@ -18,16 +18,16 @@ def prefix_analysis(k, p_threshold, books_path_func, filter_func):
             book_dialogs[book_id] = []
 
         # We crop part that before speaker.
-        for i in range(len(lines)):
+        for line_ind in range(len(lines)):
 
-            words = lines[i].split()
+            words = lines[line_ind].split()
             cropped = words[:k] if k > 0 else words[1:3]
 
             if k < len(cropped):
                 cropped[k] = '[C]'
 
             # compose k-gramms.
-            lines[i] = '~'.join(cropped).lower()
+            lines[line_ind] = '~'.join(cropped).lower()
 
         # Filter optionally.
         lines = list(filter(filter_func, lines))
@@ -35,15 +35,15 @@ def prefix_analysis(k, p_threshold, books_path_func, filter_func):
         # Collect lines.
         book_dialogs[book_id].append(lines)
 
-    ts = TermsStat()
+    terms_stat = TermsStat()
     for book_id, dialogs in book_dialogs.items():
         text = ' '.join(itertools.chain.from_iterable(dialogs))
-        ts.register_doc(doc_id=book_id, terms=text.split())
+        terms_stat.register_doc(doc_id=book_id, terms=text.split())
 
     # Fill the results.
     tfa_idf = {}
-    for term in ts.iter_terms():
-        tfa_idf[term] = ts.tfa_idf(term, p_threshold=p_threshold)
+    for term in terms_stat.iter_terms():
+        tfa_idf[term] = terms_stat.tfa_idf(term, p_threshold=p_threshold)
 
     # Filter data.
     return [x for x in tfa_idf.items() if x[1] > 0]
