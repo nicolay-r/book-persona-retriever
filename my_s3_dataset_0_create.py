@@ -57,14 +57,17 @@ class DialogFilterFunctionObject(object):
         return True
 
 
-def get_dialog_qr_pairs_iter():
+def get_dialog_qr_pairs_iter(desc):
     """ This method represents a main iterator of the qr-pairs data.
         with optionally provided filter of the dialogues.
     """
     return MyAPI.iter_dialog_question_response_pairs(
         dialogs_filapath=MyAPI.dialogs_filepath,
-        dialogue_filter_func=DialogFilterFunctionObject())
+        dialogue_filter_func=DialogFilterFunctionObject(),
+        desc=desc)
 
 
-MyAPI.write_speakers(speaker_names_list=list(filter_response_speakers(get_dialog_qr_pairs_iter())))
-MyAPI.write_dataset(dialog_qr_pairs_iter=get_dialog_qr_pairs_iter())
+MyAPI.write_speakers(list(filter_response_speakers(get_dialog_qr_pairs_iter(
+    desc="Iter dialogues for composing speakers set"))))
+MyAPI.write_dataset(dialog_qr_pairs_iter=get_dialog_qr_pairs_iter(
+    "Iter dialogues for composing utterance dataset"))

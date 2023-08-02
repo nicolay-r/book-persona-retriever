@@ -165,9 +165,9 @@ class MyAPI:
                 file.write('\n')
 
     @staticmethod
-    def _read_annotated_dialogs(filepath=None):
+    def _read_annotated_dialogs(filepath=None, desc=None):
         with open(filepath, "r") as file:
-            for line in tqdm(file.readlines(), desc="handle annotated utterances"):
+            for line in tqdm(file.readlines(), desc=desc):
                 if line == "\n":
                     # End of the dialog.
                     yield None
@@ -239,13 +239,13 @@ class MyAPI:
         file.write("\n")
 
     @staticmethod
-    def iter_dialog_question_response_pairs(dialogs_filapath, dialogue_filter_func=None):
+    def iter_dialog_question_response_pairs(dialogs_filapath, dialogue_filter_func=None, desc=None):
         """ dialogue_filter_func: func (speaker_name, dialogue)
                 serves as a filtering function for a dialogue and a response speaker name.
         """
 
         qr_pair = []
-        for line in MyAPI._read_annotated_dialogs(dialogs_filapath):
+        for line in MyAPI._read_annotated_dialogs(filepath=dialogs_filapath, desc=desc):
 
             if line is None:
                 continue
