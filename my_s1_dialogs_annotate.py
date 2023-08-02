@@ -1,4 +1,4 @@
-from core.speaker_annotation import iter_speaker_annotated_dialogs
+from core.dialogue.speaker_annotation import iter_speaker_annotated_dialogs
 from utils_my import MyAPI
 
 

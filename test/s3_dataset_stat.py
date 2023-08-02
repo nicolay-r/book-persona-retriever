@@ -1,8 +1,8 @@
 from collections import Counter
 from os.path import join
 
+from core.dialogue.speaker_annotation import iter_speaker_annotated_dialogs
 from core.plot import draw_hist_plot
-from core.speaker_annotation import iter_speaker_annotated_dialogs
 from utils_my import MyAPI
 
 

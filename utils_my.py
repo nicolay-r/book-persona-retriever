@@ -138,8 +138,9 @@ class MyAPI:
             "speakers_reply_stat": speaker_reply_stat,
         }
 
-    def write_annotated_dialogs(self, iter_dialogs_and_speakers, filepath=None, print_sep=True):
-        filepath = self.dialogs_filepath if filepath is None else filepath
+    @staticmethod
+    def write_annotated_dialogs(iter_dialogs_and_speakers, filepath=None, print_sep=True):
+        filepath = MyAPI.dialogs_filepath if filepath is None else filepath
 
         with open(filepath, "w") as file:
             it = tqdm(iter_dialogs_and_speakers, desc="writing dialogues")

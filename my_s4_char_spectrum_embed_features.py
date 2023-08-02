@@ -1,8 +1,8 @@
 from itertools import chain
 
 from core.book.utils import iter_paragraphs_with_n_speakers
+from core.dialogue.comments import iter_text_comments
 from core.spectrums_annot import annot_spectrums_in_text, annot_to_min_max_grouped
-from core.utils_comments import iter_text_comments
 from core.utils_npz import NpzUtils
 from utils_ceb import CEBApi
 from utils_fcp import FcpApi

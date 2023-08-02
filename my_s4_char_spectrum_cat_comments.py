@@ -1,8 +1,8 @@
 from collections import Counter
 
+from core.dialogue.comments import iter_text_comments
 from core.plot import draw_bar_plot
 from core.spectrums_annot import annot_spectrums_in_text
-from core.utils_comments import iter_text_comments
 from utils_fcp import FcpApi
 from utils_my import MyAPI
 

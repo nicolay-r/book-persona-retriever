@@ -6,7 +6,7 @@ from core.candidates.base import CandidatesProvider
 from core.candidates.clustering import ALOHANegBasedClusteringProvider
 
 from core.candidates.uniform_collection import UniformCandidatesProvider
-from core.utils_comments import mask_text_entities
+from core.dialogue.comments import mask_text_entities
 from core.utils_parlai_facebook_formatter import format_episode
 from utils_ceb import CEBApi
 from utils_my import MyAPI
