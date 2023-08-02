@@ -1,12 +1,12 @@
 import math
+from collections import Counter
 
 
 class TermsStat:
 
     def __init__(self):
-        self.__terms_total = {}
-        # TODO. Use counter.
-        self.__terms_in_doc = {}
+        self.__terms_total = Counter()
+        self.__terms_in_doc = Counter()
         self.__doc_ids = set()
 
     def iter_terms(self):
@@ -23,21 +23,14 @@ class TermsStat:
         used = set()
         for term in terms:
 
-            # Register in total.
-            if term not in self.__terms_total:
-                self.__terms_total[term] = 1
-            else:
-                self.__terms_total[term] += 1
+            self.__terms_total[term] += 1
 
             # Register in doc-related.
             if term in used:
                 continue
             used.add(term)
 
-            if term not in self.__terms_in_doc:
-                self.__terms_in_doc[term] = 1
-            else:
-                self.__terms_in_doc[term] += 1
+            self.__terms_in_doc[term] += 1
 
     def tfa_idf(self, term, p_threshold=None):
         """ sum(tf,d){1..d} - idf
