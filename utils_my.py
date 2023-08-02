@@ -31,10 +31,10 @@ class MyAPI:
     # Speakers filtering parameters.
     dataset_min_words_count_in_response = 10
     dataset_filter_speaker_total_speakers_count = 400
-    dataset_filter_speaker_min_utterances_per_char = None
+    dataset_filter_speaker_min_utterances_per_speaker = None
     dataset_filepath = join(__current_dir, "./data/ceb_books_annot/dataset.txt")
     dataset_fold_filepath = join(__current_dir, "./data/ceb_books_annot/dataset_f{fold_index}.txt")
-    dataset_filter_dialogue_max_utterances_per_char = 100
+    dataset_filter_dialogue_max_utterances_per_speaker = 100
     dataset_folding_parts = 5
     dataset_train_parts = range_exclude_middle(dataset_folding_parts)
     dataset_valid_parts = range_middle(dataset_folding_parts)
@@ -210,9 +210,12 @@ class MyAPI:
         assert(isinstance(speaker_names_list, list))
 
         filepath = MyAPI.filtered_speakers_filepath if filepath is None else filepath
+
         with open(filepath, "w") as f:
             for speaker_name in speaker_names_list:
                 f.write("{}\n".format(speaker_name))
+
+        print("Speakers saved: {}".format(filepath))
 
     @staticmethod
     def read_speakers(filepath=None):
@@ -260,7 +263,11 @@ class MyAPI:
             if len(qr_pair) != 2:
                 continue
 
+            # Parse speaker name.
             r_speaker_name = MyAPI._get_meta(line)
+
+            # We consider None in the case when the responding speaker is unknown.
+            r_speaker_name = None if MyAPI.dialogs_unknown_speaker in r_speaker_name else r_speaker_name
 
             # We optionally filter buffers first.
             if dialogue_filter_func is not None:
@@ -278,12 +285,12 @@ class MyAPI:
 
         counter = Counter()
         with open(filepath, "w") as file:
-            for speaker_name, qr_pair in dialog_qr_pairs_iter:
+            for r_speaker_name, qr_pair in dialog_qr_pairs_iter:
                 assert(len(qr_pair) == 2)
 
                 # We consider only such speakers that in predefined list.
                 # We know we have a response to the known speaker.
-                if MyAPI.dialogs_unknown_speaker not in speaker_name and speaker_name in speakers_set:
+                if r_speaker_name is not None and r_speaker_name in speakers_set:
                     # We release content from the buffer.
                     MyAPI.write_dataset_buffer(file=file, buffer=qr_pair)
                     counter["pairs"] += 1

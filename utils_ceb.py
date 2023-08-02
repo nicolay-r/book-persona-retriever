@@ -68,6 +68,16 @@ class CEBApi:
             f.write(text)
 
     @staticmethod
+    def is_speaker_id(value):
+        if value.count("_") != 1:
+            return False
+        args = value.split("_")
+        for p in args:
+            if not p.isnumeric():
+                return False
+        return True
+
+    @staticmethod
     def speaker_variant_to_speaker(speaker_variant):
         """ removes speaker variant from the complete speaker identifier.
             origin "BOOK_SID_VARIANT"
