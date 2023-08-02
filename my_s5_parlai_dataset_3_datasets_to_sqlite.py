@@ -21,7 +21,7 @@ for fold in [None, "train", "test"]:
         target = MyAPI.dataset_dialog_db_fold_path.format(fold_index=fold)
 
     dialog_db = DialogDatabaseWithEmbeddedTargetsHandler(
-        model_name=MyAPI.utterance_embedding_model_name,
+        model_name=MyAPI.spectrum_embedding_model_name,
         cache_dir=CACHE_DIR,
         storage_filepath=target)
 

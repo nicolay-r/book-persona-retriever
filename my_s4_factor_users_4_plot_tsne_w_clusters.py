@@ -6,12 +6,12 @@ from core.plot import plot_tsne_series
 from core.utils_npz import NpzUtils
 from utils_my import MyAPI
 
-X = NpzUtils.load(MyAPI.users_embedding_factor)
+X = NpzUtils.load(MyAPI.hla_users_embedding_factor)
 category = [0] * len(X)
 perplexies = [50]
 
 png_path = join(MyAPI.books_storage, "factor_users")
-clusters_path = join(MyAPI.speaker_clusters_path)
+clusters_path = join(MyAPI.hla_speaker_clusters_path)
 
 # Visualize clustering.
 limit_chars = 0

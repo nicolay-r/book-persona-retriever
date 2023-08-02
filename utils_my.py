@@ -17,67 +17,58 @@ class MyAPI:
     # Main parameters.
     __current_dir = dirname(realpath(__file__))
     books_storage = join(__current_dir, "./data/ceb_books_annot")
+    books_storage_en = join(books_storage, "en")
 
+    # Prefixes lexicon storage configurations.
+    prefixes_storage = join(__current_dir, "./data/ceb_books_annot/prefixes")
+    # Dialogs with recognized speakers.
+    dialogs_filepath = join(__current_dir, "./data/ceb_books_annot/dialogs.txt")
     # Setup parameters for the dataset generation
-    min_words_count_in_response = 10
+    filtered_speakers_filepath = join(__current_dir, "./data/ceb_books_annot/filtered_speakers.txt")
     # Speakers filtering parameters.
+    dataset_min_words_count_in_response = 10
     dataset_filter_speaker_total_speakers_count = 400
     dataset_filter_speaker_min_utterances_per_char = None
-    # Dialogue filtering parameters.
+    dataset_filepath = join(__current_dir, "./data/ceb_books_annot/dataset.txt")
+    dataset_fold_filepath = join(__current_dir, "./data/ceb_books_annot/dataset_f{fold_index}.txt")
     dataset_filter_dialogue_max_utterances_per_char = 100
-    # Folding parameters.
     dataset_folding_parts = 5
     dataset_train_parts = range_exclude_middle(dataset_folding_parts)
     dataset_valid_parts = range_middle(dataset_folding_parts)
-    # ParlAI dataset creation related parameters.
-    parlai_dataset_candidates_limit = 20
-    parlai_dataset_traits_per_character = 8
-    parlai_dataset_persona_prefix = ""
-    parlai_dataset_candidates_and_traits_shuffle_seed = 42
+    dataset_st_embedding_query = join(__current_dir, "./data/ceb_books_annot/x.dataset-query-sent-transformers.npz")
+    dataset_st_embedding_response = join(__current_dir, "./data/ceb_books_annot/x.dataset-response-sent-transformers.txt")
+    dataset_dialog_db_path = join(__current_dir, "./data/ceb_books_annot/dataset_dialog.sqlite")
+    dataset_dialog_db_fold_path = join(__current_dir, "./data/ceb_books_annot/dataset_dialog_{fold_index}.sqlite")
+    # spectrums-related data
+    spectrum_per_user_count = 8
+    spectrum_embedding_model_name = 'all-mpnet-base-v2'
+    spectrum_features_norm = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-norm.npz")
+    spectrum_features_diff = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-diff.npz")
+    spectrum_speakers = join(__current_dir, "./data/ceb_books_annot/y.spectrum-speakers.npz")
+    spectrum_preset = "prompt_top_k_{}_limited".format(str(spectrum_per_user_count))
+    spectrum_st_embeddings = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-sent-transformers-{preset}.npz")
+    spectrum_prompts_filepath = join(__current_dir, "./data/ceb_books_annot/spectrum_speaker_prompts-{preset}.txt".format(preset=spectrum_preset))
     # This a models for the representation of the speakers.
     # ALOHA chatbot paper: https://arxiv.org/abs/1910.08293
     hla_training_config = MatrixTrainingConfig(top_n=100, regularization=100, iterations=500, factor=36,
                                                conf_scale=20, random_state=649128, safe_pass=0.2)
     hla_cluster_config = ClusterConfig(perc_cutoff=10, level2_limit=30, acceptable_overlap=10, weighted=False)
-    speaker_clusters_path = join(books_storage, "clusters.jsonl")
-    dataset_dialog_db_path = join(__current_dir, "./data/ceb_books_annot/dataset_dialog.sqlite")
-    dataset_dialog_db_fold_path = join(__current_dir, "./data/ceb_books_annot/dataset_dialog_{fold_index}.sqlite")
-    utterance_embedding_model_name = 'all-mpnet-base-v2'
-    spectrums_limit = 40            # ALOHA parameter which is proposes to keep the most representative
-                                    # speaker traits for prompting.
-    neg_set_speakers_limit = 10     # The overall process might take so much time is what becomes a reason
-                                    # of this limit.
+    hla_users_melted_filepath = join(books_storage, "features_melted.txt")
+    hla_speaker_clusters_path = join(books_storage, "clusters.jsonl")
+    hla_spectrums_limit = 40            # ALOHA parameter which is proposes to keep the most representative traits.
+    hla_neg_set_speakers_limit = 10     # The overall process might take so much time is what becomes a reason of limit.
+    hla_users_embedding_factor = join(__current_dir, "./data/ceb_books_annot/x.speakers-factor.npz")
 
-    prefixes_storage = join(__current_dir, "./data/ceb_books_annot/prefixes")
-    # Dialogs with recognized speakers.
-    dialogs_filepath = join(__current_dir, "./data/ceb_books_annot/dialogs.txt")
-    # List of the speakers considered for the dataset.
-    filtered_speakers_filepath = join(__current_dir, "./data/ceb_books_annot/filtered_speakers.txt")
-    dataset_filepath = join(__current_dir, "./data/ceb_books_annot/dataset.txt")
-    dataset_fold_filepath = join(__current_dir, "./data/ceb_books_annot/dataset_f{fold_index}.txt")
-    dataset_parlai_filepath = join(__current_dir, "./data/ceb_books_annot/dataset_parlai_{}.zip")
-    # Embedding visualization for queries in dataset (original texts.
-    dataset_st_embedding_query = join(__current_dir, "./data/ceb_books_annot/x.dataset-query-sent-transformers.npz")
-    dataset_st_embedding_response = join(__current_dir, "./data/ceb_books_annot/x.dataset-response-sent-transformers.txt")
-    books_storage_en = join(books_storage, "en")
-    # spectrums-related data
-    spectrum_features_norm = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-norm.npz")
-    spectrum_features_diff = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-diff.npz")
-    spectrum_speakers = join(__current_dir, "./data/ceb_books_annot/y.spectrum-speakers.npz")
-    spectrum_default_preset = "prompt_top_k_{}_limited".format(str(parlai_dataset_traits_per_character))
-    spectrum_st_embeddings = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-sent-transformers-{preset}.npz")
-    # intermediate file required for a quick embedding of traits into the
-    # train/validation dataset for dialogue chatbot development.
-    spectrum_prompts_filepath = join(__current_dir,
-                                     "./data/ceb_books_annot/spectrum_speaker_prompts-{preset}.txt".format(
-                                         preset=spectrum_default_preset))
-    users_embedding_factor = join(__current_dir, "./data/ceb_books_annot/x.speakers-factor.npz")
+    # ParlAI dataset creation related parameters.
+    parlai_dataset_candidates_limit = 20
+    parlai_dataset_persona_prefix = ""
+    parlai_dataset_candidates_and_traits_shuffle_seed = 42
+    parlai_dataset_filepath = join(__current_dir, "./data/ceb_books_annot/dataset_parlai_{}.zip")
     parlai_charmask_template = "_"      # We perform character masking for the ParlAI dataset of utterances.
 
     # separator in line between meta information and the actual content
     meta_sep = ": "
-
-    unknown_speaker = "UNKN-"
+    dialogs_unknown_speaker = "UNKN-"
 
     def __init__(self, books_root=None):
         self.__book_storage_root = MyAPI.books_storage_en if books_root is None else books_root
@@ -162,7 +153,7 @@ class MyAPI:
                     sep = " " if print_sep is False else " {} ".format(BookDialogue.utterance_sep)
                     utterance = sep.join(segments)
                     speaker = recognized_speakers[speaker_id] \
-                        if speaker_id in recognized_speakers else MyAPI.unknown_speaker+str(speaker_id)
+                        if speaker_id in recognized_speakers else MyAPI.dialogs_unknown_speaker + str(speaker_id)
                     file.write("{speaker}: {utterance}\n".format(speaker=speaker, utterance=utterance))
 
                 file.write('\n')
@@ -276,7 +267,7 @@ class MyAPI:
 
                 # We consider only such speakers that in predefined list.
                 # We know we have a response to the known speaker.
-                if MyAPI.unknown_speaker not in speaker_name and speaker_name in speakers_set:
+                if MyAPI.dialogs_unknown_speaker not in speaker_name and speaker_name in speakers_set:
                     # We release content from the buffer.
                     MyAPI.write_dataset_buffer(file=file, buffer=buffer)
                     counter["pairs"] += 1

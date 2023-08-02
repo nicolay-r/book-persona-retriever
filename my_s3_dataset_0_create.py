@@ -46,7 +46,7 @@ class DialogFilterFunctionObject(object):
 
         # Limit by the minimum amount of words in the response.
         for utterance in dialogue:
-            if len(utterance.split(' ')) < MyAPI.min_words_count_in_response:
+            if len(utterance.split(' ')) < MyAPI.dataset_min_words_count_in_response:
                 return False
 
         return True

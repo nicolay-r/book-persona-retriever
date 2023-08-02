@@ -6,7 +6,7 @@ provider = ALOHANegBasedClusteringProvider(
     cache_embeddings_in_memory=True,
     candidates_limit=MyAPI.parlai_dataset_candidates_limit,
     dataset_filepath=MyAPI.dataset_filepath,
-    cluster_filepath=MyAPI.speaker_clusters_path,
+    cluster_filepath=MyAPI.hla_speaker_clusters_path,
     sqlite_dialog_db=MyAPI.dataset_dialog_db_path)
 
 dialogs_iter = MyAPI.iter_dataset_as_dialogs(

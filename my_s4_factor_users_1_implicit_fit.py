@@ -16,4 +16,4 @@ x = []
 for user_id in tqdm(range(mw.model.user_factors.shape[0])):
     x.append(mw.model.user_factors[user_id])
 
-NpzUtils.save(data=x, target=MyAPI.users_embedding_factor)
+NpzUtils.save(data=x, target=MyAPI.hla_users_embedding_factor)

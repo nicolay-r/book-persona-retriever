@@ -80,7 +80,7 @@ speaker_spectrums = MyAPI.read_speaker_spectrums(MyAPI.spectrum_prompts_filepath
 TRAITS_NO = "original"
 TRAITS_SPECTRUM = "spectrum"
 traits_provider = {
-    TRAITS_NO: lambda your_id, partner_id: ["none"] * MyAPI.parlai_dataset_traits_per_character,
+    TRAITS_NO: lambda your_id, partner_id: ["none"] * MyAPI.spectrum_per_user_count,
     # NOTE: In some cases (less than ~0.07%) speakers might be missed so we need to perform check.
     TRAITS_SPECTRUM: lambda your_id, partner_id: speaker_spectrums[partner_id] if partner_id in speaker_spectrums
         else traits_provider[TRAITS_NO](your_id, partner_id)
@@ -100,9 +100,9 @@ candidates_provider = {
     CANDIDATES_HLA_CLUSTER: ALOHANegBasedClusteringProvider(
         cache_embeddings_in_memory=True,
         candidates_limit=MyAPI.parlai_dataset_candidates_limit - 1,
-        neg_speakers_limit=MyAPI.neg_set_speakers_limit,
+        neg_speakers_limit=MyAPI.hla_neg_set_speakers_limit,
         dataset_filepath=MyAPI.dataset_filepath,
-        cluster_filepath=MyAPI.speaker_clusters_path,
+        cluster_filepath=MyAPI.hla_speaker_clusters_path,
         sqlite_dialog_db=MyAPI.dataset_dialog_db_fold_path.format(fold_index="train"))
 }
 
@@ -134,6 +134,6 @@ for data_fold_type, data_fold_source in dataset_filepaths.items():
             z = zipstream.ZipFile()
             z.write_iter(filename, data_it)
 
-            with open(my_api.dataset_parlai_filepath.format(filename), "wb") as f:
+            with open(my_api.parlai_dataset_filepath.format(filename), "wb") as f:
                 for episode_line in z:
                     f.write(episode_line)

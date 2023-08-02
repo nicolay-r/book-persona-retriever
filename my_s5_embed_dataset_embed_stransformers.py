@@ -5,7 +5,7 @@ from utils import CACHE_DIR
 from utils_my import MyAPI
 
 
-model = SentenceTransformer(MyAPI.utterance_embedding_model_name, cache_folder=CACHE_DIR)
+model = SentenceTransformer(MyAPI.spectrum_embedding_model_name, cache_folder=CACHE_DIR)
 
 X_q = []
 X_r = []

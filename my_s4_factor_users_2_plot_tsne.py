@@ -4,7 +4,7 @@ from core.plot import plot_tsne_series
 from core.utils_npz import NpzUtils
 from utils_my import MyAPI
 
-X = NpzUtils.load(MyAPI.users_embedding_factor)
+X = NpzUtils.load(MyAPI.hla_users_embedding_factor)
 
 perplexies = [5]
 
