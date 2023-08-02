@@ -4,21 +4,23 @@ from utils_ceb import CEBApi
 from utils_gd import GuttenbergDialogApi
 
 
-def try_recognize(terms, prefix_lexicon):
+def try_recognize(terms, prefix_lexicon, k_list):
     """ Annotation algorithm.
     """
     variant = None
     recognized = False
 
-    if len(terms) > 0 and GuttenbergDialogApi.is_character(terms[0]):
-        # Provide info.
-        # NOTE. it is important to convert speaker variation to its book-name format.
-        # for appropriate grouping in further.
-        variant = terms[0]
-        recognized = True
-
     # Annotation based on lexicon and prefix.
-    for k in [1, 2, 3]:
+    for k in k_list:
+
+        if k == 0:
+            if len(terms) > 0 and GuttenbergDialogApi.is_character(terms[0]):
+                # Provide info.
+                # NOTE. it is important to convert speaker variation to its book-name format.
+                # for appropriate grouping in further.
+                variant = terms[0]
+                recognized = True
+
         if prefix_lexicon is not None:
             if len(terms) > k and GuttenbergDialogApi.is_character(terms[k]):
                 if ' '.join(terms[:k]) in prefix_lexicon:
@@ -30,7 +32,7 @@ def try_recognize(terms, prefix_lexicon):
     return recognized, variant
 
 
-def iter_speaker_annotated_dialogs(book_path_func, prefix_lexicon=None):
+def iter_speaker_annotated_dialogs(book_path_func, recognize_at_positions, prefix_lexicon=None):
     """ This is a speaker annotation algorithm based on guttenberg-dialog
         project with additional annotation from my side (Rusnachenko Nicolay),
         that provides segmenting and author text part (comments) in between
@@ -40,12 +42,12 @@ def iter_speaker_annotated_dialogs(book_path_func, prefix_lexicon=None):
 
     gd_api = GuttenbergDialogApi()
 
-    for b_id, dialog_segments in gd_api.iter_dialog_segments(book_path_func):
+    for _, dialog_segments in gd_api.iter_dialog_segments(book_path_func):
 
         speakers = set()
         recognized_speakers = {}
 
-        for i, segment in enumerate(dialog_segments):
+        for _, segment in enumerate(dialog_segments):
 
             # Considering only comments.
             if segment[0] not in ['#', '.']:
@@ -62,7 +64,8 @@ def iter_speaker_annotated_dialogs(book_path_func, prefix_lexicon=None):
             # Do analysis.
             terms = gd_api.normalize_terms(text)
 
-            recognized, variant = try_recognize(terms=terms, prefix_lexicon=prefix_lexicon)
+            recognized, variant = try_recognize(
+                terms=terms, prefix_lexicon=prefix_lexicon, k_list=recognize_at_positions)
 
             if recognized:
                 recognized_speakers[speaker_id] = CEBApi.speaker_variant_to_speaker(variant)

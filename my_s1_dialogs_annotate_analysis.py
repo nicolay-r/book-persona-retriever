@@ -10,7 +10,8 @@ my_api = MyAPI()
 stat = my_api.calc_annotated_dialogs_stat(
     iter_dialogs_and_speakers=iter_speaker_annotated_dialogs(
         book_path_func=my_api.get_book_path,
-        prefix_lexicon=my_api.load_prefix_lexicon_en())
+        prefix_lexicon=my_api.load_prefix_lexicon_en(),
+        recognize_at_positions=my_api.dialogs_recognize_speaker_at_positions)
 )
 
 print("recognized/utt: {}%".format(str(round(100.0 * stat["recognized"]/stat["utterances"], 2))))

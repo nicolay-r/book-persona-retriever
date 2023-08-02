@@ -22,6 +22,9 @@ class MyAPI:
     # Prefixes lexicon storage configurations.
     prefixes_storage = join(__current_dir, "./data/ceb_books_annot/prefixes")
     # Dialogs with recognized speakers.
+    dialogs_recongize_speaker_p_threshold = 0.01
+    dialogs_recognize_speaker_at_positions = [0, 1, 2, 3]  # We consider only positions 0, 1, 2, and 3
+                                                           # according to the related preliminary analysis.
     dialogs_filepath = join(__current_dir, "./data/ceb_books_annot/dialogs.txt")
     # Setup parameters for the dataset generation
     filtered_speakers_filepath = join(__current_dir, "./data/ceb_books_annot/filtered_speakers.txt")
@@ -40,6 +43,8 @@ class MyAPI:
     dataset_dialog_db_path = join(__current_dir, "./data/ceb_books_annot/dataset_dialog.sqlite")
     dataset_dialog_db_fold_path = join(__current_dir, "./data/ceb_books_annot/dataset_dialog_{fold_index}.sqlite")
     # spectrums-related data
+    spectrum_speakers_in_paragraph = 1
+    spectrum_comment_speaker_positions = [0, 1, 2]
     spectrum_per_user_count = 8
     spectrum_embedding_model_name = 'all-mpnet-base-v2'
     spectrum_features_norm = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-norm.npz")
@@ -174,7 +179,7 @@ class MyAPI:
             default suffix is an amount of considered books.
         """
         entries = set()
-        with open("{}-b{}.txt".format(self.prefixes_storage, self.books_count()), "r") as f:
+        with open("{}-b{}.txt".format(MyAPI.prefixes_storage, self.books_count()), "r") as f:
             for line in f.readlines():
                 # split n-gramms.
                 line = line.strip()
@@ -185,12 +190,11 @@ class MyAPI:
         assert(callable(analysis_func))
 
         result_sets = {}
-        with open("{}-b{}.txt".format(self.prefixes_storage, self.books_count()), "w") as out:
+        with open("{}-b{}.txt".format(MyAPI.prefixes_storage, self.books_count()), "w") as out:
 
-            # We consider only positions 0, 1, 2, and 3
-            # according to the related preliminary analysis.
-            for k in tqdm([0, 1, 2, 3], desc="For each position of the character in comment"):
-                tfa_idf = analysis_func(k=k, p_threshold=0.01 if k > 1 else None,
+            for k in tqdm(MyAPI.dialogs_recognize_speaker_at_positions,
+                          desc="For each position of the character in comment"):
+                tfa_idf = analysis_func(k=k, p_threshold=MyAPI.dialogs_recongize_speaker_p_threshold if k > 1 else None,
                                         books_path_func=self.get_book_path,
                                         filter_func=lambda value: line_filter(value, result_sets))
                 sorted_list = sorted(tfa_idf, key=lambda item: item[1], reverse=False)

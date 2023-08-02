@@ -2,21 +2,25 @@ from utils_ceb import CEBApi
 from utils_gd import GuttenbergDialogApi
 
 
-def iter_text_comments(speakers, book_path_func):
+def filter_relevant_text_comments(speaker_positions, iter_comments_at_k_func, speakers):
+    assert(isinstance(speaker_positions, list))
+    assert(callable(iter_comments_at_k_func))
     assert(isinstance(speakers, set))
-    assert(callable(book_path_func))
 
-    g_api = GuttenbergDialogApi()
-    for k in range(3):
-
-        for book_id, comments in g_api.filter_comment_with_speaker_at_k(book_path_func=book_path_func, k=k):
+    for k in speaker_positions:
+        for book_id, comments in iter_comments_at_k_func(k):
             for comment in comments:
+
                 # Seek for speaker in a comment.
                 for term in comment.split():
-                    if GuttenbergDialogApi.is_character(term):
-                        if CEBApi.speaker_variant_to_speaker(term) in speakers:
-                            yield comment, [term]
-                            break
+
+                    if not GuttenbergDialogApi.is_character(term):
+                        continue
+                    if CEBApi.speaker_variant_to_speaker(term) not in speakers:
+                        continue
+
+                    yield comment, [term]
+                    break
 
 
 def mask_text_entities(text, mask_template="_"):

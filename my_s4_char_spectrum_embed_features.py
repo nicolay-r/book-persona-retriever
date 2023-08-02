@@ -1,11 +1,12 @@
 from itertools import chain
 
 from core.book.utils import iter_paragraphs_with_n_speakers
-from core.dialogue.comments import iter_text_comments
+from core.dialogue.comments import filter_relevant_text_comments
 from core.spectrums_annot import annot_spectrums_in_text, annot_to_min_max_grouped
 from core.utils_npz import NpzUtils
 from utils_ceb import CEBApi
 from utils_fcp import FcpApi
+from utils_gd import GuttenbergDialogApi
 from utils_my import MyAPI
 
 
@@ -16,15 +17,18 @@ def iter_all(speakers):
         lambda t: (t[0].Text, t[1]),
         iter_paragraphs_with_n_speakers(
             speakers=set(speakers),
-            n_speakers=1,
+            n_speakers=MyAPI.spectrum_speakers_in_paragraph,
             iter_paragraphs=CEBApi.iter_paragraphs(
                 iter_book_ids=my_api.book_ids_from_directory(),
                 book_by_id_func=my_api.get_book_path)))
 
     # Iterate over comments.
-    comments_it = iter_text_comments(
+    g_api = GuttenbergDialogApi()
+    comments_it = filter_relevant_text_comments(
+        speaker_positions=MyAPI.spectrum_comment_speaker_positions,
         speakers=set(speakers),
-        book_path_func=my_api.get_book_path)
+        iter_comments_at_k_func=lambda k: g_api.filter_comment_with_speaker_at_k(
+            book_path_func=my_api.get_book_path, k=k))
 
     return chain(paragraphs_it, comments_it)
 
