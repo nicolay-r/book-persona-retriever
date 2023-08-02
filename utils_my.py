@@ -200,9 +200,12 @@ class MyAPI:
 
                 result_sets[k] = set([k for k, _ in sorted_list])
 
-    def write_speakers(self, speaker_names_list):
+    @staticmethod
+    def write_speakers(speaker_names_list, filepath=None):
         assert(isinstance(speaker_names_list, list))
-        with open(self.filtered_speakers_filepath, "w") as f:
+
+        filepath = MyAPI.filtered_speakers_filepath if filepath is None else filepath
+        with open(filepath, "w") as f:
             for speaker_name in speaker_names_list:
                 f.write("{}\n".format(speaker_name))
 
@@ -230,50 +233,58 @@ class MyAPI:
             file.write("{}\n".format(buffer_line))
         file.write("\n")
 
-    def write_dataset(self, dialogue_filter_func=None):
-        """ Filter dialogs to the result dataset. Compose a Question->Response pair.
-            Where response is always a known speaker, so whe know who we ask.
-
-            dialogue_filter_func: func (speaker_name, dialogue)
-                serves as a filtering function for a dialogue and a respose speaker name.
+    @staticmethod
+    def iter_dialog_question_response_pairs(dialogs_filapath, dialogue_filter_func=None):
+        """ dialogue_filter_func: func (speaker_name, dialogue)
+                serves as a filtering function for a dialogue and a response speaker name.
         """
-        assert(callable(dialogue_filter_func) or dialogue_filter_func is None)
 
+        qr_pair = []
+        for line in MyAPI._read_annotated_dialogs(dialogs_filapath):
+
+            if line is None:
+                continue
+
+            line = line.strip()
+            qr_pair.append(line)
+
+            # Keep the size of buffer equal 2.
+            if len(qr_pair) > 2:
+                qr_pair = qr_pair[1:]
+
+            if len(qr_pair) != 2:
+                continue
+
+            r_speaker_name = MyAPI._get_meta(line)
+
+            # We optionally filter buffers first.
+            if dialogue_filter_func is not None:
+                if not dialogue_filter_func(r_speaker_name, qr_pair):
+                    continue
+
+            yield r_speaker_name, qr_pair
+
+    @staticmethod
+    def write_dataset(dialog_qr_pairs_iter, filepath=None):
         # Read speakers to be considered first.
-        speakers_set = set(self.read_speakers())
+        speakers_set = set(MyAPI.read_speakers())
 
-        buffer = []
+        filepath = MyAPI.dataset_filepath if filepath is None else filepath
+
         counter = Counter()
-        with open(self.dataset_filepath, "w") as file:
-            for line in self._read_annotated_dialogs(self.dialogs_filepath):
-                if line is None:
-                    continue
-                line = line.strip()
-                buffer.append(line)
-
-                # Keep the size of buffer equal 2.
-                if len(buffer) > 2:
-                    buffer = buffer[1:]
-
-                if len(buffer) != 2:
-                    continue
-
-                speaker_name = MyAPI._get_meta(line)
-
-                # We optionally filter buffers first.
-                if dialogue_filter_func is not None:
-                    if not dialogue_filter_func(speaker_name, buffer):
-                        continue
+        with open(filepath, "w") as file:
+            for speaker_name, qr_pair in dialog_qr_pairs_iter:
+                assert(len(qr_pair) == 2)
 
                 # We consider only such speakers that in predefined list.
                 # We know we have a response to the known speaker.
                 if MyAPI.dialogs_unknown_speaker not in speaker_name and speaker_name in speakers_set:
                     # We release content from the buffer.
-                    MyAPI.write_dataset_buffer(file=file, buffer=buffer)
+                    MyAPI.write_dataset_buffer(file=file, buffer=qr_pair)
                     counter["pairs"] += 1
 
         print("Pairs written: {}".format(counter["pairs"]))
-        print("Dataset saved: {}".format(self.dataset_filepath))
+        print("Dataset saved: {}".format(filepath))
 
     @staticmethod
     def read_dataset(dataset_filepath, keep_usep=True, split_meta=False, desc=None, pbar=True, limit=None):

@@ -1,20 +1,25 @@
 from collections import Counter
-from core.speaker_annotation import iter_speaker_annotated_dialogs
 from utils_my import MyAPI
 
 
-def filter_speakers(ids_and_utterances_count_iter):
-    """ Filtering algorithm of the speakers considered for the
-        result dataset.
+def filter_response_speakers(dialogue_qr_pairs_it):
+    """ Filtering algorithm of the speakers considered for the result dataset.
     """
-    data = list(ids_and_utterances_count_iter)
+
+    speaker_ids = []
+    speaker_entries = Counter()
+    for r_speaker_id, _ in dialogue_qr_pairs_it:
+        speaker_entries[r_speaker_id] += 1
+        speaker_ids.append(r_speaker_id)
 
     # Optional parameter. Keep the most frequent.
     if MyAPI.dataset_filter_speaker_total_speakers_count is not None:
-        data_ordered = sorted(data, key=lambda item: item[1], reverse=True)
-        data = data_ordered[:MyAPI.dataset_filter_speaker_total_speakers_count]
+        ordered_speaker_ids = sorted(speaker_ids, key=lambda speaker_id: speaker_entries[speaker_id], reverse=True)
+        speaker_ids = ordered_speaker_ids[:MyAPI.dataset_filter_speaker_total_speakers_count]
 
-    for speaker_id, entries in data:
+    for speaker_id in speaker_ids:
+
+        entries = speaker_entries[speaker_id]
 
         # Optional check whether we meet the criteria of the min. amount of the utterances per speaker.
         if MyAPI.dataset_filter_speaker_min_utterances_per_char is not None:
@@ -52,15 +57,14 @@ class DialogFilterFunctionObject(object):
         return True
 
 
-my_api = MyAPI()
-stat_origin = MyAPI.calc_annotated_dialogs_stat(
-    iter_dialogs_and_speakers=iter_speaker_annotated_dialogs(
-        book_path_func=my_api.get_book_path,
-        prefix_lexicon=my_api.load_prefix_lexicon_en())
-)
+def get_dialog_qr_pairs_iter():
+    """ This method represents a main iterator of the qr-pairs data.
+        with optionally provided filter of the dialogues.
+    """
+    return MyAPI.iter_dialog_question_response_pairs(
+        dialogs_filapath=MyAPI.dialogs_filepath,
+        dialogue_filter_func=DialogFilterFunctionObject())
 
-iter_speakers_stat = stat_origin["speakers_uc_stat"].items()
-speaker_names_list = list(filter_speakers(iter_speakers_stat))
 
-my_api.write_speakers(speaker_names_list)
-my_api.write_dataset(dialogue_filter_func=DialogFilterFunctionObject())
+MyAPI.write_speakers(speaker_names_list=list(filter_response_speakers(get_dialog_qr_pairs_iter())))
+MyAPI.write_dataset(dialog_qr_pairs_iter=get_dialog_qr_pairs_iter())
