@@ -1,5 +1,6 @@
 from collections import Counter
 
+from core.dialogue.comments import iter_terms_with_speakers
 from utils_ceb import CEBApi
 from utils_my import MyAPI
 
@@ -30,6 +31,13 @@ class QRFilterFunctionObject(object):
             return False
 
         if self.s_ctr[r_speaker_id] >= MyAPI.dataset_filter_dialogue_max_utterances_per_speaker:
+            return False
+
+        # We consider only those utterances that is not contain information
+        # or refer to other speakers.
+        r_speakers = []
+        iter_terms_with_speakers(terms=dialogue[1].split(' '), map_func=lambda x: r_speakers.append(x))
+        if len(r_speakers) > MyAPI.dataset_filter_other_speakers_in_response:
             return False
 
         # Limit by the minimum amount of words in the response.

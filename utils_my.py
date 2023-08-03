@@ -32,6 +32,7 @@ class MyAPI:
     dataset_min_words_count_in_response = 10
     dataset_filter_speaker_total_speakers_count = 400
     dataset_filter_speaker_min_utterances_per_speaker = None
+    dataset_filter_other_speakers_in_response = 0
     dataset_filepath = join(__current_dir, "./data/ceb_books_annot/dataset.txt")
     dataset_fold_filepath = join(__current_dir, "./data/ceb_books_annot/dataset_f{fold_index}.txt")
     dataset_filter_dialogue_max_utterances_per_speaker = 100
