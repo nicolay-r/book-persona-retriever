@@ -36,9 +36,10 @@ class MyAPI:
     dataset_filepath = join(__current_dir, "./data/ceb_books_annot/dataset.txt")
     dataset_fold_filepath = join(__current_dir, "./data/ceb_books_annot/dataset_f{fold_index}.txt")
     dataset_filter_dialogue_max_utterances_per_speaker = 100
+    # Dataset folding.
     dataset_folding_parts = 5
-    dataset_train_parts = range_exclude_middle(dataset_folding_parts)
-    dataset_valid_parts = range_middle(dataset_folding_parts)
+    dataset_folding_train_parts = range_exclude_middle(dataset_folding_parts)
+    dataset_folding_valid_parts = range_middle(dataset_folding_parts)
     dataset_st_embedding_query = join(__current_dir, "./data/ceb_books_annot/x.dataset-query-sent-transformers.npz")
     dataset_st_embedding_response = join(__current_dir, "./data/ceb_books_annot/x.dataset-response-sent-transformers.txt")
     dataset_dialog_db_path = join(__current_dir, "./data/ceb_books_annot/dataset_dialog.sqlite")

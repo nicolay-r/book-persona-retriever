@@ -41,9 +41,9 @@ for i in range(MyAPI.dataset_folding_parts):
 
 # Merge foldings.
 # We select such indexes for better result balancing.
-cat_files(source_filepaths=[MyAPI.dataset_fold_filepath.format(fold_index=str(i)) for i in MyAPI.dataset_train_parts],
+cat_files(source_filepaths=[MyAPI.dataset_fold_filepath.format(fold_index=str(i)) for i in MyAPI.dataset_folding_train_parts],
           target_filepath=MyAPI.dataset_fold_filepath.format(fold_index="train"))
-cat_files(source_filepaths=[MyAPI.dataset_fold_filepath.format(fold_index=str(i)) for i in MyAPI.dataset_valid_parts],
+cat_files(source_filepaths=[MyAPI.dataset_fold_filepath.format(fold_index=str(i)) for i in MyAPI.dataset_folding_valid_parts],
           target_filepath=MyAPI.dataset_fold_filepath.format(fold_index="valid"))
 
 print("---")
