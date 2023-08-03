@@ -11,7 +11,7 @@ def handle_responses(dialog_it, handle_func):
         handle_func(dialog_id, speaker_q_id, speaker_t_id, query, target)
 
 
-for fold in [None, "train", "test"]:
+for fold in [None, "train", "valid"]:
 
     if fold is None:
         source = MyAPI.dataset_filepath
