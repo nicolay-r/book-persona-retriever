@@ -70,6 +70,7 @@ class MyAPI:
     parlai_dataset_persona_prefix = ""
     parlai_dataset_candidates_and_traits_shuffle_seed = 42
     parlai_dataset_filepath = join(__current_dir, "./data/ceb_books_annot/dataset_parlai_{}.zip")
+    parlai_dataset_candidates_oversample_factor = 4
     parlai_charmask_template = "_"      # We perform character masking for the ParlAI dataset of utterances.
 
     # separator in line between meta information and the actual content

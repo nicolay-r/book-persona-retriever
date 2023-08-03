@@ -30,10 +30,12 @@ def common_iter_dialogs(dialogs_dataset_filepath):
         yield dialog
 
 
-def iter_formatted_dialog(dialogs_iter, traits_func, candidates_provider, candidates_limit):
+def iter_formatted_dialog(dialogs_iter, traits_func, candidates_provider, candidates_oversample_factor=1):
     assert(callable(traits_func))
     assert(isinstance(candidates_provider, CandidatesProvider) or candidates_provider is None)
-    assert(isinstance(candidates_limit, int))
+    assert(isinstance(candidates_oversample_factor, int) and candidates_oversample_factor > 0)
+
+    candidates_oversample_factor = 1 if candidates_provider is None else candidates_oversample_factor
 
     for dialog_id, dialog in enumerate(dialogs_iter):
         assert(len(dialog) == 2)
@@ -41,23 +43,26 @@ def iter_formatted_dialog(dialogs_iter, traits_func, candidates_provider, candid
         q_speaker_id, query = dialog[0]
         r_speaker_id, label = dialog[1]
 
-        if candidates_provider is not None:
-            other_candidates = candidates_provider.provide_or_none(
-                dialog_id=dialog_id, speaker_id=r_speaker_id, label=label)
-            other_candidates = [] if other_candidates is None else other_candidates
-            candidates = [label] + other_candidates
-        else:
-            candidates = [label]
+        # We basically generate every episode with new candidates.
+        for _ in range(candidates_oversample_factor):
 
-        if candidates is None:
-            continue
+            if candidates_provider is not None:
+                other_candidates = candidates_provider.provide_or_none(
+                    dialog_id=dialog_id, speaker_id=r_speaker_id, label=label)
+                other_candidates = [] if other_candidates is None else other_candidates
+                candidates = [label] + other_candidates
+            else:
+                candidates = [label]
 
-        yield format_episode(request=query,
-                             response=label,
-                             candidates=candidates,
-                             resp_persona_traits=traits_func(q_speaker_id, r_speaker_id),
-                             resp_persona_prefix=MyAPI.parlai_dataset_persona_prefix,
-                             seed=MyAPI.parlai_dataset_candidates_and_traits_shuffle_seed).encode()
+            if candidates is None:
+                continue
+
+            yield format_episode(request=query,
+                                 response=label,
+                                 candidates=candidates,
+                                 resp_persona_traits=traits_func(q_speaker_id, r_speaker_id),
+                                 resp_persona_prefix=MyAPI.parlai_dataset_persona_prefix,
+                                 seed=MyAPI.parlai_dataset_candidates_and_traits_shuffle_seed).encode()
         yield b"\n"
 
 
@@ -129,7 +134,7 @@ for data_fold_type, data_fold_source in dataset_filepaths.items():
                 dialogs_iter=common_iter_dialogs(data_fold_source),
                 traits_func=traits_func,
                 candidates_provider=candidates_dict,
-                candidates_limit=MyAPI.parlai_dataset_candidates_limit)
+                candidates_oversample_factor=my_api.parlai_dataset_candidates_oversample_factor)
 
             z = zipstream.ZipFile()
             z.write_iter(filename, data_it)
