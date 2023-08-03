@@ -1,9 +1,0 @@
-#!/bin/bash
-python my_s4_char_spectrum_embed_features.py
-python my_s4_char_spectrum_embed_stransformer.py
-python my_s4_char_spectrum_tsne_embed.py
-python my_s4_char_spectrum_tsne_features.py
-python my_s5_embed_dataset_embed_stransformers.py
-python my_s5_embed_dataset_plot.py
-python my_s5_parlai_dataset_0_stat.py
-python my_s5_parlai_dataset_1_stat.py
