@@ -5,8 +5,7 @@ class SameBookRandomCandidatesProvider(CandidatesProvider):
     """ Random candidates selection from the dataset.
     """
 
-    def __init__(self, random_gen, iter_dialogs, candidates_limit, candidates_per_book):
-        self.__random_gen = random_gen
+    def __init__(self, iter_dialogs, candidates_limit, candidates_per_book):
         self.__candidates_limit = candidates_limit
         self.__candidates_per_book = self.__collect_candidates_responses_per_book(
             iter_dialogs=iter_dialogs, limit_per_book=candidates_per_book)
@@ -47,7 +46,4 @@ class SameBookRandomCandidatesProvider(CandidatesProvider):
         # remove already labeled candidate.
         if label in related:
             related.remove(label)
-        # shuffle candidates.
-        self.__random_gen.shuffle(related)
-        # select the top of the shuffled.
         return related[:self.__candidates_limit]
