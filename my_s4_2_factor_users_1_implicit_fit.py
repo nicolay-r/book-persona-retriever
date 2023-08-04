@@ -1,13 +1,12 @@
 import pandas as pd
 from tqdm import tqdm
-from os.path import join
 
 from core.utils_npz import NpzUtils
 from embeddings.aloha.matrix import MatrixWrapper
 from utils_my import MyAPI
 
 
-df = pd.read_csv(join(MyAPI.books_storage, "features_melted.txt"))
+df = pd.read_csv(MyAPI.hla_melted_data_filepath)
 mw = MatrixWrapper(df, user_col='user', feature_col='feature', value_col="value")
 mw.get_train(MyAPI.hla_training_config, report_test=False)
 

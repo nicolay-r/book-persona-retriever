@@ -59,6 +59,7 @@ class MyAPI:
     spectrum_prompts_filepath = join(__current_dir, "./data/ceb_books_annot/spectrum_speaker_prompts-{preset}.txt".format(preset=spectrum_preset))
     # This a models for the representation of the speakers.
     # ALOHA chatbot paper: https://arxiv.org/abs/1910.08293
+    hla_melted_data_filepath = join(books_storage, "features_melted.txt")
     hla_training_config = MatrixTrainingConfig(top_n=100, regularization=100, iterations=500, factor=36,
                                                conf_scale=20, random_state=649128, safe_pass=0.2)
     hla_cluster_config = ClusterConfig(perc_cutoff=10, level2_limit=30, acceptable_overlap=10, weighted=False)

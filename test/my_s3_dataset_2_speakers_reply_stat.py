@@ -23,6 +23,6 @@ filters = {
 
 
 for f_type, f_func in filters.items():
-    for data_type in ["train", "valid"]:
+    for data_type in MyAPI.dataset_folding_fixed_parts.keys():
         c = __count(data_type, f_func)
         print(c)

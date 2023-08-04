@@ -27,7 +27,7 @@ filters = {
 }
 
 for f_type, f_func in filters.items():
-    for data_type in ["train", "valid"]:
+    for data_type in MyAPI.dataset_folding_fixed_parts.keys():
         c = __count(data_type, filter_func=f_func)
         png_path = join(MyAPI.books_storage, "dataset_{}_p{}_t{}.png".format(f_type, data_type, sum(c)))
         draw_hist_plot(c, desc="Histogram of sentence lengths in words (`{}` dataset)".format(data_type),

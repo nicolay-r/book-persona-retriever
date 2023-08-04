@@ -1,5 +1,3 @@
-from os.path import join
-
 from tqdm import tqdm
 
 from core.utils_npz import NpzUtils
@@ -9,7 +7,7 @@ X = list(NpzUtils.load(MyAPI.spectrum_features_norm))
 y = list(NpzUtils.load(MyAPI.spectrum_speakers))
 
 filter_func = lambda val: val > 0.3 or val < -0.3
-with open(join(MyAPI.books_storage, "features_melted.txt"), "w") as out:
+with open(MyAPI.hla_melted_data_filepath, "w") as out:
     out.write("user,feature,value\n")
     for u_ind, name in tqdm(enumerate(y)):
         for item_ind, x in enumerate(X[u_ind]):
