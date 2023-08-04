@@ -38,8 +38,10 @@ class MyAPI:
     dataset_filter_dialogue_max_utterances_per_speaker = 100
     # Dataset folding.
     dataset_folding_parts = 5
-    dataset_folding_train_parts = range_exclude_middle(dataset_folding_parts)
-    dataset_folding_valid_parts = range_middle(dataset_folding_parts)
+    dataset_folding_fixed_parts = {
+        'train': range_exclude_middle(dataset_folding_parts),
+        "valid": range_middle(dataset_folding_parts),
+    }
     dataset_st_embedding_query = join(__current_dir, "./data/ceb_books_annot/x.dataset-query-sent-transformers.npz")
     dataset_st_embedding_response = join(__current_dir, "./data/ceb_books_annot/x.dataset-response-sent-transformers.txt")
     dataset_dialog_db_path = join(__current_dir, "./data/ceb_books_annot/dataset_dialog.sqlite")
@@ -151,6 +153,10 @@ class MyAPI:
         }
 
     @staticmethod
+    def utterance_to_str(speaker_id, utterance):
+        return "{speaker}: {utterance}".format(speaker=speaker_id, utterance=utterance)
+
+    @staticmethod
     def write_annotated_dialogs(iter_dialogs_and_speakers, filepath=None, print_sep=True):
         filepath = MyAPI.dialogs_filepath if filepath is None else filepath
 
@@ -167,7 +173,10 @@ class MyAPI:
                     utterance = sep.join(segments)
                     speaker = recognized_speakers[speaker_id] \
                         if speaker_id in recognized_speakers else MyAPI.dialogs_unknown_speaker + str(speaker_id)
-                    file.write("{speaker}: {utterance}\n".format(speaker=speaker, utterance=utterance))
+
+                    line = MyAPI.utterance_to_str(speaker_id=speaker, utterance=utterance)
+
+                    file.write("{}\n".format(line))
 
                 file.write('\n')
 
@@ -245,6 +254,12 @@ class MyAPI:
     def write_dataset_buffer(file, buffer):
         assert(isinstance(buffer, list) and len(buffer) == 2)
         for buffer_line in buffer:
+            assert(isinstance(buffer_line, tuple) or isinstance(buffer, str))
+
+            if isinstance(buffer_line, tuple):
+                assert(len(buffer_line) == 2)
+                buffer_line = MyAPI.utterance_to_str(speaker_id=buffer_line[0], utterance=buffer_line[1])
+
             file.write("{}\n".format(buffer_line))
         file.write("\n")
 
@@ -363,15 +378,15 @@ class MyAPI:
             lines.clear()
 
     @staticmethod
-    def calc_speakers_count(dataset_filepath, pbar=True):
+    def calc_utterances_per_speakers_count(dataset_filepath, pbar=True):
         """ Folding with the even splits of the utterances.
         """
-        partners_count = Counter()
 
         dialogs_it = MyAPI.iter_dataset_as_dialogs(
             MyAPI.read_dataset(keep_usep=False, split_meta=True,
                                dataset_filepath=dataset_filepath, pbar=pbar))
 
+        partners_count = Counter()
         for dialog in dialogs_it:
             partner_id = dialog[1][0]
             partners_count[partner_id] += 1
