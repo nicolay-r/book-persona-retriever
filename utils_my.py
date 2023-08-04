@@ -75,11 +75,11 @@ class MyAPI:
     parlai_dataset_candidates_and_traits_shuffle_seed = 42
     parlai_dataset_filepath = join(__current_dir, "./data/ceb_books_annot/dataset_parlai_{}.zip")
     parlai_charmask_template = "_"      # We perform character masking for the ParlAI dataset of utterances.
-    parlai_dataset_candidates_oversample_factor = 5     # In Aloha Paper, authors end up dealing with 1M dialogue lines.
-                                                        # For the similar amount of speakers in books, we deal with ~40K
-                                                        # lines by default. Hence we introduce oversampling for
-                                                        # candidate-selective approach to get closer to experiments in
-                                                        # ALOHA paper.
+    parlai_dataset_train_candidates_oversample_factor = 5   # In Aloha Paper, authors end up dealing with 1M dialogue lines.
+                                                            # For the similar amount of speakers in books, we deal with ~40K
+                                                            # lines by default. Hence we introduce oversampling for
+                                                            # candidate-selective approach to get closer to experiments in
+                                                            # ALOHA paper.
 
     # separator in line between meta information and the actual content
     meta_sep = ": "
