@@ -50,7 +50,6 @@ def draw_hist_plot(c, desc=None, min_val=None, max_val=None, n_bins=None, show=T
     ##################################################################
     desc = "" if desc is None else desc
     df_dict = {desc: list(c.values())}
-    print(c.values())
     g = sns.histplot(data=pd.DataFrame(df_dict),
                      x=desc,
                      bins=n_bins,
