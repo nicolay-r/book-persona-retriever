@@ -20,7 +20,7 @@ class MyAPI:
     books_storage_en = join(books_storage, "en")
 
     # Prefixes lexicon storage configurations.
-    prefixes_storage = join(__current_dir, "./data/ceb_books_annot/prefixes")
+    prefixes_storage_filepath = join(__current_dir, "./data/ceb_books_annot/prefixes.txt")
     # Dialogs with recognized speakers.
     dialogs_recongize_speaker_p_threshold = 0.01
     dialogs_recognize_speaker_at_positions = [0, 1, 2, 3]  # We consider only positions 0, 1, 2, and 3
@@ -112,48 +112,6 @@ class MyAPI:
         return books_ids
 
     @staticmethod
-    def calc_annotated_dialogs_stat(iter_dialogs_and_speakers):
-        """ iter_dialog_and_speakers: iter
-                iter of data (dialog, recognized_speakers), where
-                    recognized_speakers (dict): {speaker_id: speaker}
-                        speaker_id: BOOK_SPEAKER_VAR,
-                        speaker: BOOK_SPEAKER.
-        """
-        dialogs = 0
-        recognized = 0
-        utterances = 0
-        speaker_utts_stat = Counter()       # Per every utterance
-        speaker_reply_stat = Counter()      # Per replies
-        it = tqdm(iter_dialogs_and_speakers, desc="calculating annotated dialogues stat")
-        for dialog, recognized_speakers in it:
-            assert(isinstance(dialog, OrderedDict))
-
-            for utt_index, speaker_id in enumerate(dialog.keys()):
-                assert(isinstance(recognized_speakers, dict))
-
-                if speaker_id in recognized_speakers:
-                    recognized += 1
-
-                    # register speaker
-                    speaker = recognized_speakers[speaker_id]
-                    speaker_utts_stat[speaker] += 1
-
-                    if utt_index > 0:
-                        speaker_reply_stat[speaker] += 1
-
-                utterances += 1
-
-            dialogs += 1
-
-        return {
-            "recognized": recognized,
-            "utterances": utterances,
-            "dialogs": dialogs,
-            "speakers_uc_stat": speaker_utts_stat,
-            "speakers_reply_stat": speaker_reply_stat,
-        }
-
-    @staticmethod
     def utterance_to_str(speaker_id, utterance):
         return "{speaker}: {utterance}".format(speaker=speaker_id, utterance=utterance)
 
@@ -191,23 +149,26 @@ class MyAPI:
                 else:
                     yield line
 
-    def load_prefix_lexicon_en(self):
+    @staticmethod
+    def load_prefix_lexicon_en(filepath=None):
         """ Loading the aux lexicon which allow us recognize characters in text.
             default suffix is an amount of considered books.
         """
         entries = set()
-        with open("{}-b{}.txt".format(MyAPI.prefixes_storage, self.books_count()), "r") as f:
+
+        with open(MyAPI.prefixes_storage_filepath if filepath is None else filepath, "r") as f:
             for line in f.readlines():
                 # split n-gramms.
                 line = line.strip()
                 entries.add(line.replace('~', ' '))
+
         return entries
 
     def write_lexicon(self, analysis_func, line_filter):
         assert(callable(analysis_func))
 
         result_sets = {}
-        with open("{}-b{}.txt".format(MyAPI.prefixes_storage, self.books_count()), "w") as out:
+        with open(MyAPI.prefixes_storage_filepath, "w") as out:
 
             for k in tqdm(MyAPI.dialogs_recognize_speaker_at_positions,
                           desc="For each position of the character in comment"):
