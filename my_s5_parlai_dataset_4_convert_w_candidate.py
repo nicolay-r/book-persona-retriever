@@ -70,8 +70,6 @@ def iter_formatted_dialog(dialogs_iter, traits_func, candidates_provider,
 my_api = MyAPI()
 z = zipstream.ZipFile()
 
-random_gen = random.Random(x=42)
-
 dataset_filepaths = {part_name: my_api.dataset_fold_filepath.format(fold_index=part_name)
                      for part_name in MyAPI.dataset_folding_fixed_parts}
 
@@ -84,7 +82,7 @@ speaker_spectrums = MyAPI.read_speaker_spectrums(MyAPI.spectrum_prompts_filepath
 TRAITS_NO = "original"
 TRAITS_SPECTRUM = "spectrum"
 traits_provider = {
-    TRAITS_NO: lambda your_id, partner_id: ["none"] * MyAPI.spectrum_per_user_count,
+    TRAITS_NO: lambda your_id, partner_id: [None] * MyAPI.spectrum_per_user_count,
     # NOTE: In some cases (less than ~0.07%) speakers might be missed so we need to perform check.
     TRAITS_SPECTRUM: lambda your_id, partner_id: speaker_spectrums[partner_id] if partner_id in speaker_spectrums
         else traits_provider[TRAITS_NO](your_id, partner_id)
@@ -93,12 +91,10 @@ traits_provider = {
 CANDIDATES_UNIFORM = ""
 CANDIDATES_HLA_CLUSTER = "clustered"
 candidates_provider = {
-
     CANDIDATES_UNIFORM: lambda fold_index: UniformCandidatesProvider(
-        random_gen=random_gen,
+        random_gen=random.Random(x=MyAPI.parlai_dataset_candidates_and_traits_shuffle_seed),
         iter_dialogs=common_iter_dialogs(MyAPI.dataset_fold_filepath.format(fold_index=fold_index)),
         candidates_limit=MyAPI.parlai_dataset_candidates_limit - 1),
-
     CANDIDATES_HLA_CLUSTER: lambda fold_index: ALOHANegBasedClusteringProvider(
         cache_embeddings_in_memory=True,
         candidates_limit=MyAPI.parlai_dataset_candidates_limit - 1,

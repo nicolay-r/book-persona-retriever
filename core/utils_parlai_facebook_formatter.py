@@ -25,8 +25,9 @@ def format_episode(request, response, candidates, resp_persona_traits=None, resp
     lines = []
 
     if resp_persona_traits is not None:
-        traits = ["{p}persona: I am {t}".format(p=resp_persona_prefix, t=__handle_line(trait))
-                  for trait in resp_persona_traits if trait is not None]
+        traits = ["{p}persona: {t}".format(
+                    p=resp_persona_prefix, t="I am {}".format(__handle_line(t)) if t is not None else "none")
+                  for t in resp_persona_traits]
 
         if rand is not None:
             rand.shuffle(traits)
