@@ -34,7 +34,8 @@ def iter_formatted_dialog(dialogs_iter, traits_func, candidates_provider,
                           candidates_oversample_factor=None):
     assert(callable(traits_func))
     assert(isinstance(candidates_provider, CandidatesProvider) or candidates_provider is None)
-    assert(isinstance(candidates_oversample_factor, int) and candidates_oversample_factor > 0)
+    assert((isinstance(candidates_oversample_factor, int) and candidates_oversample_factor > 0) or
+           candidates_oversample_factor is None)
 
     candidates_oversample_factor = 1 if candidates_provider is None else candidates_oversample_factor
 
