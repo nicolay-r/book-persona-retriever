@@ -83,7 +83,7 @@ speaker_spectrums = MyAPI.read_speaker_spectrums(MyAPI.spectrum_prompts_filepath
 TRAITS_NO = "original"
 TRAITS_SPECTRUM = "spectrum"
 traits_provider = {
-    # TRAITS_NO: lambda your_id, partner_id: [None] * MyAPI.spectrum_per_user_count,
+    TRAITS_NO: lambda your_id, partner_id: [None] * MyAPI.spectrum_per_user_count,
     # NOTE: In some cases (less than ~0.07%) speakers might be missed so we need to perform check.
     TRAITS_SPECTRUM: lambda your_id, partner_id: speaker_spectrums[partner_id] if partner_id in speaker_spectrums
         else traits_provider[TRAITS_NO](your_id, partner_id)
