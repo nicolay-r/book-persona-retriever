@@ -79,14 +79,15 @@ class ALOHANegBasedClusteringProvider(CandidatesProvider):
     def __cache_label(self, dialog_id):
         return self.__label_cache[dialog_id]
 
-    def provide_or_none(self, dialog_id, speaker_id, label):
+    def provide_or_none(self, dialog_id, speaker_id, label, random):
 
         # In some cases we may end up with the missed speaker.
         if speaker_id not in self.__neg_clusters_per_speaker:
             return None
 
         # Compose a SQL-request to obtain vectors and utterances.
-        neg_speakers = self.__neg_clusters_per_speaker[speaker_id][:self.__neg_speakers_limit]
+        assert(len(self.__neg_clusters_per_speaker[speaker_id]) > self.__neg_speakers_limit+1)
+        neg_speakers = random.sample(self.__neg_clusters_per_speaker[speaker_id], self.__neg_speakers_limit+1)
 
         # Compose WHERE clause that filters the relevant speakers.
         data_it = self.__iter_from_database(neg_speakers) \

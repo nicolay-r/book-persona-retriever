@@ -1,4 +1,5 @@
 import random
+from os.path import basename
 
 import zipstream
 
@@ -20,7 +21,7 @@ def common_iter_dialogs(dialogs_dataset_filepath):
         MyAPI.read_dataset(
             keep_usep=False, split_meta=True,
             dataset_filepath=dialogs_dataset_filepath,
-            desc=dialogs_dataset_filepath))
+            desc="Iter dialogs: {}".format(basename(dialogs_dataset_filepath))))
 
     for dialog in dialogs:
         for d_ind in range(len(dialog)):
@@ -30,10 +31,9 @@ def common_iter_dialogs(dialogs_dataset_filepath):
         yield dialog
 
 
-def iter_formatted_dialog(dialogs_iter, traits_func, candidates_provider,
-                          candidates_oversample_factor=None):
+def iter_formatted_dialog(dialogs_iter, traits_func, candidates_provider, candidates_oversample_factor=None):
     assert(callable(traits_func))
-    assert(isinstance(candidates_provider, CandidatesProvider) or candidates_provider is None)
+    assert(isinstance(candidates_provider, CandidatesProvider))
     assert((isinstance(candidates_oversample_factor, int) and candidates_oversample_factor > 0) or
            candidates_oversample_factor is None)
 
@@ -46,15 +46,15 @@ def iter_formatted_dialog(dialogs_iter, traits_func, candidates_provider,
         r_speaker_id, label = dialog[1]
 
         # We basically generate every episode with new candidates.
+        rand = random.Random(MyAPI.parlai_dataset_candidates_selection_seed)
         for _ in range(candidates_oversample_factor):
 
-            if candidates_provider is not None:
-                other_candidates = candidates_provider.provide_or_none(
-                    dialog_id=dialog_id, speaker_id=r_speaker_id, label=label)
-                other_candidates = [] if other_candidates is None else other_candidates
-                candidates = [label] + other_candidates
-            else:
-                candidates = [label]
+            other_candidates = candidates_provider.provide_or_none(
+                dialog_id=dialog_id, speaker_id=r_speaker_id, label=label, random=rand)
+            other_candidates = [] if other_candidates is None else other_candidates
+            candidates = other_candidates + [label]
+
+            assert(len(candidates) == MyAPI.parlai_dataset_candidates_limit)
 
             if candidates is None:
                 continue
@@ -83,7 +83,7 @@ speaker_spectrums = MyAPI.read_speaker_spectrums(MyAPI.spectrum_prompts_filepath
 TRAITS_NO = "original"
 TRAITS_SPECTRUM = "spectrum"
 traits_provider = {
-    TRAITS_NO: lambda your_id, partner_id: [None] * MyAPI.spectrum_per_user_count,
+    # TRAITS_NO: lambda your_id, partner_id: [None] * MyAPI.spectrum_per_user_count,
     # NOTE: In some cases (less than ~0.07%) speakers might be missed so we need to perform check.
     TRAITS_SPECTRUM: lambda your_id, partner_id: speaker_spectrums[partner_id] if partner_id in speaker_spectrums
         else traits_provider[TRAITS_NO](your_id, partner_id)
@@ -93,7 +93,6 @@ CANDIDATES_UNIFORM = ""
 CANDIDATES_HLA_CLUSTER = "clustered"
 candidates_provider = {
     CANDIDATES_UNIFORM: lambda fold_index: UniformCandidatesProvider(
-        random_gen=random.Random(x=MyAPI.parlai_dataset_candidates_and_traits_shuffle_seed),
         iter_dialogs=common_iter_dialogs(MyAPI.dataset_fold_filepath.format(fold_index=fold_index)),
         candidates_limit=MyAPI.parlai_dataset_candidates_limit - 1),
     CANDIDATES_HLA_CLUSTER: lambda fold_index: ALOHANegBasedClusteringProvider(

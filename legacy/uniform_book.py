@@ -39,7 +39,7 @@ class SameBookRandomCandidatesProvider(CandidatesProvider):
 
         return candidates_per_book
 
-    def provide_or_none(self, dialog_id, speaker_id, label):
+    def provide_or_none(self, dialog_id, speaker_id, label, random):
         # pick a copy of the candidates.
         book_id = SameBookRandomCandidatesProvider.speaker_to_book_id(speaker_id)
         related = list(iter(self.__candidates_per_book[book_id]))
