@@ -37,7 +37,7 @@ def iter_formatted_dialog(dialogs_iter, traits_func, candidates_provider,
     assert((isinstance(candidates_oversample_factor, int) and candidates_oversample_factor > 0) or
            candidates_oversample_factor is None)
 
-    candidates_oversample_factor = 1 if candidates_provider is None else candidates_oversample_factor
+    candidates_oversample_factor = 1 if candidates_oversample_factor is None else candidates_oversample_factor
 
     for dialog_id, dialog in enumerate(dialogs_iter):
         assert(len(dialog) == 2)
@@ -112,7 +112,7 @@ for data_fold_type, data_fold_source in dataset_filepaths.items():
             if trait_type == TRAITS_NO and candidates_type == CANDIDATES_HLA_CLUSTER:
                 # This type does not makes sense, so we skip such formatting.
                 continue
-            if trait_type == TRAITS_SPECTRUM and candidates_type == CANDIDATES_UNIFORM:
+            if trait_type == TRAITS_SPECTRUM and candidates_type == CANDIDATES_UNIFORM and data_fold_type == "train":
                 continue
             if candidates_type == CANDIDATES_HLA_CLUSTER and data_fold_type != "train":
                 # We consider HLA clustering and candidates selection only for training.
@@ -139,3 +139,5 @@ for data_fold_type, data_fold_source in dataset_filepaths.items():
             with open(my_api.parlai_dataset_filepath.format(filename), "wb") as f:
                 for episode_line in z:
                     f.write(episode_line)
+
+            print(filename)
