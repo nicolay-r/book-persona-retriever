@@ -65,7 +65,7 @@ def iter_formatted_dialog(dialogs_iter, traits_func, candidates_provider, candid
                                  resp_persona_traits=traits_func(q_speaker_id, r_speaker_id),
                                  resp_persona_prefix=MyAPI.parlai_dataset_persona_prefix,
                                  seed=MyAPI.parlai_dataset_candidates_and_traits_shuffle_seed).encode()
-        yield b"\n"
+            yield b"\n"
 
 
 my_api = MyAPI()
