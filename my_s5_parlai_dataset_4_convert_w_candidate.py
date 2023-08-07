@@ -46,7 +46,7 @@ def iter_formatted_dialog(dialogs_iter, traits_func, candidates_provider, candid
         r_speaker_id, label = dialog[1]
 
         # We basically generate every episode with new candidates.
-        rand = random.Random(MyAPI.parlai_dataset_candidates_selection_seed)
+        rand = random.Random(MyAPI.parlai_dataset_ovesampling_candidates_selection_seed)
         for _ in range(candidates_oversample_factor):
 
             other_candidates = candidates_provider.provide_or_none(
@@ -64,7 +64,7 @@ def iter_formatted_dialog(dialogs_iter, traits_func, candidates_provider, candid
                                  candidates=candidates,
                                  resp_persona_traits=traits_func(q_speaker_id, r_speaker_id),
                                  resp_persona_prefix=MyAPI.parlai_dataset_persona_prefix,
-                                 seed=MyAPI.parlai_dataset_candidates_and_traits_shuffle_seed).encode()
+                                 seed=MyAPI.parlai_dataset_episode_candidates_and_traits_shuffle_seed).encode()
             yield b"\n"
 
 
