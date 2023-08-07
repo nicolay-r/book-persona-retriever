@@ -39,6 +39,8 @@ def iter_formatted_dialog(dialogs_iter, traits_func, candidates_provider, candid
 
     candidates_oversample_factor = 1 if candidates_oversample_factor is None else candidates_oversample_factor
 
+    # We would like to shuffle the traits to prevent models from overfitting with the particular order.
+    resp_persona_random = random.Random(MyAPI.parlai_dataset_ovesampling_candidates_selection_seed)
     for dialog_id, dialog in enumerate(dialogs_iter):
         assert(len(dialog) == 2)
 
@@ -46,11 +48,11 @@ def iter_formatted_dialog(dialogs_iter, traits_func, candidates_provider, candid
         r_speaker_id, label = dialog[1]
 
         # We basically generate every episode with new candidates.
-        rand = random.Random(MyAPI.parlai_dataset_ovesampling_candidates_selection_seed)
+        candidates_random = random.Random(MyAPI.parlai_dataset_ovesampling_candidates_selection_seed)
         for _ in range(candidates_oversample_factor):
 
             other_candidates = candidates_provider.provide_or_none(
-                dialog_id=dialog_id, speaker_id=r_speaker_id, label=label, random=rand)
+                dialog_id=dialog_id, speaker_id=r_speaker_id, label=label, random=candidates_random)
             other_candidates = [] if other_candidates is None else other_candidates
             candidates = other_candidates + [label]
 
@@ -59,10 +61,14 @@ def iter_formatted_dialog(dialogs_iter, traits_func, candidates_provider, candid
             if candidates is None:
                 continue
 
+            resp_persona_traits = traits_func(q_speaker_id, r_speaker_id)
+            resp_persona_traits_shuffled = resp_persona_random.sample(
+                resp_persona_traits, len(resp_persona_traits))
+
             yield format_episode(request=query,
                                  response=label,
                                  candidates=candidates,
-                                 resp_persona_traits=traits_func(q_speaker_id, r_speaker_id),
+                                 resp_persona_traits=resp_persona_traits_shuffled,
                                  resp_persona_prefix=MyAPI.parlai_dataset_persona_prefix,
                                  seed=MyAPI.parlai_dataset_episode_candidates_and_traits_shuffle_seed).encode()
             yield b"\n"
@@ -135,8 +141,9 @@ for data_fold_type, data_fold_source in dataset_filepaths.items():
 
             filename = '{}.txt'.format("_".join(args))
             z.write_iter(filename, data_it)
+            target = my_api.parlai_dataset_filepath.format(filename)
             with open(my_api.parlai_dataset_filepath.format(filename), "wb") as f:
                 for episode_line in z:
                     f.write(episode_line)
 
-            print(filename)
+            print("Saved: {}".format(target))
