@@ -5,7 +5,7 @@ from core.spectrums.presets import FILTER_PRESETS
 from core.utils_npz import NpzUtils
 from utils_my import MyAPI
 
-preset = MyAPI.spectrum_preset
+preset = MyAPI.hla_spectrum_preset
 X = NpzUtils.load(MyAPI.spectrum_st_embeddings.format(preset=preset))
 y = NpzUtils.load(MyAPI.spectrum_speakers)
 

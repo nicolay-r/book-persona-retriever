@@ -9,7 +9,7 @@ X_norm = NpzUtils.load(MyAPI.spectrum_features_norm)
 X_diff = NpzUtils.load(MyAPI.spectrum_features_diff)
 y = NpzUtils.load(MyAPI.spectrum_speakers)
 
-prompts, weights = PROMPT_PRESETS[MyAPI.spectrum_preset](X_norm, X_diff, FcpApi())
+prompts, weights = PROMPT_PRESETS[MyAPI.hla_spectrum_preset](X_norm, X_diff, FcpApi())
 
-SpectrumIOUtils.write(filepath=MyAPI.spectrum_prompts_filepath,
+SpectrumIOUtils.write(filepath=MyAPI.hla_prompts_filepath,
                       speaker_names=y, speaker_prompts=prompts, weights=weights)

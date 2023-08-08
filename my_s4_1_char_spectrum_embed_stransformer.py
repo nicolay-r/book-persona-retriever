@@ -7,7 +7,7 @@ from utils import CACHE_DIR
 from utils_fcp import FcpApi
 from utils_my import MyAPI
 
-preset = MyAPI.spectrum_preset
+preset = MyAPI.hla_spectrum_preset
 model = SentenceTransformer(MyAPI.spectrum_embedding_model_name, cache_folder=CACHE_DIR)
 
 X_norm = NpzUtils.load(MyAPI.spectrum_features_norm)

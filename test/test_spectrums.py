@@ -11,4 +11,4 @@ print(xn)
 print(xc)
 print(y)
 
-prompts = PROMPT_PRESETS[MyAPI.spectrum_preset](xn, xc, FcpApi())
+prompts = PROMPT_PRESETS[MyAPI.hla_spectrum_preset](xn, xc, FcpApi())

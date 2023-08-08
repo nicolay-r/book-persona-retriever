@@ -17,8 +17,8 @@ PROMPT_PRESETS = {
         X_norm=X_norm, X_diff=X_diff, fcp_api=fcp_api, k=8, limit=MyAPI.hla_spectrums_limit),
     "prompt_top_k_5_limited": lambda X_norm, X_diff, fcp_api: to_prompts_top_k(
         X_norm=X_norm, X_diff=X_diff, fcp_api=fcp_api, k=5, limit=MyAPI.hla_spectrums_limit),
-    "prompt_top_40": lambda X_norm, X_diff, fcp_api: to_prompts_top_k(
-        X_norm=X_norm, X_diff=X_diff, fcp_api=fcp_api, k=None, limit=40),
+    "prompt_top_{}".format(MyAPI.hla_spectrums_limit): lambda X_norm, X_diff, fcp_api: to_prompts_top_k(
+        X_norm=X_norm, X_diff=X_diff, fcp_api=fcp_api, k=None, limit=MyAPI.hla_spectrums_limit),
 }
 
 FILTER_PRESETS = {

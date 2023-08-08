@@ -54,9 +54,7 @@ class MyAPI:
     spectrum_features_norm = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-norm.npz")
     spectrum_features_diff = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-diff.npz")
     spectrum_speakers = join(__current_dir, "./data/ceb_books_annot/y.spectrum-speakers.npz")
-    spectrum_preset = "prompt_top_40".format(str(spectrum_per_user_count))
     spectrum_st_embeddings = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-sent-transformers-{preset}.npz")
-    spectrum_prompts_filepath = join(__current_dir, "./data/ceb_books_annot/spectrum_speaker_prompts-{preset}.txt".format(preset=spectrum_preset))
     # This a models for the representation of the speakers.
     # ALOHA chatbot paper: https://arxiv.org/abs/1910.08293
     hla_melted_data_filepath = join(books_storage, "features_melted.txt")
@@ -65,7 +63,11 @@ class MyAPI:
     hla_cluster_config = ClusterConfig(perc_cutoff=10, level2_limit=30, acceptable_overlap=10, weighted=False)
     hla_users_melted_filepath = join(books_storage, "features_melted.txt")
     hla_speaker_clusters_path = join(books_storage, "clusters.jsonl")
-    hla_spectrums_limit = 40            # ALOHA parameter which is proposes to keep the most representative traits.
+    hla_spectrums_limit = 20            # ALOHA parameter which is proposes to keep the most representative traits.
+                                        # We limit to 20 because of the 2 polarities of spectrums (two different values
+                                        # per one trait).
+    hla_spectrum_preset = "prompt_top_{}".format(str(hla_spectrums_limit))
+    hla_prompts_filepath = join(__current_dir, "./data/ceb_books_annot/spectrum_speaker_prompts-{preset}.txt".format(preset=hla_spectrum_preset))
     hla_neg_set_speakers_limit = 10     # The overall process might take so much time is what becomes a reason of limit.
     hla_users_embedding_factor = join(__current_dir, "./data/ceb_books_annot/x.speakers-factor.npz")
 

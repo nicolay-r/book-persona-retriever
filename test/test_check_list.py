@@ -1,8 +1,8 @@
 from utils_my import MyAPI
 
 s = set()
-print(MyAPI.spectrum_prompts_filepath)
-with open(MyAPI.spectrum_prompts_filepath, "r") as f:
+print(MyAPI.hla_prompts_filepath)
+with open(MyAPI.hla_prompts_filepath, "r") as f:
     for line in f.readlines():
         line = line.split(":")[1]
         words = [s.strip() for s in line.split(",")]
