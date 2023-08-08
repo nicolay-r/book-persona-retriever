@@ -3,31 +3,6 @@ from functools import cmp_to_key
 from utils_fcp import FcpApi
 
 
-def to_prompts(X, fcp_api):
-    """ This is an original versions of the prompting when all non-zero features were considered.
-    """
-    assert(isinstance(X, list))
-    assert(isinstance(fcp_api, FcpApi))
-
-    # Setup API for using lexicon.
-    lexicon = fcp_api.extract_as_lexicon()
-
-    prompts = []
-    for x in X:
-        prompt = []
-        for i, spec_val in enumerate(x):
-
-            if spec_val == 0:
-                continue
-
-            ind = fcp_api.ind_to_spectrum(i)
-            prompt.append(lexicon[ind][fcp_api.float_to_spectrum_key(spec_val)])
-
-        prompts.append(" ".join(prompt))
-
-    return prompts
-
-
 def filter_most_distictive(X_norm, limit):
     """ X_norm: matrix of shape [speaker, traits]
         limit: int
@@ -65,7 +40,7 @@ def order_traits_by_relevance(trait_inds, x_norm, x_diff):
     return list(zip(ordered_trait_inds, ordered_x_inds))
 
 
-def to_prompts_top_k(X_norm, X_diff, fcp_api, k, limit=None):
+def to_prompts_top_k(X_norm, X_diff, fcp_api, k=None, limit=None):
     """ k: int
             amount of the traits to be chosen per every speaker for
             prompt composition.
@@ -79,9 +54,11 @@ def to_prompts_top_k(X_norm, X_diff, fcp_api, k, limit=None):
     assert(isinstance(X_diff, np.ndarray))
     assert(len(X_norm) == len(X_diff))
     assert(isinstance(fcp_api, FcpApi))
-    assert(isinstance(k, int))
+    assert(isinstance(k, int) or k is None)
     assert(isinstance(limit, int) or limit is None)
-    assert(k < limit)
+
+    if k is not None and limit is not None:
+        assert(k < limit)
 
     # Setup API for using lexicon.
     lexicon = fcp_api.extract_as_lexicon()
@@ -95,21 +72,26 @@ def to_prompts_top_k(X_norm, X_diff, fcp_api, k, limit=None):
         trait_inds = list(range(X_norm.shape[1]))
 
     prompts = []
+    weights = []
     for i in range(len(X_norm)):
 
         x_norm = X_norm[i]
         x_diff = X_diff[i]
 
         # We invalidate traits with the small absolute difference.
-        bound = list(sorted(x_diff, reverse=True))[k]
-        for ii in range(len(x_norm)):
-            if abs(x_diff[ii]) < bound:
-                x_norm[ii] = 0
+        if k is not None:
+            bound = list(sorted(x_diff, reverse=True))[k]
+            for ii in range(len(x_norm)):
+                if abs(x_diff[ii]) < bound:
+                    x_norm[ii] = 0
 
         prompt = []
 
         x_oridered_inds = order_traits_by_relevance(
             trait_inds=trait_inds, x_norm=x_norm, x_diff=x_diff)
+
+        prompt_weights = []
+        weights.append(prompt_weights)
 
         for ordered_trait_ind, ordered_x_ind in x_oridered_inds[:k]:
             spec_val = x_norm[ordered_x_ind]
@@ -119,10 +101,11 @@ def to_prompts_top_k(X_norm, X_diff, fcp_api, k, limit=None):
 
             spectrum_ind = fcp_api.ind_to_spectrum(ordered_trait_ind)
             prompt.append(lexicon[spectrum_ind][fcp_api.float_to_spectrum_key(spec_val)])
+            prompt_weights.append(spec_val)
 
         prompts.append(" ".join(prompt))
 
-    return prompts
+    return prompts, weights
 
 
 def filter_by_non_zero(X, y, z=None, threshold=None, paint_func=None, gt=True):

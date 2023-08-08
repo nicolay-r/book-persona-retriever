@@ -12,7 +12,7 @@ model = SentenceTransformer(MyAPI.spectrum_embedding_model_name, cache_folder=CA
 
 X_norm = NpzUtils.load(MyAPI.spectrum_features_norm)
 X_diff = NpzUtils.load(MyAPI.spectrum_features_diff)
-prompts = PROMPT_PRESETS[preset](X_norm, X_diff, FcpApi())
+prompts, _ = PROMPT_PRESETS[preset](X_norm, X_diff, FcpApi())
 
 X_st = []
 for prompt in tqdm(prompts, desc="Calculate sentence embedding [{m}-{p}]".format(

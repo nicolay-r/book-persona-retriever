@@ -54,7 +54,7 @@ class MyAPI:
     spectrum_features_norm = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-norm.npz")
     spectrum_features_diff = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-diff.npz")
     spectrum_speakers = join(__current_dir, "./data/ceb_books_annot/y.spectrum-speakers.npz")
-    spectrum_preset = "prompt_top_k_{}_limited".format(str(spectrum_per_user_count))
+    spectrum_preset = "prompt_top_40".format(str(spectrum_per_user_count))
     spectrum_st_embeddings = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-sent-transformers-{preset}.npz")
     spectrum_prompts_filepath = join(__current_dir, "./data/ceb_books_annot/spectrum_speaker_prompts-{preset}.txt".format(preset=spectrum_preset))
     # This a models for the representation of the speakers.
@@ -364,6 +364,10 @@ class MyAPI:
             partners_count[partner_id] += 1
 
         return partners_count
+
+    # TODO. Move this to the spectrum API.
+    # TODO. Move this to the spectrum API.
+    # TODO. Move this to the spectrum API.
 
     @staticmethod
     def save_speaker_spectrums(filepath, speaker_names, speaker_prompts):
