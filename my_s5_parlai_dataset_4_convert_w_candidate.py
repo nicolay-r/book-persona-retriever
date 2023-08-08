@@ -8,6 +8,7 @@ from core.candidates.clustering import ALOHANegBasedClusteringProvider
 
 from core.candidates.uniform_collection import UniformCandidatesProvider
 from core.dialogue.comments import mask_text_entities
+from core.spectrums.io_utils import SpectrumIOUtils
 from core.utils_parlai_facebook_formatter import format_episode
 from utils_ceb import CEBApi
 from utils_my import MyAPI
@@ -84,15 +85,16 @@ ceb_api = CEBApi()
 ceb_api.read_char_map()
 # roles = ceb_api.get_meta_role()
 # genders = ceb_api.get_meta_gender()
-speaker_spectrums = MyAPI.read_speaker_spectrums(MyAPI.spectrum_prompts_filepath)
+speaker_spectrums = SpectrumIOUtils.read(MyAPI.spectrum_prompts_filepath)
 
 TRAITS_NO = "original"
 TRAITS_SPECTRUM = "spectrum"
 traits_provider = {
     TRAITS_NO: lambda your_id, partner_id: [None] * MyAPI.spectrum_per_user_count,
     # NOTE: In some cases (less than ~0.07%) speakers might be missed so we need to perform check.
-    TRAITS_SPECTRUM: lambda your_id, partner_id: speaker_spectrums[partner_id] if partner_id in speaker_spectrums
-        else traits_provider[TRAITS_NO](your_id, partner_id)
+    TRAITS_SPECTRUM: lambda your_id, partner_id:
+        speaker_spectrums[partner_id]["prompts"][:my_api.spectrum_per_user_count]
+        if partner_id in speaker_spectrums else traits_provider[TRAITS_NO](your_id, partner_id)
 }
 
 CANDIDATES_UNIFORM = ""

@@ -1,3 +1,4 @@
+from core.spectrums.io_utils import SpectrumIOUtils
 from core.spectrums.presets import PROMPT_PRESETS
 from core.utils_npz import NpzUtils
 from utils_fcp import FcpApi
@@ -10,4 +11,5 @@ y = NpzUtils.load(MyAPI.spectrum_speakers)
 
 prompts, weights = PROMPT_PRESETS[MyAPI.spectrum_preset](X_norm, X_diff, FcpApi())
 
-MyAPI.save_speaker_spectrums(filepath=MyAPI.spectrum_prompts_filepath, speaker_names=y, speaker_prompts=prompts)
+SpectrumIOUtils.write(filepath=MyAPI.spectrum_prompts_filepath,
+                      speaker_names=y, speaker_prompts=prompts, weights=weights)

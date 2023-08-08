@@ -364,24 +364,3 @@ class MyAPI:
             partners_count[partner_id] += 1
 
         return partners_count
-
-    # TODO. Move this to the spectrum API.
-    # TODO. Move this to the spectrum API.
-    # TODO. Move this to the spectrum API.
-
-    @staticmethod
-    def save_speaker_spectrums(filepath, speaker_names, speaker_prompts):
-        with open(filepath,  "w") as file:
-            for i, p in enumerate(speaker_prompts):
-                line = "".join([speaker_names[i], MyAPI.meta_sep, ",".join(p.split(' '))])
-                file.write(line + "\n")
-
-    @staticmethod
-    def read_speaker_spectrums(filepath):
-        with open(filepath, "r") as file:
-            spectrums = {}
-            for line in file.readlines():
-                speaker_name, args = line.split(MyAPI.meta_sep)
-                spectrums[speaker_name] = [a.strip() for a in args.split(',')]
-
-        return spectrums
