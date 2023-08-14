@@ -11,6 +11,9 @@ class GuttenbergDialogApi:
     __current_dir = dirname(realpath(__file__))
     dialogs_en = join(__current_dir, "./data/filtered/en/dialogs_clean.txt")
 
+    META_AUTHOR_COMMENT_LINE = "#"
+    META_END_OF_DIALOG_LINE = "."
+
     def iter_dialog_segments(self, book_path_func):
         assert(callable(book_path_func))
 
@@ -66,6 +69,9 @@ class GuttenbergDialogApi:
             return GuttenbergDialogApi.is_character(s)
         return False
 
+    @staticmethod
+    def is_author_comment(segment):
+
     def filter_comment_with_speaker_at_k(self, book_path_func, k=None):
         """ filter examples in distance from K
         """
@@ -74,7 +80,7 @@ class GuttenbergDialogApi:
             for segment in lines:
 
                 # Collect only author comments.
-                if not (segment[0] in ['#', '.']):
+                if not (segment[0] in [self.META_AUTHOR_COMMENT_LINE, self.META_END_OF_DIALOG_LINE]):
                     continue
 
                 # Crop meta-information.

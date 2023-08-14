@@ -5,7 +5,7 @@ from utils_gd import GuttenbergDialogApi
 
 
 def try_recognize(terms, prefix_lexicon, k_list):
-    """ Annotation algorithm.
+    """ Speaker annotation algorithm.
     """
     variant = None
     recognized = False
@@ -50,7 +50,7 @@ def iter_speaker_annotated_dialogs(book_path_func, recognize_at_positions, prefi
         for _, segment in enumerate(dialog_segments):
 
             # Considering only comments.
-            if segment[0] not in ['#', '.']:
+            if segment[0] not in [gd_api.META_AUTHOR_COMMENT_LINE, gd_api.META_END_OF_DIALOG_LINE]:
                 continue
 
             # Taking meta information and text.

@@ -6,9 +6,14 @@ from core.book.book_dialog import BookDialogue
 from utils_gd import GuttenbergDialogApi
 from utils_my import MyAPI
 
-next_dialog = True
 my_api = MyAPI()
 books_dialogue = BookDialogue()
+
+lines_to_consider = [
+    '!',
+    GuttenbergDialogApi.META_AUTHOR_COMMENT_LINE,
+    GuttenbergDialogApi.META_END_OF_DIALOG_LINE,
+    ">"]
 
 __current_dir = dirname(realpath(__file__))
 with open(join(__current_dir, GuttenbergDialogApi.dialogs_en), "r") as f:
@@ -20,11 +25,10 @@ with open(join(__current_dir, GuttenbergDialogApi.dialogs_en), "r") as f:
             pass
 
         elif line == '\n':
-            next_dialog = True
             annot = books_dialogue.annotate_dialog()
             print_sep = False
             for a in annot:
-                if a[0] in ['!', "#", '.', ">"]:
+                if a[0] in lines_to_consider:
                     print(book_id, a)
                     print_sep = True
 
