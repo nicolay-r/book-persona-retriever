@@ -167,24 +167,10 @@ class MyAPI:
 
         return entries
 
-    def write_lexicon(self, analysis_func, line_filter):
-        assert(callable(analysis_func))
-
-        result_sets = {}
-        with open(MyAPI.prefixes_storage_filepath, "w") as out:
-
-            for k in tqdm(MyAPI.dialogs_recognize_speaker_at_positions,
-                          desc="For each position of the character in comment"):
-                tfa_idf = analysis_func(k=k, p_threshold=MyAPI.dialogs_recongize_speaker_p_threshold if k > 1 else None,
-                                        books_path_func=self.get_book_path,
-                                        filter_func=lambda value: line_filter(value, result_sets))
-                sorted_list = sorted(tfa_idf, key=lambda item: item[1], reverse=False)
-
-                if k > 0:
-                    for key, v in sorted_list:
-                        out.write("{prefix}\n".format(prefix=key, value=round(v, 2)))
-
-                result_sets[k] = set([k for k, _ in sorted_list])
+    def write_lexicon(self, rows_iter):
+        with open(MyAPI.prefixes_storage_filepath, "w") as f_out:
+            for row in rows_iter:
+                f_out.write("{}\n".format(row))
 
     @staticmethod
     def write_speakers(speaker_names_list, filepath=None):

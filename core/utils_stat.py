@@ -3,6 +3,8 @@ from collections import Counter
 
 
 class TermsStat:
+    """ TF-IDF stat calculation for terms.
+    """
 
     def __init__(self):
         self.__terms_total = Counter()
@@ -12,7 +14,10 @@ class TermsStat:
     def iter_terms(self):
         return self.__terms_total.keys()
 
-    def register_doc(self, doc_id, terms):
+    def register(self, terms, doc_id):
+        """ Register terms for the related document, provided as `doc_id`
+        """
+        assert(isinstance(doc_id, str) or isinstance(doc_id, int))
 
         # Check whether document has been added already.
         if doc_id in self.__doc_ids:
