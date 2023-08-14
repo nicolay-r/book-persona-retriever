@@ -8,7 +8,7 @@ from utils_my import MyAPI
 my_api = MyAPI()
 dataset_names = [
     "dataset_parlai_train_original.txt.zip",
-    "dataset_parlai_train_spectrum_clustered.txt.zip",
+    "dataset_parlai_train_spectrum.txt.zip",
     "dataset_parlai_valid_original.txt.zip",
     "dataset_parlai_valid_spectrum.txt.zip",
 ]
