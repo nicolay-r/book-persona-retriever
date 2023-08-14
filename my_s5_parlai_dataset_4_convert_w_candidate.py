@@ -8,11 +8,12 @@ from core.candidates.base import CandidatesProvider
 from core.candidates.clustering import ALOHANegBasedClusteringProvider
 
 from core.candidates.uniform_collection import UniformCandidatesProvider
-from core.dialogue.comments import mask_text_entities
+from core.dialogue.utils import mask_text_entities
 from core.spectrums.io_utils import SpectrumIOUtils
 from core.utils_math import random_choice_non_repetitive
 from core.utils_parlai_facebook_formatter import format_episode
 from utils_ceb import CEBApi
+from utils_gd import GuttenbergDialogApi
 from utils_my import MyAPI
 
 
@@ -20,6 +21,7 @@ def common_iter_dialogs(dialogs_dataset_filepath):
     """ We provide a common wrapping for reading because of the additional operations:
         the issue #18: https://github.com/nicolay-r/chatbot_experiments/issues/18
     """
+
     dialogs = MyAPI.iter_dataset_as_dialogs(
         MyAPI.read_dataset(
             keep_usep=False, split_meta=True,
@@ -29,7 +31,13 @@ def common_iter_dialogs(dialogs_dataset_filepath):
     for dialog in dialogs:
         for d_ind in range(len(dialog)):
             meta, utterance = dialog[d_ind]
-            dialog[d_ind] = (meta, mask_text_entities(utterance, mask_template=MyAPI.parlai_charmask_template))
+
+            # Mask text entities.
+            utterance_masked = mask_text_entities(text=utterance,
+                                                  is_term_has_char_func=GuttenbergDialogApi.has_character,
+                                                  mask_template=MyAPI.parlai_charmask_template)
+
+            dialog[d_ind] = (meta, utterance_masked)
 
         yield dialog
 
