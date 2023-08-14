@@ -5,10 +5,6 @@ from utils_my import MyAPI
 my_api = MyAPI()
 gd_api = GuttenbergDialogApi()
 
-# Print the total amount of books.
-books_count = my_api.books_count()
-print(books_count)
-
 
 def calc_comments_count(c):
     count = 0
@@ -30,6 +26,7 @@ for book_id, lines in gd_api.filter_comment_with_speaker_at_k(book_path_func=my_
 total_comments_count = calc_comments_count(all_dialogs)
 
 print("------------------")
+print("DOC level:")
 
 # Collect.
 for k in list(range(10)):
@@ -43,6 +40,7 @@ for k in list(range(10)):
           round(100.0 * calc_comments_count(k_comments) / calc_comments_count(all_dialogs), 2))
 
 print("------------------")
+print("DIALOGUE level:")
 
 # Collect.
 for k in [None] + list(range(10)):
@@ -55,6 +53,8 @@ for k in [None] + list(range(10)):
 
     books_total = len(k_dialogs)
 
-    print("At least one segment in DIALOG mention author at position {k} (% of dialogs): ".format(k=k),
-          round(100.0 * total_dialogs_count(k_dialogs) / total_dialogs_count(all_dialogs), 2),
-          "[{}% of books]".format(100.0 * len(k_dialogs) / len(all_dialogs)))
+    value = round(100.0 * total_dialogs_count(k_dialogs) / total_dialogs_count(all_dialogs), 2)
+
+    print("At least one segment in DIALOG mention speaker at pos. {k} (% of dialogs): ".format(k=k),
+          value,
+          "[{}% of books]".format(round(100.0 * len(k_dialogs) / len(all_dialogs))))

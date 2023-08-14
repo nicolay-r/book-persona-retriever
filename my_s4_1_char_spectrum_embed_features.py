@@ -25,6 +25,7 @@ def iter_all(speakers):
     # Iterate over comments.
     g_api = GuttenbergDialogApi()
     comments_it = filter_relevant_text_comments(
+        is_term_speaker_func=GuttenbergDialogApi.is_character,
         speaker_positions=MyAPI.spectrum_comment_speaker_positions,
         speakers=set(speakers),
         iter_comments_at_k_func=lambda k: g_api.filter_comment_with_speaker_at_k(

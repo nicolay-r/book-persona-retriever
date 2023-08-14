@@ -69,9 +69,6 @@ class GuttenbergDialogApi:
             return GuttenbergDialogApi.is_character(s)
         return False
 
-    @staticmethod
-    def is_author_comment(segment):
-
     def filter_comment_with_speaker_at_k(self, book_path_func, k=None):
         """ filter examples in distance from K
         """

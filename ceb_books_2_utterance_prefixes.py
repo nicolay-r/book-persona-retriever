@@ -1,4 +1,4 @@
-from core.dialogue.comments import iter_lexicon_content, prefix_analysis, filter_non_addressed_cases
+from core.dialogue.comments_prefix import prefix_analysis, iter_lexicon_content, filter_non_addressed_cases
 from utils_my import MyAPI
 
 
