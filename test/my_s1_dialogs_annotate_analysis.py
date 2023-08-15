@@ -55,7 +55,9 @@ gd_api = GuttenbergDialogApi()
 
 stat = calc_annotated_dialogs_stat(
     iter_dialogs_and_speakers=iter_speaker_annotated_dialogs(
-        dialog_segments_iter_func=gd_api.iter_dialog_segments(my_api.get_book_path),
+        dialog_segments_iter_func=gd_api.iter_dialog_segments(
+            book_path_func=my_api.get_book_path,
+            split_meta=True),
         prefix_lexicon=my_api.load_prefix_lexicon_en(),
         recognize_at_positions=my_api.dialogs_recognize_speaker_at_positions)
 )

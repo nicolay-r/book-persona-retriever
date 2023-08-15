@@ -26,6 +26,13 @@ class BookDialogue(object):
         # map (utt_id => segments)
         self.__segment_bounds = {}
 
+    @staticmethod
+    def get_segment_type(segment):
+        """ Segment that follows the `segment_line_format`.
+        """
+        assert(isinstance(segment, str))
+        return segment[0]
+
     def set_book(self, book_id, book_path):
 
         # If already read this book and it is cached.

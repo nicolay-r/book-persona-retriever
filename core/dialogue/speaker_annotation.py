@@ -50,23 +50,19 @@ def iter_speaker_annotated_dialogs(dialog_segments_iter_func, recognize_at_posit
         speakers = set()
         recognized_speakers = {}
 
-        for segment in dialog_segments:
+        for meta, text in dialog_segments:
 
             # Considering only comments.
-            if segment[0] not in [BookDialogue.META_AUTHOR_COMMENT_LINE,
-                                  BookDialogue.META_END_OF_DIALOG_LINE]:
+            if meta[0] not in [BookDialogue.META_AUTHOR_COMMENT_LINE,
+                               BookDialogue.META_END_OF_DIALOG_LINE]:
                 continue
 
             # Taking meta information and text.
-            terms = segment.split()
-            meta = terms[0]
-            text = terms[1:]
-
             speaker_id = int(meta[1:-1])
             speakers.add(speaker_id)
 
             # Do analysis.
-            terms = gd_api.normalize_terms(text)
+            terms = gd_api.normalize_terms(text.split())
 
             recognized, variant = try_recognize(
                 terms=terms,
@@ -79,15 +75,10 @@ def iter_speaker_annotated_dialogs(dialog_segments_iter_func, recognize_at_posit
 
         # Compose to format of actual dialog between speakers
         dialog = OrderedDict()
-        for segment in dialog_segments:
+        for meta, text in dialog_segments:
 
-            if segment[0] not in [">"]:
+            if meta[0] not in [BookDialogue.META_DIALOGUE_LINE]:
                 continue
-
-            # Taking meta information and text.
-            terms = segment.split()
-            meta = terms[0]
-            text = ' '.join(terms[1:])
 
             # Initialize the list for the particular speaker.
             speaker_id = int(meta[1:-1])
