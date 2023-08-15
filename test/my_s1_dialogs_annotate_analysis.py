@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 
 from core.dialogue.speaker_annotation import iter_speaker_annotated_dialogs
+from utils_gd import GuttenbergDialogApi
 from utils_my import MyAPI
 
 
@@ -50,14 +51,16 @@ def calc_annotated_dialogs_stat(iter_dialogs_and_speakers):
 
 
 my_api = MyAPI()
+gd_api = GuttenbergDialogApi()
 
 stat = calc_annotated_dialogs_stat(
     iter_dialogs_and_speakers=iter_speaker_annotated_dialogs(
-        book_path_func=my_api.get_book_path,
+        dialog_segments_iter_func=gd_api.iter_dialog_segments(my_api.get_book_path),
         prefix_lexicon=my_api.load_prefix_lexicon_en(),
         recognize_at_positions=my_api.dialogs_recognize_speaker_at_positions)
 )
 
+print("original dialogs: {}".format(stat["dialogs"]))
 print("recognized per utterance: {}%".format(str(round(100.0 * stat["recognized"]/stat["utterances"], 2))))
 print("recognized speakers per dialogs: {}".format(str(round(stat["recognized"]/stat["dialogs"], 2))))
 print("Total speakers: {}".format(len(stat["speakers_uc_stat"])))

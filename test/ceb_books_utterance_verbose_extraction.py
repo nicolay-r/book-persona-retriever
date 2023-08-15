@@ -10,10 +10,11 @@ my_api = MyAPI()
 books_dialogue = BookDialogue()
 
 lines_to_consider = [
-    '!',
-    GuttenbergDialogApi.META_AUTHOR_COMMENT_LINE,
-    GuttenbergDialogApi.META_END_OF_DIALOG_LINE,
-    ">"]
+    BookDialogue.META_BEGIN_OF_DIALOG_LINE,
+    BookDialogue.META_DIALOGUE_LINE,
+    BookDialogue.META_AUTHOR_COMMENT_LINE,
+    BookDialogue.META_END_OF_DIALOG_LINE
+]
 
 __current_dir = dirname(realpath(__file__))
 with open(join(__current_dir, GuttenbergDialogApi.dialogs_en), "r") as f:

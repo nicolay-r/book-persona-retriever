@@ -4,6 +4,13 @@ class BookDialogue(object):
     """
 
     utterance_sep = "[USEP]"
+    segment_line_format = "{t}{utt_id}: {text}"
+
+    # Meta types of the segments.
+    META_BEGIN_OF_DIALOG_LINE = "!"
+    META_DIALOGUE_LINE = ">"
+    META_AUTHOR_COMMENT_LINE = "#"
+    META_END_OF_DIALOG_LINE = "."
 
     def __init__(self):
         self.__book_id = None
@@ -93,7 +100,7 @@ class BookDialogue(object):
                     self.__found += 1
                 else:
                     self.__missed += 1
-                    raise Exception("!")
+                    raise Exception("! This is not supposed to happen.")
 
         # Clear empty bounds and utterances.
         s_inds = list(self.__segment_bounds.keys())
@@ -116,11 +123,19 @@ class BookDialogue(object):
                     if seg_bounds[0] < 2:
                         continue
                     annot_data.append(
-                        "!{utt_id}: {text}".format(utt_id=utt_id, text=self.__paragraph[:seg_bounds[0]]))
+                        self.segment_line_format.format(
+                            t=self.META_BEGIN_OF_DIALOG_LINE,
+                            utt_id=utt_id,
+                            text=self.__paragraph[:seg_bounds[0]])
+                    )
 
                 # add UTT.
                 annot_data.append(
-                    ">{utt_id}: {text}".format(utt_id=utt_id, text=self.__paragraph[seg_bounds[0]:seg_bounds[1]]))
+                    self.segment_line_format.format(
+                        t=self.META_DIALOGUE_LINE,
+                        utt_id=utt_id,
+                        text=self.__paragraph[seg_bounds[0]:seg_bounds[1]])
+                )
 
                 is_after = False
                 text_start = seg_bounds[1] + 1
@@ -150,8 +165,8 @@ class BookDialogue(object):
 
                 # Annotate text.
                 annot_data.append(
-                    "{t}{utt_id}: {text}".format(
-                        t="." if is_after else "#",
+                    self.segment_line_format.format(
+                        t=self.META_END_OF_DIALOG_LINE if is_after else self.META_AUTHOR_COMMENT_LINE,
                         utt_id=utt_id,
                         text=text))
 
