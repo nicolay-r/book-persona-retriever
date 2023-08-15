@@ -184,5 +184,14 @@ class CEBApi:
         """
         return self.__chars[char_id]
 
-    def characters_count(self):
-        return len(self.__book_by_char)
+    def characters_count(self, book_ids=None):
+        if book_ids is None:
+            # Consider characters from all books.
+            return len(self.__book_by_char)
+
+        total = 0
+        for char_id in self.__book_by_char.keys():
+            book_id = int(char_id.split('_')[0])
+            total += 1 if book_id in book_ids else 0
+
+        return total
