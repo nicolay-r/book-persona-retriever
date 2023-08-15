@@ -62,9 +62,11 @@ stat = calc_annotated_dialogs_stat(
         recognize_at_positions=my_api.dialogs_recognize_speaker_at_positions)
 )
 
-print("original dialogs: {}".format(stat["dialogs"]))
+print("original dialogs count: {}".format(stat["dialogs"]))
 print("recognized per utterance: {}%".format(str(round(100.0 * stat["recognized"]/stat["utterances"], 2))))
 print("recognized speakers per dialogs: {}".format(str(round(stat["recognized"]/stat["dialogs"], 2))))
+print("utterances count: {}".format(str(stat["utterances"])))
+print("utterances per dialog: {}".format(str(round(stat["utterances"]/stat["dialogs"], 2))))
 print("Total speakers: {}".format(len(stat["speakers_uc_stat"])))
 
 
