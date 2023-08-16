@@ -37,8 +37,14 @@ def draw_hist_plot(c, desc=None, min_val=None, max_val=None, n_bins=None, show=T
 
     if min_val is None:
         min_val = int(min(c.keys()))
+        for x in list(c.keys()):
+            if x < min_val:
+                del c[x]
     if max_val is None:
         max_val = int(max(c.keys()))
+        for x in list(c.keys()):
+            if x > max_val:
+                del c[x]
 
     val_width = max_val - min_val
     n_bins = abs(max_val - min_val) if n_bins is None else n_bins
