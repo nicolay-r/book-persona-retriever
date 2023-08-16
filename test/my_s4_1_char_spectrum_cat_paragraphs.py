@@ -1,4 +1,5 @@
 from collections import Counter
+from os.path import join
 
 from core.book.utils import iter_paragraphs_with_n_speakers
 from core.plot import draw_bar_plot, draw_hist_plot
@@ -43,4 +44,6 @@ s_counter = Counter()
 for name, s_ctr in speakers.items():
     s_counter[name] = len(s_ctr)
 
-draw_hist_plot(c=s_counter, desc='baps_per_speaker', min_val=0, max_val=50)
+png_path = join(MyAPI.books_storage, f"spectrums_per_speaker.png")
+draw_hist_plot(c=s_counter, save_png_path=png_path, desc='Spectrums Per Speaker',
+               min_val=0, max_val=20, asp_hor=14, asp_ver=2, show=False)

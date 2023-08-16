@@ -32,7 +32,12 @@ for f_type, f_func in filters.items():
 
     for data_type in folding_parts:
         c = calc_words_count(data_type, filter_func=f_func)
-        png_path = join(MyAPI.books_storage, "dataset_{}_p{}.png".format(
-            f_type, data_type if data_type is not None else "all"))
-        draw_hist_plot(c, desc="Histogram of sentence lengths in words (`{}` dataset)".format(data_type),
-                       n_bins=20, save_png_path=png_path, show=False, asp_hor=12, asp_ver=2)
+        sdt = data_type if data_type is not None else "all"
+        png_path = join(MyAPI.books_storage, f"dataset_{f_type}_p{sdt}.png")
+        print(f_type, sdt, c.most_common(10))
+        draw_hist_plot(c,
+                       desc=f"Histogram of {f_type} utterance lengths in words (`{sdt}` dataset)",
+                       n_bins=20, save_png_path=png_path, show=False, asp_hor=14, asp_ver=2,
+                       # Round to the closest 10.
+                       max_val=round(max(c.keys()), -1),
+                       log_scale=False)
