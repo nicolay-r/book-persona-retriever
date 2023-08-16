@@ -32,7 +32,7 @@ def draw_bar_plot(c, x_name, y_name, val_to_x=lambda v: v,
 
 
 def draw_hist_plot(c, desc=None, min_val=None, max_val=None, n_bins=None, show=True,
-                   save_png_path=None, asp_hor=8, asp_ver=2):
+                   save_png_path=None, asp_hor=8, asp_ver=2, log_scale=False):
     assert(isinstance(c, Counter))
 
     if min_val is None:
@@ -43,18 +43,24 @@ def draw_hist_plot(c, desc=None, min_val=None, max_val=None, n_bins=None, show=T
     val_width = max_val - min_val
     n_bins = abs(max_val - min_val) if n_bins is None else n_bins
     bin_width = val_width/n_bins
-    plt.xticks(np.arange(min_val + bin_width, max_val + bin_width, bin_width))
+    plt.xticks(np.arange(min_val - bin_width, max_val + bin_width, bin_width))
 
-    ##################################################################
-    # Draw count plot of all BAPS
-    ##################################################################
     desc = "" if desc is None else desc
-    df_dict = {desc: list(c.values())}
-    g = sns.histplot(data=pd.DataFrame(df_dict),
+
+    # Compose data.
+    data = []
+    for e, count in c.items():
+        for _ in range(count):
+            data.append(e)
+
+    g = sns.histplot(data=pd.DataFrame({desc: data}),
                      x=desc,
                      bins=n_bins,
                      binrange=(min_val, max_val),
                      legend=True)
+
+    if log_scale:
+        g.set_yscale('log')
 
     if show:
         plt.show()
