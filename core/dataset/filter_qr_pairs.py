@@ -1,7 +1,8 @@
 from collections import Counter
 
-from core.dialogue.comments import iter_terms_with_speakers
+from core.dialogue.utils import iter_terms_with_speakers
 from utils_ceb import CEBApi
+from utils_gd import GuttenbergDialogApi
 from utils_my import MyAPI
 
 
@@ -36,7 +37,9 @@ class QRFilterFunctionObject(object):
         # We consider only those utterances that is not contain information
         # or refer to other speakers.
         r_speakers = []
-        iter_terms_with_speakers(terms=dialogue[1].split(' '), map_func=lambda x: r_speakers.append(x))
+        iter_terms_with_speakers(terms=dialogue[1].split(' '),
+                                 is_term_has_char_func=GuttenbergDialogApi.has_character,
+                                 map_func=lambda x: r_speakers.append(x))
         if len(r_speakers) > MyAPI.dataset_filter_other_speakers_in_response:
             return False
 
