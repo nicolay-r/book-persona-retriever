@@ -10,8 +10,8 @@ from core.candidates.clustering import ALOHANegBasedClusteringProvider
 from core.candidates.uniform_collection import UniformCandidatesProvider
 from core.dialogue.utils import mask_text_entities
 from core.spectrums.io_utils import SpectrumIOUtils
+from core.utils_fmt_parlai_facebook import format_episode
 from core.utils_math import random_choice_non_repetitive
-from core.utils_parlai_facebook_formatter import format_episode
 from utils_ceb import CEBApi
 from utils_gd import GuttenbergDialogApi
 from utils_my import MyAPI
@@ -44,11 +44,13 @@ def common_iter_dialogs(dialogs_dataset_filepath):
 
 def iter_formatted_dialog(dialogs_iter, traits_func, candidates_provider, candidates_oversample_factor=None):
     assert(callable(traits_func))
-    assert(isinstance(candidates_provider, CandidatesProvider))
+    assert(isinstance(candidates_provider, CandidatesProvider) or candidates_provider is None)
     assert((isinstance(candidates_oversample_factor, int) and candidates_oversample_factor > 0) or
            candidates_oversample_factor is None)
 
-    candidates_oversample_factor = 1 if candidates_oversample_factor is None else candidates_oversample_factor
+    candidates_oversample_factor = 1 \
+        if candidates_oversample_factor is None or candidates_provider is None \
+        else candidates_oversample_factor
 
     # We would like to shuffle the traits to prevent models from overfitting with the particular order.
     resp_persona_random = random.Random(MyAPI.parlai_dataset_ovesampling_candidates_selection_seed)
@@ -62,15 +64,19 @@ def iter_formatted_dialog(dialogs_iter, traits_func, candidates_provider, candid
         candidates_random = random.Random(MyAPI.parlai_dataset_ovesampling_candidates_selection_seed)
         for _ in range(candidates_oversample_factor):
 
-            other_candidates = candidates_provider.provide_or_none(
-                dialog_id=dialog_id, speaker_id=r_speaker_id, label=label, random=candidates_random)
-            other_candidates = [] if other_candidates is None else other_candidates
-            candidates = other_candidates + [label]
+            candidates = None
 
-            assert(len(candidates) == MyAPI.parlai_dataset_candidates_limit)
+            if candidates_provider is not None:
 
-            if candidates is None:
-                continue
+                other_candidates = candidates_provider.provide_or_none(
+                    dialog_id=dialog_id, speaker_id=r_speaker_id, label=label, random=candidates_random)
+                other_candidates = [] if other_candidates is None else other_candidates
+                candidates = other_candidates + [label]
+
+                assert(len(candidates) == MyAPI.parlai_dataset_candidates_limit)
+
+                if candidates is None:
+                    continue
 
             resp_persona_traits = traits_func(q_speaker_id, r_speaker_id)
             resp_persona_traits_shuffled = resp_persona_random.sample(
@@ -113,6 +119,7 @@ traits_provider = {
 CANDIDATES_UNIFORM = ""
 CANDIDATES_HLA_CLUSTER = "clustered"
 candidates_provider = {
+    "no-cand": lambda _: None,
     CANDIDATES_UNIFORM: lambda fold_index: UniformCandidatesProvider(
         iter_dialogs=common_iter_dialogs(MyAPI.dataset_fold_filepath.format(fold_index=fold_index)),
         candidates_limit=MyAPI.parlai_dataset_candidates_limit - 1),

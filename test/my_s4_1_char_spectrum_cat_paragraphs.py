@@ -37,7 +37,7 @@ if len(s_counter) > 0:
                   y_name="cat",
                   val_to_x=lambda k: int(''.join([ch for ch in k if ch.isdigit()])),
                   val_to_cat=lambda k: k.split('-')[0] + ' ' + str(fcp_api.find_by_id(k.split('-')[0])),
-                  top_bars=50)
+                  top_bars=MyAPI.hla_spectrums_limit)
 
 # Compose global stat.
 s_counter = Counter()

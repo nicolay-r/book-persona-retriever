@@ -37,4 +37,4 @@ if len(s_counter) != 0:
                   val_to_x=lambda k: int(''.join([ch for ch in k if ch.isdigit()])),
                   # BAP + meaning
                   val_to_cat=lambda k: k.split('-')[0] + ' ' + str(fcp_api.find_by_id(k.split('-')[0])),
-                  top_bars=50)
+                  top_bars=40)
