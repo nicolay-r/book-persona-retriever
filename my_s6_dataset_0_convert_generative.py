@@ -4,8 +4,6 @@ import numpy as np
 import zipstream
 
 from core.candidates.base import CandidatesProvider
-from core.candidates.clustering import ALOHANegBasedClusteringProvider
-from core.candidates.uniform_collection import UniformCandidatesProvider
 from core.dataset.pairs_iterator import common_iter_dialogs
 from core.spectrums.io_utils import SpectrumIOUtils
 from core.utils_fmt_llm import format_episode
@@ -71,36 +69,24 @@ dataset_filepaths = {part_name: my_api.dataset_fold_filepath.format(fold_index=p
 
 ceb_api = CEBApi()
 ceb_api.read_char_map()
-# roles = ceb_api.get_meta_role()
-# genders = ceb_api.get_meta_gender()
 speaker_spectrums = SpectrumIOUtils.read(MyAPI.hla_prompts_filepath)
 
 TRAITS_NO = "original"
 TRAITS_SPECTRUM = "spectrum"
 traits_provider = {
     TRAITS_NO: lambda your_id, partner_id: [None] * MyAPI.spectrum_per_user_count,
-    # NOTE: In some cases (less than ~0.07%) speakers might be missed so we need to perform check.
     TRAITS_SPECTRUM: lambda your_id, partner_id:
-        random_choice_non_repetitive(v=speaker_spectrums[partner_id]["prompts"],
-                                     size=my_api.spectrum_per_user_count,
-                                     p=np.absolute(speaker_spectrums[partner_id]["weights"]),
-                                     to_list=True, take_less=True)
-        if partner_id in speaker_spectrums else traits_provider[TRAITS_NO](your_id, partner_id)
+    random_choice_non_repetitive(v=speaker_spectrums[partner_id]["prompts"],
+                                 size=my_api.spectrum_per_user_count,
+                                 p=np.absolute(speaker_spectrums[partner_id]["weights"]),
+                                 to_list=True, take_less=True)
+    if partner_id in speaker_spectrums else traits_provider[TRAITS_NO](your_id, partner_id)
 }
 
 CANDIDATES_UNIFORM = ""
 CANDIDATES_HLA_CLUSTER = "clustered"
 candidates_provider = {
-    CANDIDATES_UNIFORM: lambda fold_index: UniformCandidatesProvider(
-        iter_dialogs=common_iter_dialogs(MyAPI.dataset_fold_filepath.format(fold_index=fold_index)),
-        candidates_limit=MyAPI.parlai_dataset_candidates_limit - 1),
-    CANDIDATES_HLA_CLUSTER: lambda fold_index: ALOHANegBasedClusteringProvider(
-        cache_embeddings_in_memory=True,
-        candidates_limit=MyAPI.parlai_dataset_candidates_limit - 1,
-        neg_speakers_limit=MyAPI.hla_neg_set_speakers_limit,
-        dataset_filepath=MyAPI.dataset_filepath,
-        cluster_filepath=MyAPI.hla_speaker_clusters_path,
-        sqlite_dialog_db=MyAPI.dataset_dialog_db_fold_path.format(fold_index=fold_index))
+    "no-cand": lambda _: None,
 }
 
 for data_fold_type, data_fold_source in dataset_filepaths.items():
