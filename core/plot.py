@@ -8,15 +8,47 @@ from matplotlib import pyplot as plt, ticker
 from sklearn.manifold import TSNE
 from tqdm import tqdm
 
+def colors_from_values(values, palette_name):
+    # normalize the values to range [0, 1]
+    normalized = (values - min(values)) / (max(values) - min(values))
+    # convert to indices
+    indices = np.round(normalized * (len(values) - 1)).astype(np.int32)
+    # use the indices to get the colors
+    palette = sns.color_palette(palette_name, len(values))
+    return np.array(palette).take(indices, axis=0)
 
-def draw_bar_plot(c, x_name, y_name, val_to_x=lambda v: v,
-                  val_to_cat=lambda v: 0, top_bars=None, order=True):
+
+def draw_spectrum_barplot(c, x_name, y_name, val_to_x=lambda v: v, asp_hor=2, asp_ver=8,
+                          val_to_cat_caption=lambda v: 0,
+                          top_bars_count=None, bottom_bars_count=None,
+                          order=True, show=True, save_png_path=None,
+                          colorgradient="coolwarm"):
     assert(isinstance(c, Counter))
 
     df_dict = {x_name: [], y_name: [], "count": []}
-    for k, v in c.most_common(top_bars if top_bars is not None else len(c)):
+
+    if top_bars_count is None and bottom_bars_count is None:
+        # Keep all elements, ordered.
+        items = c.most_common()
+    else:
+        items = []
+        if top_bars_count is not None:
+            # Keep top ordered.
+            items += c.most_common()[:top_bars_count]
+        if bottom_bars_count is not None:
+            # Keep bottom ordered.
+            items += c.most_common()[-bottom_bars_count:]
+
+    k_used = set()
+    for k, v in set(items):
+
+        # Consider keys only once.
+        if k in k_used:
+            continue
+        k_used.add(k)
+
         df_dict[x_name].append(val_to_x(k))
-        df_dict[y_name].append(val_to_cat(k))
+        df_dict[y_name].append(val_to_cat_caption(k))
         df_dict["count"].append(v)
 
     df = pd.DataFrame(df_dict)
@@ -24,11 +56,21 @@ def draw_bar_plot(c, x_name, y_name, val_to_x=lambda v: v,
     if order:
         df = df.sort_values("count", ascending=False)
 
-    ax = sns.barplot(df, x="count", y=y_name, width=1)
+    ax = sns.barplot(df, x="count", y=y_name, width=1,
+                     palette=colors_from_values(df["count"], colorgradient))
 
     ax.xaxis.set_major_formatter(ticker.ScalarFormatter())
 
-    plt.show()
+    if show:
+        plt.show()
+
+    if save_png_path is not None:
+        # And saving the output image.
+        plt.gcf().set_size_inches(asp_hor, asp_ver)
+        print("Saving: {}".format(save_png_path))
+        plt.savefig(save_png_path, bbox_inches='tight', dpi=200)
+
+    plt.clf()
 
 
 def draw_hist_plot(c, desc=None, min_val=None, max_val=None, n_bins=None, show=True,
@@ -106,7 +148,9 @@ def plot_tsne_series(X, y=None, perplexies=[5], n_iter=1000, alpha=0.1, palette=
     tsne_data["y"] = list(chain(*[y for _ in perplexies]))
 
     g = sns.FacetGrid(tsne_data, col="perplexy", hue="y", palette=palette, legend_out=draw_legend)
-    g.map(sns.scatterplot, "comp-1", "comp-2", alpha=alpha)
+    g.map(sns.scatterplot, "comp-1", "comp-2", alpha=alpha, edgecolor=None)
+
+    plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.4), ncol=1, fancybox=True, shadow = True)
 
     if show:
         plt.show()

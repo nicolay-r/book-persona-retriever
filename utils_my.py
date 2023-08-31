@@ -31,6 +31,7 @@ class MyAPI:
     # Speakers filtering parameters.
     dataset_min_words_count_in_response = 10
     dataset_filter_speaker_total_speakers_count = 400
+    dataset_predefined_speakers_count = 10
     dataset_filter_speaker_min_utterances_per_speaker = None
     dataset_filter_other_speakers_in_response = 0
     dataset_filepath = join(__current_dir, "./data/ceb_books_annot/dataset.txt")
@@ -83,6 +84,11 @@ class MyAPI:
                                                             # lines by default. Hence we introduce oversampling for
                                                             # candidate-selective approach to get closer to experiments in
                                                             # ALOHA paper.
+
+
+    # Set of the predefined (selected speakers)
+    # predefined_speakers = ['126_2', '429_0', '764_5', '1282_3', '330_0']
+    predefined_speakers = ['763_3', '547_3', '538_2', '507_3', '457_4']
 
     # separator in line between meta information and the actual content
     meta_sep = ": "

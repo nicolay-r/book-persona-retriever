@@ -1,0 +1,2 @@
+# This value is predefined and obtained from the result analysis of 400 selected speakers.
+MOST_DISTINCTIVE = set([53, 128, 83, 266, 230, 124, 165, 151, 75, 210, 0, 125, 183, 158, 174, 173, 68, 121, 203, 136])

@@ -37,5 +37,5 @@ with open("file.txt", "r") as f:
     contents = contents.replace("\n", " ").replace("\\", " ").strip()
     tokens = contents.split()
     r = {tokens[i]: tokens[i+1] for i in range(0, len(tokens), 2)}
-    line = [r[m] if m in r else "" for m in result_metrics_generative]
+    line = [r[m] if m in r else "" for m in result_metrics]
     print("\t".join(line))

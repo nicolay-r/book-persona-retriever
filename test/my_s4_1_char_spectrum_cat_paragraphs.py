@@ -2,8 +2,10 @@ from collections import Counter
 from os.path import join
 
 from core.book.utils import iter_paragraphs_with_n_speakers
-from core.plot import draw_bar_plot, draw_hist_plot
+from core.plot import draw_hist_plot
 from core.spectrums_annot import annot_spectrums_in_text
+from test.const import MOST_DISTINCTIVE
+from utils_draw import draw_spectrums_stat
 from utils_ceb import CEBApi
 from utils_fcp import FcpApi
 from utils_my import MyAPI
@@ -15,7 +17,7 @@ my_api = MyAPI()
 fcp_api = FcpApi()
 ds_speakers = my_api.read_speakers()
 
-speakers = annot_spectrums_in_text(
+speaker_spectrums = annot_spectrums_in_text(
     texts_and_speakervars_iter=map(lambda t: (t[0].Text, t[1]),
                                    iter_paragraphs_with_n_speakers(
                                        speakers=set(ds_speakers),
@@ -25,24 +27,24 @@ speakers = annot_spectrums_in_text(
                                            book_by_id_func=my_api.get_book_path))),
     rev_spectrums=fcp_api.reversed_spectrums())
 
+draw_spectrums_stat(speaker_spectrum_counters=speaker_spectrums.values(),
+                    fcp_api=fcp_api,
+                    top_bars_count=20,
+                    bottom_bars_count=20,
+                    save_png_filepath="spectrum-all-paragraphs.png")
+
+most_distinctive = set()
+draw_spectrums_stat(speaker_spectrum_counters=speaker_spectrums.values(),
+                    fcp_api=fcp_api,
+                    top_bars_count=20, bottom_bars_count=20,
+                    spectrums_set=MOST_DISTINCTIVE,
+                    asp_ver=6, asp_hor=2,
+                    save_png_filepath="spectrum-all-paragraphs-most-distinctive.png")
+
 # Compose global stat.
 s_counter = Counter()
-for s_ctr in speakers.values():
-    for s_name, v in s_ctr.items():
-        s_counter[s_name] += v
-
-if len(s_counter) > 0:
-    draw_bar_plot(s_counter,
-                  x_name="bap",
-                  y_name="cat",
-                  val_to_x=lambda k: int(''.join([ch for ch in k if ch.isdigit()])),
-                  val_to_cat=lambda k: k.split('-')[0] + ' ' + str(fcp_api.find_by_id(k.split('-')[0])),
-                  top_bars=MyAPI.hla_spectrums_limit)
-
-# Compose global stat.
-s_counter = Counter()
-for name, s_ctr in speakers.items():
-    s_counter[name] = len(s_ctr)
+for name, spectrum_ctr in speaker_spectrums.items():
+    s_counter[name] = len(spectrum_ctr)
 
 png_path = join(MyAPI.books_storage, f"spectrums_per_speaker.png")
 draw_hist_plot(c=s_counter, save_png_path=png_path, desc='Spectrums Per Speaker',

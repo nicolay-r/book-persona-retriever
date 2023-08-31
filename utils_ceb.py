@@ -182,6 +182,7 @@ class CEBApi:
     def get_char_names(self, char_id):
         """ List all the name variations for the particular book character.
         """
+        assert(self.__chars is not None)
         return self.__chars[char_id]
 
     def characters_count(self, book_ids=None):

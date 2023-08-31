@@ -1,7 +1,8 @@
 ##########################################
 # This is a dictionary of preset functions
 ##########################################
-from core.spectrums.to_prompts import filter_by_non_zero, to_prompts_top_k
+from core.spectrums.stat import filter_by_non_zero
+from core.spectrums.to_prompts import to_prompts_top_k
 from core.utils_npz import NpzUtils
 from utils_my import MyAPI
 
