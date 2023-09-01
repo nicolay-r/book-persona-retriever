@@ -34,10 +34,8 @@ for x_path, f in data.items():
         x.append(ctr)
         y.append(spectrum_name)
 
-    print("Saved:", x_path)
     NpzUtils.save(data=x, target=x_path)
-    print("Saved:", "speaker-names.npz")
-    NpzUtils.save(data=y, target="speaker-names.npz")
+    NpzUtils.save(data=y, target="speaker-selected-names.npz")
 
 for speaker_id, ctr in speaker_spectrums_dict.items():
     draw_spectrums_stat(speaker_spectrum_counters=[ctr], fcp_api=fcp_api,

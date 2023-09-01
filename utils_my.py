@@ -31,7 +31,7 @@ class MyAPI:
     # Speakers filtering parameters.
     dataset_min_words_count_in_response = 10
     dataset_filter_speaker_total_speakers_count = 400
-    dataset_predefined_speakers_count = 10
+    dataset_predefined_speakers_count = 100
     dataset_filter_speaker_min_utterances_per_speaker = None
     dataset_filter_other_speakers_in_response = 0
     dataset_filepath = join(__current_dir, "./data/ceb_books_annot/dataset.txt")
@@ -88,7 +88,14 @@ class MyAPI:
 
     # Set of the predefined (selected speakers)
     # predefined_speakers = ['126_2', '429_0', '764_5', '1282_3', '330_0']
-    predefined_speakers = ['763_3', '547_3', '538_2', '507_3', '457_4']
+
+    # 507_9. Bartle Massey -- The schoolteacher and Adam’s best friend. Unbeknownst to his friends, not only does Mr. Massey care deeply for his students, but he exhibits a patience with them that he seldom shows in the company of friends. Mr. Massey rails against the stupidity of women and says everything twice. During Hetty’s trial, he is a tactful comfort to Adam because he is able to see when it is best not to speak.I
+    # 139_1 The Lost World by Arthur Conan Doyle ['Summerlee', 'Mr. Summerlee', 'SUMMERLEE'] UNK https://arthurconandoyle.co.uk/character/professor-summerlee-from-the-professor-challenger-stories
+    # 1257_9 The Three Musketeers by Alexandre Dumas Pere ['Buckingham', 'Duke', 'Lord Duke', 'Lord Buckingham', 'Duke of Buckingham'] https://heroes-and-villain.fandom.com/wiki/Duke_of_Buckingham_(2011)
+    # 155_21 The Moonstone by Wilkie Collins ['Sergeant', 'Mr. Cuff', 'Sergeant Cuff'] UNK https://www.litcharts.com/lit/the-moonstone/characters/sergeant-cuff#:~:text=A%20%E2%80%9Crenowned%20and%20capable%E2%80%9D%20detective,%2C%20Franklin%20Blake%2C%20and%20Mr.
+    # 507_3 Soldiers of Fortune by Richard Harding Davis ['MacWilliams', 'Mr. MacWilliams'] https://www.theatlantic.com/magazine/archive/1897/12/mr-daviss-soldiers-of-fortune/636194/
+    predefined_speakers = ['507_3', '139_1', '1257_9', '155_21', '403_3']
+
 
     # separator in line between meta information and the actual content
     meta_sep = ": "

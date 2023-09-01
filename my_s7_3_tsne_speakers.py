@@ -18,7 +18,9 @@ def get_book_id(v):
 
 
 def __make_group_name(v):
-    return ceb_api.get_char_names(v)[0] + " " + pg19.find_book_title(get_book_id(v)) + " [{}]".format(v)
+    return ceb_api.get_char_names(v)[0] + " " + \
+           '"{}"'.format(pg19.find_book_title(get_book_id(v))) + \
+           " [{}]".format(v)
 
 
 # Init API.
@@ -27,9 +29,22 @@ ceb_api.read_char_map()
 pg19 = PG19Api()
 pg19.read()
 
-speaker_names = list(NpzUtils.load(MyAPI.spectrum_speakers)) + list(NpzUtils.load("speaker-names.npz"))
-melt_to_csv(X=list(NpzUtils.load(MyAPI.spectrum_features_norm)) + list(NpzUtils.load("speakers-selected-norm.npz")),
-            y=speaker_names, out_filepath="melted_data.csv",
+speaker_names = list(NpzUtils.load("speaker-all-names.npz")) + list(NpzUtils.load("speaker-selected-names.npz"))
+X = list(NpzUtils.load("speakers-all-norm.npz")) + list(NpzUtils.load("speakers-selected-norm.npz"))
+
+# Filtering unique. (because of the manually selected speakers, they might be a part of the valid/train set.
+sset = set()
+u_speaker_names = []
+u_X = []
+for i, s in enumerate(speaker_names):
+    if s in sset:
+        print("Skipped: {}".format(s))
+        continue
+    sset.add(s)
+    u_speaker_names.append(s)
+    u_X.append(X[i])
+
+melt_to_csv(X=u_X, y=u_speaker_names, out_filepath="melted_data.csv",
             user_col_name="user", feature_col_name="feature", value_col_name="value")
 
 mw = MatrixWrapper(pd.read_csv("melted_data.csv"),
@@ -41,8 +56,9 @@ for user_id in tqdm(range(mw.model.user_factors.shape[0])):
 NpzUtils.save(data=factors_list, target="x.speakers-ext-factor.npz")
 
 plot_tsne_series(X=NpzUtils.load("x.speakers-ext-factor.npz"),
-                 y=[__make_group_name(s) if s in MyAPI.predefined_speakers else "_Other" for s in speaker_names],
-                 perplexies=[5], n_iter=1000, save_png_path="tsne.png", alpha=0.8,
+                 y=[__make_group_name(s) if s in MyAPI.predefined_speakers else "_Other"
+                    for s in speaker_names],
+                 perplexies=[30], n_iter=1000, save_png_path="tsne.png", alpha=0.15,
                  palette={
                      "_Other": "gray",
                      __make_group_name(MyAPI.predefined_speakers[0]): "red",

@@ -179,6 +179,9 @@ class CEBApi:
             if char_id.startswith(str(book_id) + "_"):
                 yield char_id
 
+    def iter_chars(self):
+        return self.__chars.keys()
+
     def get_char_names(self, char_id):
         """ List all the name variations for the particular book character.
         """

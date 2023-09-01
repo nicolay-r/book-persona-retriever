@@ -37,7 +37,7 @@ def filter_response_speakers(dialogue_qr_pairs_it):
         speaker_ids = ordered_speaker_ids[:MyAPI.dataset_filter_speaker_total_speakers_count]
         predefined_ids = ordered_speaker_ids[MyAPI.dataset_filter_speaker_total_speakers_count:
                                              MyAPI.dataset_filter_speaker_total_speakers_count + MyAPI.dataset_predefined_speakers_count]
-        print(predefined_ids)
+        print("Predefined Speakers", predefined_ids)
 
     for speaker_id in speaker_ids:
 
