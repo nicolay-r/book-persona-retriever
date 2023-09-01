@@ -8,9 +8,13 @@ from matplotlib import pyplot as plt, ticker
 from sklearn.manifold import TSNE
 from tqdm import tqdm
 
+
 def colors_from_values(values, palette_name):
+    # centering at 0.
+    mx = max(abs(values))
+    mn = -mx
     # normalize the values to range [0, 1]
-    normalized = (values - min(values)) / (max(values) - min(values))
+    normalized = (values - mn) / (mx - mn)
     # convert to indices
     indices = np.round(normalized * (len(values) - 1)).astype(np.int32)
     # use the indices to get the colors
