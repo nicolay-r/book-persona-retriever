@@ -29,10 +29,12 @@ ceb_api.read_char_map()
 pg19 = PG19Api()
 pg19.read()
 
+# Original data.
 speaker_names = list(NpzUtils.load("speaker-all-names.npz")) + list(NpzUtils.load("speaker-selected-names.npz"))
 X = list(NpzUtils.load("speakers-all-norm.npz")) + list(NpzUtils.load("speakers-selected-norm.npz"))
 
 # Filtering unique. (because of the manually selected speakers, they might be a part of the valid/train set.
+# This is temprorary caused due to the lack of fixed sort at dataset creation stage (already fixed).
 sset = set()
 u_speaker_names = []
 u_X = []
@@ -57,7 +59,7 @@ NpzUtils.save(data=factors_list, target="x.speakers-ext-factor.npz")
 
 plot_tsne_series(X=NpzUtils.load("x.speakers-ext-factor.npz"),
                  y=[__make_group_name(s) if s in MyAPI.predefined_speakers else "_Other"
-                    for s in speaker_names],
+                    for s in u_speaker_names],
                  perplexies=[30], n_iter=1000, save_png_path="tsne.png", alpha=0.15,
                  palette={
                      "_Other": "gray",
