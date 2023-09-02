@@ -154,7 +154,7 @@ def plot_tsne_series(X, y=None, perplexies=[5], n_iter=1000, alpha=0.1, palette=
     g = sns.FacetGrid(tsne_data, col="perplexy", hue="y", palette=palette, legend_out=draw_legend)
     g.map(sns.scatterplot, "comp-1", "comp-2", alpha=alpha, edgecolor=None)
 
-    plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.4), ncol=1, fancybox=True, shadow = True)
+    plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.4), ncol=1, fancybox=True, shadow=True)
 
     if show:
         plt.show()
