@@ -8,7 +8,7 @@ from core.candidates.clustering import ALOHANegBasedClusteringProvider
 from core.candidates.uniform_collection import UniformCandidatesProvider
 from core.dataset.pairs_iterator import common_iter_dialogs
 from core.spectrums.io_utils import SpectrumIOUtils
-from core.utils_fmt_llm import format_episode
+from core.utils_fmt_parlai_facebook import format_episode
 from core.utils_math import random_choice_non_repetitive
 from utils_ceb import CEBApi
 from utils_my import MyAPI
@@ -52,7 +52,7 @@ def iter_formatted_dialog(dialogs_iter, traits_func, candidates_provider, candid
 
             resp_persona_traits = traits_func(q_speaker_id, r_speaker_id)
             resp_persona_traits_shuffled = resp_persona_random.sample(
-                resp_persona_traits, len(resp_persona_traits))
+                resp_persona_traits, len(resp_persona_traits)) if resp_persona_traits is not None else None
 
             yield format_episode(request=query,
                                  response=label,
