@@ -13,7 +13,7 @@ from utils_ceb import CEBApi
 from utils_se import SEApi
 
 
-def iter_formatted_dialog(dialogs_iter, traits_func, candidates_provider, candidates_oversample_factor=None):
+def iter_formatted_dialog(dialogs_iter, ignored_speakers, traits_func, candidates_provider, candidates_oversample_factor=None):
     assert(callable(traits_func))
     assert(isinstance(candidates_provider, CandidatesProvider) or candidates_provider is None)
     assert((isinstance(candidates_oversample_factor, int) and candidates_oversample_factor > 0) or
@@ -30,6 +30,9 @@ def iter_formatted_dialog(dialogs_iter, traits_func, candidates_provider, candid
 
         r_speaker_id, query = dialog[1]
         label = candidates_provider.get_label(r_speaker_id)
+
+        if r_speaker_id in ignored_speakers:
+            continue
 
         # We basically generate every episode with new candidates.
         candidates_random = random.Random(SEApi.parlai_dataset_ovesampling_candidates_selection_seed)
@@ -100,7 +103,8 @@ for data_fold_type, data_fold_source in dataset_filepaths.items():
                 dialogs_iter=common_iter_dialogs(data_fold_source),
                 traits_func=traits_func,
                 candidates_provider=candidate_dict_func(data_fold_type),
-                candidates_oversample_factor=oversample_factor)
+                candidates_oversample_factor=oversample_factor,
+                ignored_speakers=SEApi.ignored_speakers)
 
             z = zipstream.ZipFile()
 
