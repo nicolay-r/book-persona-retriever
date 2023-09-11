@@ -268,9 +268,8 @@ class MyAPI:
             yield r_speaker_id, qr_utterance_pair
 
     @staticmethod
-    def write_dataset(dialog_qr_pairs_iter, filepath=None):
-        # Read speakers to be considered first.
-        speakers_set = set(MyAPI.read_speakers())
+    def write_dataset(dialog_qr_pairs_iter, speakers_set=None, filepath=None):
+        assert(isinstance(speakers_set, set) or speakers_set is None)
 
         filepath = MyAPI.dataset_filepath if filepath is None else filepath
 
@@ -279,16 +278,22 @@ class MyAPI:
             for r_speaker_id, qr_utterance_pair in dialog_qr_pairs_iter:
                 assert(len(qr_utterance_pair) == 2)
 
-                # We consider only such speakers that in predefined list.
-                # We know we have a response to the known speaker.
-                if r_speaker_id is not None and r_speaker_id in speakers_set:
+                # We do not consider `r_speaker_id` with the None value.
+                if r_speaker_id is None:
+                    continue
 
-                    # We combine lines with the speaker information as it was before.
-                    qr_utterance_pair[0] = MyAPI.dialogs_unknown_speaker + "X" + MyAPI.meta_sep + qr_utterance_pair[0]
-                    qr_utterance_pair[1] = r_speaker_id + MyAPI.meta_sep + qr_utterance_pair[1]
+                # We consider only such speakers that in speakers_set (optional).
+                if speakers_set is not None:
+                    if r_speaker_id not in speakers_set:
+                        continue
 
-                    MyAPI.write_dataset_buffer(file=file, buffer=qr_utterance_pair)
-                    counter["pairs"] += 1
+                # We combine lines with the speaker information as it was before.
+                buffer = [None] * 2
+                buffer[0] = MyAPI.dialogs_unknown_speaker + "X" + MyAPI.meta_sep + qr_utterance_pair[0]
+                buffer[1] = r_speaker_id + MyAPI.meta_sep + qr_utterance_pair[1]
+
+                MyAPI.write_dataset_buffer(file=file, buffer=buffer)
+                counter["pairs"] += 1
 
         print("Pairs written: {}".format(counter["pairs"]))
         print("Dataset saved: {}".format(filepath))
