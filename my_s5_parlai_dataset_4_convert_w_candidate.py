@@ -4,7 +4,7 @@ import numpy as np
 import zipstream
 
 from core.candidates.base import CandidatesProvider
-from core.candidates.clustering import ALOHANegBasedClusteringProvider
+from core.candidates.clustering import ALOHANegBasedClusteringCandidatesProvider
 from core.candidates.uniform_collection import UniformCandidatesProvider
 from core.dataset.pairs_iterator import common_iter_dialogs
 from core.spectrums.io_utils import SpectrumIOUtils
@@ -94,7 +94,7 @@ candidates_provider = {
     CANDIDATES_UNIFORM: lambda fold_index: UniformCandidatesProvider(
         iter_dialogs=common_iter_dialogs(MyAPI.dataset_fold_filepath.format(fold_index=fold_index)),
         candidates_limit=MyAPI.parlai_dataset_candidates_limit - 1),
-    CANDIDATES_HLA_CLUSTER: lambda fold_index: ALOHANegBasedClusteringProvider(
+    CANDIDATES_HLA_CLUSTER: lambda fold_index: ALOHANegBasedClusteringCandidatesProvider(
         cache_embeddings_in_memory=True,
         candidates_limit=MyAPI.parlai_dataset_candidates_limit - 1,
         neg_speakers_limit=MyAPI.hla_neg_set_speakers_limit,

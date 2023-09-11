@@ -1,10 +1,10 @@
 from random import Random
 
-from core.candidates.clustering import ALOHANegBasedClusteringProvider
+from core.candidates.clustering import ALOHANegBasedClusteringCandidatesProvider
 from utils_my import MyAPI
 
 
-provider = ALOHANegBasedClusteringProvider(
+provider = ALOHANegBasedClusteringCandidatesProvider(
     cache_embeddings_in_memory=True,
     candidates_limit=MyAPI.parlai_dataset_candidates_limit,
     dataset_filepath=MyAPI.dataset_filepath,

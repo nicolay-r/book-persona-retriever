@@ -7,7 +7,7 @@ from core.candidates.base import CandidatesProvider
 from core.utils_math import cosine_similarity
 
 
-class ALOHANegBasedClusteringProvider(CandidatesProvider):
+class ALOHANegBasedClusteringCandidatesProvider(CandidatesProvider):
     """ Cluster based approach.
         Every cluster provides list of positive and negative characters.
         For candidates we consider utterances from "Negative" characters.
