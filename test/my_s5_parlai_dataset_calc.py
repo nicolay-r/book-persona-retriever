@@ -20,7 +20,7 @@ for dataset_name in dataset_names:
         with myzip.open(myzip.filelist[0]) as f:
             for line in f.readlines():
                 line_index = int(line.split()[0])
-                if prev_line_index is None or (prev_line_index > line_index):
+                if prev_line_index is None or (prev_line_index >= line_index):
                     c["lines"] += 1
                 prev_line_index = line_index
         print(dataset_name)
