@@ -10,6 +10,7 @@ from core.dataset.pairs_iterator import common_iter_dialogs
 from core.spectrums.io_utils import SpectrumIOUtils
 from core.utils_fmt_parlai_facebook import format_episode
 from core.utils_math import random_choice_non_repetitive
+from core.utils_npz import save_zip_stream
 from utils_ceb import CEBApi
 from utils_my import MyAPI
 
@@ -130,13 +131,7 @@ for data_fold_type, data_fold_source in dataset_filepaths.items():
                 candidates_provider=candidate_dict_func(data_fold_type),
                 candidates_oversample_factor=oversample_factor)
 
-            z = zipstream.ZipFile()
-
-            filename = '{}.txt'.format("_".join(args))
-            z.write_iter(filename, data_it)
-            target = my_api.parlai_dataset_filepath.format(filename)
-            with open(my_api.parlai_dataset_filepath.format(filename), "wb") as f:
-                for episode_line in z:
-                    f.write(episode_line)
-
-            print("Saved: {}".format(target))
+            inner_filename = '{}.txt'.format("_".join(args))
+            save_zip_stream(target=my_api.parlai_dataset_filepath.format(inner_filename),
+                            inner_filename=inner_filename,
+                            data_it=data_it)

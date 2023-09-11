@@ -1,6 +1,4 @@
 import random
-from os import mkdir
-from os.path import dirname, exists
 
 import zipstream
 
@@ -9,6 +7,7 @@ from core.candidates.other_speakers import OtherSpeakersProvider
 from core.dataset.pairs_iterator import common_iter_dialogs
 from core.spectrums.io_utils import SpectrumIOUtils
 from core.utils_fmt_parlai_facebook import format_episode
+from core.utils_npz import save_zip_stream
 from utils_ceb import CEBApi
 from utils_se import SEApi
 
@@ -106,17 +105,7 @@ for data_fold_type, data_fold_source in dataset_filepaths.items():
                 candidates_oversample_factor=oversample_factor,
                 ignored_speakers=SEApi.ignored_speakers)
 
-            z = zipstream.ZipFile()
-
             filename = '{}.txt'.format("_".join(args))
-            z.write_iter(filename, data_it)
-            target = se_api.parlai_dataset_filepath.format(filename)
-
-            if not exists(dirname(target)):
-                mkdir(dirname(target))
-
-            with open(se_api.parlai_dataset_filepath.format(filename), "wb") as f:
-                for episode_line in z:
-                    f.write(episode_line)
-
-            print("Saved: {}".format(target))
+            save_zip_stream(target=se_api.parlai_dataset_filepath.format(filename),
+                            inner_filename=filename,
+                            data_it=data_it)
