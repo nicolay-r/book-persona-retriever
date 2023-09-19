@@ -39,11 +39,12 @@ for x_path, f in data.items():
 
 for speaker_id, ctr in speaker_spectrums_dict.items():
     draw_spectrums_stat(speaker_spectrum_counters=[ctr], fcp_api=fcp_api,
-                        asp_ver=6, asp_hor=2, top_bars_count=10, bottom_bars_count=10,
-                        save_png_filepath=f"speakers-selected-spectrums-{speaker_id}.png")
+                        asp_ver=6, asp_hor=2, top_bars_count=8, bottom_bars_count=8,
+                        save_png_filepath=f"speakers-selected-spectrums-{speaker_id}.png",
+                        spectrums_exclude=[70, 98, 117, 84, 125, 211, 69, 161, 119, 97, 54])
 
 for speaker_id, ctr in speaker_spectrums_dict.items():
     draw_spectrums_stat(speaker_spectrum_counters=[ctr], fcp_api=fcp_api,
                         asp_ver=6, asp_hor=2,
-                        spectrums_set=MOST_DISTINCTIVE, top_bars_count=10, bottom_bars_count=10,
+                        spectrums_keep=MOST_DISTINCTIVE, top_bars_count=8, bottom_bars_count=8,
                         save_png_filepath=f"speakers-selected-spectrums-{speaker_id}-most-distinctive.png")

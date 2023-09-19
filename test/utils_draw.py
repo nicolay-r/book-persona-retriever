@@ -3,7 +3,7 @@ from core.plot import draw_spectrum_barplot
 
 
 def draw_spectrums_stat(speaker_spectrum_counters, save_png_filepath, fcp_api, asp_hor=2, asp_ver=8,
-                        spectrums_set=None, top_bars_count=None, bottom_bars_count=None):
+                        spectrums_keep=None, spectrums_exclude=None, top_bars_count=None, bottom_bars_count=None):
     """ Drawing based on counter.
     """
 
@@ -15,9 +15,13 @@ def draw_spectrums_stat(speaker_spectrum_counters, save_png_filepath, fcp_api, a
         for spectrum_name, value in spectrum_ctr.items():
 
             # Optional filtering.
-            if spectrums_set is not None:
-                # "BAP56" -> "56"
-                if int(bap_to_number(spectrum_name)[3:]) not in spectrums_set:
+            # "BAP56" -> "56"
+            spectrum_int = int(bap_to_number(spectrum_name)[3:])
+            if spectrums_keep is not None:
+                if spectrum_int not in spectrums_keep:
+                    continue
+            if spectrums_exclude is not None:
+                if spectrum_int in spectrums_exclude:
                     continue
 
             s_counter[spectrum_name] += value if 'high' in spectrum_name else -value

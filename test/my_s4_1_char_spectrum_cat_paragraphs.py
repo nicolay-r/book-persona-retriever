@@ -37,7 +37,7 @@ most_distinctive = set()
 draw_spectrums_stat(speaker_spectrum_counters=speaker_spectrums.values(),
                     fcp_api=fcp_api,
                     top_bars_count=20, bottom_bars_count=20,
-                    spectrums_set=MOST_DISTINCTIVE,
+                    spectrums_keep=MOST_DISTINCTIVE,
                     asp_ver=6, asp_hor=2,
                     save_png_filepath="spectrum-all-paragraphs-most-distinctive.png")
 
