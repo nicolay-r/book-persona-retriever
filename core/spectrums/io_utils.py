@@ -28,7 +28,7 @@ class SpectrumIOUtils(object):
                 speaker_info = json.loads(line)
                 spectrums[speaker_info["name"]] = {
                    "prompts": speaker_info["prompts"],
-                   "weights": speaker_info["weights"]
+                   "weights": speaker_info["weights"] if "weights" in speaker_info else []
                 }
 
         return spectrums
