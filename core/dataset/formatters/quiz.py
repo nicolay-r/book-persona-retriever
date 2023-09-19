@@ -6,8 +6,6 @@ def format_episode(request, response, candidates, resp_persona_traits=None, resp
     assert(isinstance(response, str))
     assert(isinstance(candidates, list))
 
-    rand = None
-
     # Performing candidates shuffling
     if candidates_random is not None:
         candidates_random.shuffle(candidates)
@@ -20,22 +18,13 @@ def format_episode(request, response, candidates, resp_persona_traits=None, resp
 
     lines = []
 
-    if resp_persona_traits is not None:
-        traits = ["{p}persona: {t}".format(
-                    p=resp_persona_prefix, t="I am {}".format(__handle_line(t)) if t is not None else "none")
-                  for t in resp_persona_traits]
-
-        if rand is not None:
-            rand.shuffle(traits)
-
-        lines.extend(traits)
-
     # Main episode content. (Query - Response)
     text = "\n".join(__fn([__handle_line(request)]))
-    labels = "\n".join([__handle_line(response)])
-    reward = ""
-    label_candidates = "|".join([__handle_line(c) for c in candidates])
+    #labels = "\n".join([__handle_line(response)])
+    label_candidates = "\nChoose:\n" + "\n".join(
+        ["{}{} {}".format("[x]" if c == response else "   ", i, __handle_line(c))
+         for i, c in enumerate(candidates)])
 
-    lines.append("\t".join([text, labels, reward, label_candidates]))
+    lines.append("\t".join([text, label_candidates]))
 
-    return "\n".join(["{} {}".format(i+1, l) for i, l in enumerate(lines)])
+    return "\n".join(lines) + "---\n"

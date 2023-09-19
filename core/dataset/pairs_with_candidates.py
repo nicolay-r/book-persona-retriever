@@ -1,6 +1,6 @@
 import random
 from core.candidates.base import CandidatesProvider
-from core.dataset.formatters.llm import format_episode
+from core.dataset.formatters.parlai_facebook import format_episode
 from utils_my import MyAPI
 
 
@@ -18,6 +18,7 @@ def provide_formatted_pairs(dialogs_iter, traits_func, candidates_provider, cand
 
     # We would like to shuffle the traits to prevent models from overfitting with the particular order.
     resp_persona_random = random.Random(MyAPI.parlai_dataset_ovesampling_candidates_selection_seed)
+    candidates_random = random.Random(MyAPI.parlai_dataset_ovesampling_candidates_selection_seed)
     for dialog_id, dialog in enumerate(dialogs_iter):
         assert(len(dialog) == 2)
 
@@ -25,7 +26,6 @@ def provide_formatted_pairs(dialogs_iter, traits_func, candidates_provider, cand
         r_speaker_id, label = dialog[1]
 
         # We basically generate every episode with new candidates.
-        candidates_random = random.Random(MyAPI.parlai_dataset_ovesampling_candidates_selection_seed)
         for _ in range(candidates_oversample_factor):
 
             candidates = None
@@ -51,5 +51,5 @@ def provide_formatted_pairs(dialogs_iter, traits_func, candidates_provider, cand
                                  candidates=candidates,
                                  resp_persona_traits=resp_persona_traits_shuffled,
                                  resp_persona_prefix=MyAPI.parlai_dataset_persona_prefix,
-                                 seed=MyAPI.parlai_dataset_episode_candidates_and_traits_shuffle_seed).encode()
+                                 candidates_random=candidates_random).encode()
             yield b"\n"

@@ -1,4 +1,4 @@
-def format_episode(request, response, candidates, resp_persona_traits, resp_persona_prefix="", seed=42):
+def format_episode(request, response, candidates, resp_persona_traits, resp_persona_prefix="", candidates_random=None):
     assert(isinstance(request, str))
     assert(isinstance(response, str))
     assert(candidates is None)
