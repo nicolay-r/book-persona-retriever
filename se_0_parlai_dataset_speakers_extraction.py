@@ -4,9 +4,9 @@ import zipstream
 
 from core.candidates.base import CandidatesProvider
 from core.candidates.other_speakers import OtherSpeakersProvider
+from core.dataset.formatters.parlai_facebook import format_episode
 from core.dataset.pairs_iterator import common_iter_dialogs
 from core.spectrums.io_utils import SpectrumIOUtils
-from core.utils_fmt_parlai_facebook import format_episode
 from core.utils_npz import save_zip_stream
 from utils_ceb import CEBApi
 from utils_se import SEApi
@@ -60,7 +60,7 @@ def iter_formatted_dialog(dialogs_iter, ignored_speakers, traits_func, candidate
                                  candidates=candidates,
                                  resp_persona_traits=resp_persona_traits_shuffled,
                                  resp_persona_prefix=SEApi.parlai_dataset_persona_prefix,
-                                 seed=SEApi.parlai_dataset_episode_candidates_and_traits_shuffle_seed).encode()
+                                 candidates_random=candidates_random).encode()
             yield b"\n"
 
 

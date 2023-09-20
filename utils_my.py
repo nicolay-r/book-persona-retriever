@@ -19,6 +19,9 @@ class MyAPI:
     books_storage = join(__current_dir, "./data/ceb_books_annot")
     books_storage_en = join(books_storage, "en")
 
+    # Output directory for the selected speakers.
+    selected_output_dir = "./data/selected_books_annot/"
+
     # Prefixes lexicon storage configurations.
     prefixes_storage_filepath = join(__current_dir, "./data/ceb_books_annot/prefixes.txt")
     # Dialogs with recognized speakers.

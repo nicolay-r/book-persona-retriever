@@ -1,5 +1,4 @@
 from utils_ceb import CEBApi
-from utils_my import MyAPI
 from utils_pg19 import PG19Api
 
 
@@ -9,19 +8,8 @@ from utils_pg19 import PG19Api
 def get_book_id(v):
     return v.split('_')[0]
 
-# 126_2 The Poison Belt by Arthur Conan Doyle ['Lord John', 'Lord John Roxton'] UNK
-
-
-# 507_9. Bartle Massey -- The schoolteacher and Adam’s best friend. Unbeknownst to his friends, not only does Mr. Massey care deeply for his students, but he exhibits a patience with them that he seldom shows in the company of friends. Mr. Massey rails against the stupidity of women and says everything twice. During Hetty’s trial, he is a tactful comfort to Adam because he is able to see when it is best not to speak.I
-# 139_1 The Lost World by Arthur Conan Doyle ['Summerlee', 'Mr. Summerlee', 'SUMMERLEE'] UNK https://arthurconandoyle.co.uk/character/professor-summerlee-from-the-professor-challenger-stories
-# 1257_9 The Three Musketeers by Alexandre Dumas Pere ['Buckingham', 'Duke', 'Lord Duke', 'Lord Buckingham', 'Duke of Buckingham'] https://heroes-and-villain.fandom.com/wiki/Duke_of_Buckingham_(2011)
-# 155_21 The Moonstone by Wilkie Collins ['Sergeant', 'Mr. Cuff', 'Sergeant Cuff'] UNK https://www.litcharts.com/lit/the-moonstone/characters/sergeant-cuff#:~:text=A%20%E2%80%9Crenowned%20and%20capable%E2%80%9D%20detective,%2C%20Franklin%20Blake%2C%20and%20Mr.
-# 507_3 Soldiers of Fortune by Richard Harding Davis ['MacWilliams', 'Mr. MacWilliams'] https://www.theatlantic.com/magazine/archive/1897/12/mr-daviss-soldiers-of-fortune/636194/
-
-predefined_speakers = [#'763_3', #'547_3',
-                       #'538_2',
-                       '507_3',
-                       '457_4', '433_6', '429_0', '394_0',
+predefined_speakers = [#'763_3', #'547_3', #'538_2',
+                       '507_3', '457_4', '433_6', '429_0', '394_0',
                        '369_0', '367_0', '335_3', '330_0', '298_5', '296_0', '283_2', '268_3',
                        '233_2', '203_2', '179_7', '155_21', '1380_0', '1282_3', '126_2', '1259_7',
                        '1259_29', '1257_9', '1257_7', '1235_2', '122_2', '1207_0', '1204_1',

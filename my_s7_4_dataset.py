@@ -1,3 +1,5 @@
+from os.path import join
+
 from core.candidates.uniform_collection import UniformCandidatesProvider
 from core.dataset.pairs_iterator import common_iter_dialogs
 from core.dataset.pairs_with_candidates import provide_formatted_pairs
@@ -6,7 +8,7 @@ from core.utils_npz import save_zip_stream
 from utils_my import MyAPI
 
 
-speaker_spectrums = SpectrumIOUtils.read("hla.txt")
+speaker_spectrums = SpectrumIOUtils.read(join(MyAPI.predefined_speakers, "hla.txt"))
 
 for speaker_id in MyAPI.predefined_speakers:
 

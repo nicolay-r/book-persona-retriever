@@ -1,3 +1,5 @@
+from os.path import join
+
 from core.spectrums.text_source import iter_all
 from core.spectrums_annot import annot_spectrums_in_text, annot_to_min_max_grouped
 from core.utils_npz import NpzUtils
@@ -34,17 +36,18 @@ for x_path, f in data.items():
         x.append(ctr)
         y.append(spectrum_name)
 
-    NpzUtils.save(data=x, target=x_path)
-    NpzUtils.save(data=y, target="speaker-selected-names.npz")
+    NpzUtils.save(data=x, target=join(MyAPI.selected_output_dir, x_path))
+    NpzUtils.save(data=y, target=join(MyAPI.selected_output_dir, "speaker-selected-names.npz"))
 
 for speaker_id, ctr in speaker_spectrums_dict.items():
     draw_spectrums_stat(speaker_spectrum_counters=[ctr], fcp_api=fcp_api,
                         asp_ver=6, asp_hor=2, top_bars_count=8, bottom_bars_count=8,
-                        save_png_filepath=f"speakers-selected-spectrums-{speaker_id}.png",
-                        spectrums_exclude=[70, 98, 117, 84, 125, 211, 69, 161, 119, 97, 54])
+                        spectrums_exclude=[70, 98, 117, 84, 125, 211, 69, 161, 119, 97, 54],
+                        save_png_filepath=join(MyAPI.selected_output_dir,
+                                               f"speakers-selected-spectrums-{speaker_id}.png"))
 
 for speaker_id, ctr in speaker_spectrums_dict.items():
     draw_spectrums_stat(speaker_spectrum_counters=[ctr], fcp_api=fcp_api,
-                        asp_ver=6, asp_hor=2,
-                        spectrums_keep=MOST_DISTINCTIVE, top_bars_count=8, bottom_bars_count=8,
-                        save_png_filepath=f"speakers-selected-spectrums-{speaker_id}-most-distinctive.png")
+                        asp_ver=6, asp_hor=2, spectrums_keep=MOST_DISTINCTIVE, top_bars_count=8, bottom_bars_count=8,
+                        save_png_filepath=join(MyAPI.selected_output_dir,
+                                               f"speakers-selected-spectrums-{speaker_id}-most-distinctive.png"))

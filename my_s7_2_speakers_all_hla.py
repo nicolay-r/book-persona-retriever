@@ -1,3 +1,6 @@
+import os
+from os.path import join, exists
+
 from core.spectrums.text_source import iter_all
 from core.spectrums_annot import annot_spectrums_in_text, annot_to_min_max_grouped
 from core.utils_npz import NpzUtils
@@ -29,6 +32,11 @@ data = {
         speakers, do_norm=False, as_vectors=True, spectrums_count=spectrums_count),
 }
 
+# Create dir if not exists.
+if not exists(MyAPI.selected_output_dir):
+    os.makedirs(MyAPI.selected_output_dir)
+
+# Collect and write data.
 for x_path, f in data.items():
     x, y = [], []
     d = f(speaker_spectrums_dict)
@@ -37,5 +45,5 @@ for x_path, f in data.items():
         x.append(ctr)
         y.append(spectrum_name)
 
-    NpzUtils.save(data=x, target=x_path)
-    NpzUtils.save(data=y, target="speaker-all-names.npz")
+    NpzUtils.save(data=x, target=join(MyAPI.selected_output_dir, x_path))
+    NpzUtils.save(data=y, target=join(MyAPI.selected_output_dir, "speaker-all-names.npz"))
