@@ -27,12 +27,10 @@ def filter_response_speakers(dialogue_qr_pairs_it):
         speaker_ids.add(r_speaker_id)
 
     # Optional parameter. Keep the most frequent.
-    print(speaker_entries)
     if MyAPI.dataset_filter_speaker_total_speakers_count is not None:
         ordered_speaker_ids = sorted(speaker_ids,
                                      key=cmp_to_key(lambda a, b: (__compare(a, b))),
                                      reverse=True)
-        print(ordered_speaker_ids)
         print([speaker_entries[sid] for sid in ordered_speaker_ids])
         speaker_ids = ordered_speaker_ids[:MyAPI.dataset_filter_speaker_total_speakers_count]
         predefined_ids = ordered_speaker_ids[MyAPI.dataset_filter_speaker_total_speakers_count:

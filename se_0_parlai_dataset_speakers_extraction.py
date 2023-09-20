@@ -2,66 +2,13 @@ import random
 
 import zipstream
 
-from core.candidates.base import CandidatesProvider
 from core.candidates.other_speakers import OtherSpeakersProvider
-from core.dataset.formatters.parlai_facebook import format_episode
 from core.dataset.pairs_iterator import common_iter_dialogs
+from core.dataset.pairs_with_candidates import provide_formatter_pairs_speaker_extraction
 from core.spectrums.io_utils import SpectrumIOUtils
 from core.utils_npz import save_zip_stream
 from utils_ceb import CEBApi
 from utils_se import SEApi
-
-
-def iter_formatted_dialog(dialogs_iter, ignored_speakers, traits_func, candidates_provider, candidates_oversample_factor=None):
-    assert(callable(traits_func))
-    assert(isinstance(candidates_provider, CandidatesProvider) or candidates_provider is None)
-    assert((isinstance(candidates_oversample_factor, int) and candidates_oversample_factor > 0) or
-           candidates_oversample_factor is None)
-
-    candidates_oversample_factor = 1 \
-        if candidates_oversample_factor is None or candidates_provider is None \
-        else candidates_oversample_factor
-
-    # We would like to shuffle the traits to prevent models from overfitting with the particular order.
-    resp_persona_random = random.Random(SEApi.parlai_dataset_ovesampling_candidates_selection_seed)
-    for dialog_id, dialog in enumerate(dialogs_iter):
-        assert(len(dialog) == 2)
-
-        r_speaker_id, query = dialog[1]
-        label = candidates_provider.get_label(r_speaker_id)
-
-        if r_speaker_id in ignored_speakers:
-            continue
-
-        # We basically generate every episode with new candidates.
-        candidates_random = random.Random(SEApi.parlai_dataset_ovesampling_candidates_selection_seed)
-        for _ in range(candidates_oversample_factor):
-
-            candidates = None
-
-            if candidates_provider is not None:
-
-                other_candidates = candidates_provider.provide_or_none(
-                    dialog_id=dialog_id, speaker_id=r_speaker_id, label=None, random=candidates_random)
-                other_candidates = [] if other_candidates is None else other_candidates
-                candidates = other_candidates + [label]
-
-                assert(len(candidates) == SEApi.parlai_dataset_candidates_limit)
-
-                if candidates is None:
-                    continue
-
-            resp_persona_traits = traits_func(None, r_speaker_id)
-            resp_persona_traits_shuffled = resp_persona_random.sample(
-                resp_persona_traits, len(resp_persona_traits)) if resp_persona_traits is not None else None
-
-            yield format_episode(request=query,
-                                 response=label,
-                                 candidates=candidates,
-                                 resp_persona_traits=resp_persona_traits_shuffled,
-                                 resp_persona_prefix=SEApi.parlai_dataset_persona_prefix,
-                                 candidates_random=candidates_random).encode()
-            yield b"\n"
 
 
 se_api = SEApi()
@@ -98,7 +45,7 @@ for data_fold_type, data_fold_source in dataset_filepaths.items():
             oversample_factor = None if data_fold_type != "train" else \
                 se_api.parlai_dataset_train_candidates_oversample_factor
 
-            data_it = iter_formatted_dialog(
+            data_it = provide_formatter_pairs_speaker_extraction(
                 dialogs_iter=common_iter_dialogs(data_fold_source),
                 traits_func=traits_func,
                 candidates_provider=candidate_dict_func(data_fold_type),

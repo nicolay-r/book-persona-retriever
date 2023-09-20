@@ -9,6 +9,8 @@ class SEApi(object):
     __current_dir = dirname(realpath(__file__))
     books_storage = join(__current_dir, "./data/se_task/")
 
+    selected_output_dir = join(__current_dir, "./data/se_task_selected/")
+
     dataset_folding_parts = 5
     dataset_folding_fixed_parts = {
         'train': range_exclude_middle(dataset_folding_parts),
@@ -27,7 +29,9 @@ class SEApi(object):
     # The result dataset details.
     parlai_dataset_filepath = join(__current_dir, "./data/se_task/dataset_parlai_{}.zip")
     parlai_dataset_train_candidates_oversample_factor = 5
-    
+
+    predefined_speakers = ['153_2', '1257_7', '1257_9', '403_3', '1258_8']
+
     ignored_speakers = ['33857_0', '1399_0', '34415_0', '36159_0', '3610_0', '4274_0', '4687_0',
                         '38087_0', '39520_0', '40922_0', '8874_0', '42153_0', '11110_0', '47279_0',
                         '14532_0', '15627_0', '48942_0', '49954_0', '50325_1', '50329_0', '17564_0',

@@ -8,7 +8,7 @@ from core.utils_npz import save_zip_stream
 from utils_my import MyAPI
 
 
-speaker_spectrums = SpectrumIOUtils.read(join(MyAPI.predefined_speakers, "hla.txt"))
+speaker_spectrums = SpectrumIOUtils.read(join(MyAPI.selected_output_dir, "hla.txt"))
 
 for speaker_id in MyAPI.predefined_speakers:
 
@@ -38,6 +38,6 @@ for speaker_id in MyAPI.predefined_speakers:
         candidates_provider=candidates_provider,
         candidates_oversample_factor=None)
 
-    save_zip_stream(target=speaker_id + ".parlai_dataset.txt.zip",
-                    inner_filename="valid_" + speaker_id + ".txt",
+    save_zip_stream(target=f"{speaker_id}.parlai_dataset.txt.zip",
+                    inner_filename=f"valid_{speaker_id}.txt",
                     data_it=data_it)
