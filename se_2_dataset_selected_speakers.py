@@ -8,12 +8,17 @@ from core.utils_npz import save_zip_stream
 from utils_my import MyAPI
 from utils_se import SEApi
 
-speaker_spectrums = SpectrumIOUtils.read(join(SEApi.selected_output_dir, "all_spectrums.txt"))
+
+speaker_spectrums = SpectrumIOUtils.read([
+    # We use speaker prompts from the MyAPI dataset (for the filtered speakers, i.e. 400 in past experiments).
+    MyAPI.hla_prompts_filepath,
+    # In addition we consider the selected speakers to add in that list.
+    join(SEApi.selected_output_dir, "hla.txt")])
 
 for speaker_id in SEApi.predefined_speakers:
 
     # Part #1 composing dataset.
-    it = MyAPI.iter_dialog_question_response_pairs(
+    pairs_it = MyAPI.iter_dialog_question_response_pairs(
         dialogs_filapath=MyAPI.dialogs_filepath,
         dialogue_filter_func=None,
         desc="Iter dialogues for speaker `{}`".format(speaker_id))
@@ -21,11 +26,11 @@ for speaker_id in SEApi.predefined_speakers:
     # Speaker id dialogs output filepath.
     speaker_id_dialogs_path = join(SEApi.selected_output_dir, speaker_id + ".dataset.txt")
 
-    MyAPI.write_dataset(dialog_qr_pairs_iter=it,
+    MyAPI.write_dataset(dialog_qr_pairs_iter=pairs_it,
                         filepath=speaker_id_dialogs_path,
-                        speakers_set=set([speaker_id]))
+                        speakers_set={speaker_id})
 
-    # We consider uniform candidates provider.
+    # We consider provider of other speakers.
     candidates_provider = OtherSpeakersProvider(
         speaker_ids=list(speaker_spectrums.keys()),
         candidates_limit=SEApi.parlai_dataset_candidates_limit - 1,
@@ -38,6 +43,7 @@ for speaker_id in SEApi.predefined_speakers:
         # We do not serve with any traits about speaker.
         traits_func=lambda your_id, partner_id: None,
         candidates_provider=candidates_provider,
+        # No need, because it is for the `test`.
         candidates_oversample_factor=None,
         ignored_speakers=SEApi.ignored_speakers)
 
