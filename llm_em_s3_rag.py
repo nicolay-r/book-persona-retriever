@@ -37,35 +37,54 @@ def iter_rag(src):
 
         yield "id", "text"
 
+        names_list = []
         for row in tqdm(d):
             em = EMApi.mistral_parse_em(row["response"])
 
-            p_list = []
+            p_dict = {}
 
             # Assess the closest passages.
             for cat_name, empathy_texts in em.items():
                 for empathy_text in empathy_texts:
-                    p_list += search_passage_kb(kb=kb, req_cat=cat_name, req_v=model.encode(empathy_text))
+                    for item in search_passage_kb(kb=kb, req_cat=cat_name, req_v=model.encode(empathy_text)):
+                        similarity, data = item
 
-            # Order by cosine similarity.
-            p_list = sorted(p_list, key=lambda item: item[0], reverse=True)
+                        # Serialize the data.
+                        passage = "->".join([ceb_api.get_char_name(char_id=f"{EMApi.book_id}_{data[0]}"),
+                                             data[1], data[2]])
 
-            # Keep top K passages.
-            serialized_graph_passages = [
-                "->".join([ceb_api.get_char_name(char_id=f"{EMApi.book_id}_{meta[0]}"), meta[1], meta[2]])
-                for _, meta in p_list[:EMApi.K]]
+                        # Initialize the list for similarity values.
+                        if passage not in p_dict:
+                            p_dict[passage] = []
+
+                        # Save the related similarity.
+                        p_dict[passage].append(similarity)
+
+            # Transform passages weights into averaged weights.
+            p_list = [(passage, sum(similarities) / len(similarities)) for passage, similarities in p_dict.items()]
+
+            # Order by similarity.
+            p_list = sorted(p_list, key=lambda item: item[1], reverse=True)
+
+            selected_passages = [meta for meta, _ in p_list[:EMApi.K]]
+            selected_names = [passage.split('->')[0] for passage in selected_passages]
+            names_list.append(selected_names)
 
             # Format prompt for the original utterance.
             original_utterance = ''.join(row["prompt"].split(':')[1:])
 
             # Wrapping everything into a single prompt.
             prompt = [f"Given {EMApi.K} passages:"] + \
-                     serialized_graph_passages + \
-                     [f"Select the speaker for text: {original_utterance}"] + \
-                     ["Choices: {}".format(",".join([ceb_api.get_char_name(f"{EMApi.book_id}_{c}") for c in EMApi.chars]))]
+                     selected_passages + \
+                     [f"Select the one speaker for text: {original_utterance}"] + \
+                     ["From: {}".format(",".join(set(selected_names)))]
 
             yield row["id"], "\n".join(prompt)
 
+        with open("data/llm_em/passages_result.txt", "w") as f:
+            for i in names_list:
+                f.write(",".join(i) + "\n")
+
 
 src = "data/llm_em/utternaces_em.json"
-CsvService.write(target=f"data/llm_em/{EMApi.book_id}_rag.csv", lines_it=iter_rag(src))
+CsvService.write(target=f"data/llm_em/{EMApi.book_id}_{EMApi.K}_rag.csv", lines_it=iter_rag(src))
