@@ -1,9 +1,14 @@
 from collections import Counter
+from os.path import join
 from utils_ceb import CEBApi
+from utils_em import EMApi
 from utils_pg19 import PG19Api
 
+
+dataset_filepath = join(EMApi.output_dir, "dataset.txt")
+
 c = Counter()
-with open("data/llm_em/dataset.txt", "r") as f:
+with open(dataset_filepath, "r") as f:
     for line in f.readlines():
         line = line.strip()
         if len(line) == 0:
@@ -39,7 +44,7 @@ def calc_speakers_stat(dataset_path):
 
 
 def iter_book_utterances(requested_book_id):
-    with open("data/llm_em/dataset.txt", "r") as f:
+    with open(dataset_filepath, "r") as f:
         for line in f.readlines():
             line = line.strip()
             if len(line) == 0:
@@ -53,11 +58,10 @@ def iter_book_utterances(requested_book_id):
                 yield line
 
 
-book_id_filter = 1184
-filtered_dataset = f"data/llm_em/{book_id_filter}.txt"
-with open("data/llm_em/dataset.txt", "r") as f:
+filtered_dataset = f"data/llm_em/{EMApi.book_id}.txt"
+with open(dataset_filepath, "r") as f:
     with open(filtered_dataset, "w") as o:
-        for line in iter_book_utterances(book_id_filter):
+        for line in iter_book_utterances(EMApi.book_id):
             o.write(line + "\n")
 
 c = calc_speakers_stat(dataset_path=filtered_dataset)

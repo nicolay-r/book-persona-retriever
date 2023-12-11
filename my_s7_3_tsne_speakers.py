@@ -3,6 +3,7 @@
 #######################################################
 from os.path import join
 
+import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
@@ -21,8 +22,8 @@ def get_book_id(v):
 
 def __make_group_name(v):
     return ceb_api.get_char_names(v)[0] + " " + \
-           '"{}"'.format(pg19.find_book_title(get_book_id(v))) + \
-           " [{}]".format(v)
+           '"{}"'.format(pg19.find_book_title(get_book_id(v)))
+           #" [{}]".format(v)
 
 
 # Init API.
@@ -46,6 +47,9 @@ for i, s in enumerate(speaker_names):
     if s in sset:
         print("Skipped: {}".format(s))
         continue
+    print(np.count_nonzero(X[i]))
+    if np.count_nonzero(X[i]) < 5:
+        continue
     sset.add(s)
     u_speaker_names.append(s)
     u_X.append(X[i])
@@ -65,7 +69,7 @@ NpzUtils.save(data=factors_list, target=factor_path)
 plot_tsne_series(X=NpzUtils.load(factor_path),
                  y=[__make_group_name(s) if s in MyAPI.predefined_speakers else "_Other"
                     for s in u_speaker_names],
-                 perplexies=[30], n_iter=1000,
+                 perplexies=[5], n_iter=3000,
                  save_png_path=join(MyAPI.selected_output_dir, "tsne.png"),
                  alpha=0.15,
                  palette={

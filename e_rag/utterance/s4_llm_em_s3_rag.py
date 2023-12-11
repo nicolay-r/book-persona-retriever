@@ -1,4 +1,5 @@
 import json
+from os.path import join
 
 import numpy as np
 from sentence_transformers import SentenceTransformer
@@ -24,6 +25,7 @@ def search_passage_kb(kb, req_cat, req_v):
                 r.append((cos_sim, [char_id, cat_name, empathy_text]))
     return r
 
+
 ceb_api = CEBApi()
 ceb_api.read_char_map()
 
@@ -31,6 +33,7 @@ rag = []
 
 
 def iter_rag(src):
+
     with open(src, "r") as f:
         d = json.load(f)
         model = SentenceTransformer(EMApi.emb_model, cache_folder=CACHE_DIR)
@@ -81,10 +84,11 @@ def iter_rag(src):
 
             yield row["id"], "\n".join(prompt)
 
-        with open("data/llm_em/passages_result.txt", "w") as f:
+        with open(f"data/llm_em/{EMApi.book_id}_{EMApi.K}_passages.txt", "w") as f:
             for i in names_list:
                 f.write(",".join(i) + "\n")
 
 
-src = "data/llm_em/utternaces_em.json"
-CsvService.write(target=f"data/llm_em/{EMApi.book_id}_{EMApi.K}_rag.csv", lines_it=iter_rag(src))
+src = join(EMApi.output_dir, u"./utternaces_em.json")
+CsvService.write(target=join(EMApi.output_dir, f"./{EMApi.book_id}_{EMApi.K}_rag.csv"),
+                 lines_it=iter_rag(src))

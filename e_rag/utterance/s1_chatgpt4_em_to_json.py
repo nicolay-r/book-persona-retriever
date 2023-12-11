@@ -1,9 +1,11 @@
 import json
+from os.path import join
 
 from utils_em import EMApi
 
+
 for c in EMApi.chars:
-    src = f"data/llm_em/em-chatgpt4/{EMApi.book_id}_{c}"
+    src = join(EMApi.output_dir, f"./em-chatgpt4/{EMApi.book_id}_{c}")
     d = {}
     cat = None
     with open(src + ".txt", "r") as f:
@@ -20,7 +22,7 @@ for c in EMApi.chars:
             else:
                 d[cat].append(l)
 
-    target = f"data/llm_em/em-chatgpt4-fmt/{EMApi.book_id}_{c}.json"
+    target = join(EMApi.output_dir, f"./em-chatgpt4-fmt/{EMApi.book_id}_{c}.json")
     with open(target, "w") as f:
         print(f"Save: {target}")
         json.dump(d, f, indent=4, ensure_ascii=False)

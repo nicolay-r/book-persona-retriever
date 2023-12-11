@@ -1,19 +1,22 @@
 import json
+from os.path import join
 
 from sentence_transformers import SentenceTransformer
 from tqdm import tqdm
 
+import utils
 from utils import CACHE_DIR
 
 
 class EMApi:
     """ Experiments with RAG.
     """
-    K = 5
+    K = 10
     book_id = 1184
     chars = [0, 3, 4, 5, 6, 7, 10, 12, 14, 17]
     emb_model = 'all-mpnet-base-v2'
     categories = ['thinking and feeling', 'hearing', 'seeing', 'saying and doing', 'gains', 'pains']
+    output_dir = join(utils.PROJECT_DIR, "./data/llm_em/")
 
     @staticmethod
     def map_category(cat):
@@ -35,7 +38,9 @@ class EMApi:
         model = SentenceTransformer(EMApi.emb_model, cache_folder=CACHE_DIR)
         embeddings = {}
         for speaker_id in tqdm(EMApi.chars, desc="Embed characters EM"):
-            json_src = f"data/llm_em/em-chatgpt4-fmt/{EMApi.book_id}_{speaker_id}.json"
+
+            json_src = join(EMApi.output_dir, f"./em-chatgpt4-fmt/{EMApi.book_id}_{speaker_id}.json")
+
             with open(json_src, "r") as f:
                 emb_em = {}
                 for cat, texts in json.load(f).items():
