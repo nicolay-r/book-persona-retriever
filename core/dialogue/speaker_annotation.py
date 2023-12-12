@@ -35,6 +35,15 @@ def try_recognize(terms, prefix_lexicon, k_list, is_character_func):
     return recognized, variant
 
 
+def parse_meta_speaker_id(meta):
+    """ Parsing the speaker integer id within the following notation of the dialogue:
+            >3#
+        where 3 is a result id.
+        return: int
+    """
+    return int(meta[1:-1])
+
+
 def iter_speaker_annotated_dialogs(dialog_segments_iter_func, recognize_at_positions, prefix_lexicon=None):
     """ This is a speaker annotation algorithm based on guttenberg-dialog
         project with additional annotation from my side (Rusnachenko Nicolay),
@@ -58,7 +67,7 @@ def iter_speaker_annotated_dialogs(dialog_segments_iter_func, recognize_at_posit
                 continue
 
             # Taking meta information and text.
-            speaker_id = int(meta[1:-1])
+            speaker_id = parse_meta_speaker_id(meta)
             speakers.add(speaker_id)
 
             # Do analysis.
@@ -81,7 +90,7 @@ def iter_speaker_annotated_dialogs(dialog_segments_iter_func, recognize_at_posit
                 continue
 
             # Initialize the list for the particular speaker.
-            speaker_id = int(meta[1:-1])
+            speaker_id = parse_meta_speaker_id(meta)
             if speaker_id not in dialog:
                 dialog[speaker_id] = []
 
