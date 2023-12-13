@@ -17,7 +17,8 @@ lines_to_consider = [
 ]
 
 __current_dir = dirname(realpath(__file__))
-with open(join(__current_dir, GuttenbergDialogApi.dialogs_en), "r") as f:
+gb_api = GuttenbergDialogApi()
+with open(join(__current_dir, gb_api.dialogues_en), "r") as f:
 
     for line in f.readlines():
 

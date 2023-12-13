@@ -1,3 +1,4 @@
+import os
 from os.path import join, dirname, realpath
 from gutenberg_dialog.pipeline.utils import DialogMetaHelper
 from nltk import RegexpTokenizer
@@ -9,21 +10,28 @@ class GuttenbergDialogApi:
 
     __tokenizer = RegexpTokenizer(r'\w+')
     __current_dir = dirname(realpath(__file__))
-    dialogs_en = join(__current_dir, "./data/filtered/en/dialogs_clean.txt")
+    dialogues_en = join(__current_dir, "./data/filtered/en/dialogs_clean.txt")
 
-    def __iter_dialog_segments(self, book_path_func):
+    def __init__(self, dialogues_source=None):
+        self.__dialogues_en = dialogues_source if dialogues_source is not None else GuttenbergDialogApi.dialogues_en
+
+    def __iter_dialog_segments(self, book_path_func, skip_missed_books=False):
         """ Internal API function.
         """
         assert(callable(book_path_func))
+        assert(isinstance(skip_missed_books, bool))
+
+        skipping_book = False
 
         bs = BookDialogue()
-        with open(self.dialogs_en, "r") as f:
+        with open(self.__dialogues_en, "r") as f:
             for l in f.readlines():
                 if l.strip() == '~':
                     # break within a one dialog
                     pass
                 elif l == '\n':
-                    yield book_id, bs.annotate_dialog()
+                    if not skipping_book:
+                        yield book_id, bs.annotate_dialog()
                 elif l != '\n':
                     # actual utterance.
                     l = l.strip()
@@ -34,13 +42,20 @@ class GuttenbergDialogApi:
 
                     meta, utt = args
                     book_id, dialog_region = meta.split('.txt')
+
+                    # Optionally skip missed books.
+                    book_path = book_path_func(book_id)
+                    skipping_book = not os.path.exists(book_path) and skip_missed_books
+                    if skipping_book:
+                        continue
+
                     bs.set_book(book_id=book_id, book_path=book_path_func(book_id))
                     # Span of paragraphs.
                     l_from, l_to = dialog_region[1:-1].split(":")
                     bs.set_paragraphs(l_from=l_from, l_to=l_to)
                     bs.register_utterance(utt=utt, l_from=l_from, l_to=l_to)
 
-    def iter_dialog_segments(self, book_path_func, filter_types=None, split_meta=False):
+    def iter_dialog_segments(self, book_path_func, filter_types=None, split_meta=False, skip_missed_books=False):
         assert(isinstance(filter_types, list) or filter_types is None)
 
         def __split_meta(s):
@@ -50,7 +65,10 @@ class GuttenbergDialogApi:
             text_terms = terms[1:]
             return meta, " ".join(text_terms)
 
-        for book_id, dialogue_segments in self.__iter_dialog_segments(book_path_func):
+        segments_it = self.__iter_dialog_segments(book_path_func=book_path_func,
+                                                  skip_missed_books=skip_missed_books)
+
+        for book_id, dialogue_segments in segments_it:
 
             data = []
             for segment in dialogue_segments:

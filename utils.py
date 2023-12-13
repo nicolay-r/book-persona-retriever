@@ -29,11 +29,20 @@ def range_exclude_middle(n):
 class CsvService:
 
     @staticmethod
-    def write(target, lines_it):
+    def write(target, lines_it, header=None, notify=True):
+        assert(isinstance(header, list) or header is None)
+
         with open(target, "w") as f:
             w = csv.writer(f, delimiter="\t", quotechar='"', quoting=csv.QUOTE_MINIMAL)
+
+            if header is not None:
+                w.writerow(header)
+
             for content in lines_it:
                 w.writerow(content)
+
+        if notify:
+            print(f"Saved: {target}")
 
     @staticmethod
     def read(target, delimiter='\t', quotechar='"', skip_header=False):

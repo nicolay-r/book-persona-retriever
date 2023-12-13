@@ -43,25 +43,24 @@ def calc_speakers_stat(dataset_path):
     return c
 
 
-def iter_book_utterances(requested_book_id):
-    with open(dataset_filepath, "r") as f:
-        for line in f.readlines():
-            line = line.strip()
-            if len(line) == 0:
-                continue
-            args = line.split(": ")
-            meta = args[0]
-            if meta == "UNKN-X":
-                continue
-            book_id = meta.split("_")[0]
-            if int(book_id) == requested_book_id:
-                yield line
+def iter_book_utterances(f, requested_book_id):
+    for line in f.readlines():
+        line = line.strip()
+        if len(line) == 0:
+            continue
+        args = line.split(": ")
+        meta = args[0]
+        if meta == "UNKN-X":
+            continue
+        book_id = meta.split("_")[0]
+        if int(book_id) == requested_book_id:
+            yield line
 
 
-filtered_dataset = f"data/llm_em/{EMApi.book_id}.txt"
+filtered_dataset = join(EMApi.output_dir, f"/{EMApi.book_id}.txt")
 with open(dataset_filepath, "r") as f:
     with open(filtered_dataset, "w") as o:
-        for line in iter_book_utterances(EMApi.book_id):
+        for line in iter_book_utterances(f, EMApi.book_id):
             o.write(line + "\n")
 
 c = calc_speakers_stat(dataset_path=filtered_dataset)

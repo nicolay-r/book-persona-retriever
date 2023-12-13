@@ -1,6 +1,9 @@
 import argparse
 from os.path import join
 
+from tqdm import tqdm
+
+import utils
 from core.book.book_dialog import BookDialogue
 from core.dialogue.speaker_annotation import parse_meta_speaker_id
 from utils import CsvService
@@ -61,6 +64,11 @@ def do_extract_speaker(utt):
 
         # Check that the next word is speaker.
         frame_ind = utterance_words.index(mention)
+
+        # We consider that it is the first word.
+        if frame_ind != 0:
+            continue
+
         next_word = utterance_words[frame_ind + 1] if frame_ind + 1 < len(utterance_words) else None
 
         if next_word is None:
@@ -69,17 +77,11 @@ def do_extract_speaker(utt):
         return CEBApi.speaker_variant_to_speaker(next_word[1:], return_none=True)
 
 
-def iter_content():
-
-    gd_api = GuttenbergDialogApi()
-    my_api = MyAPI()
-
-    dialog_segments_iter = gd_api.iter_dialog_segments(book_path_func=my_api.get_book_path, split_meta=True)
-    utterance_segments_iter = iter_by_utterances(dialogue_data=dialog_segments_iter)
+def iter_content(utterance_segments_iter):
 
     # We utilize the following keywords to match the exact speaker for the line.
 
-    for book_id, data in utterance_segments_iter:
+    for book_id, data in tqdm(utterance_segments_iter, "Iter dialogue utterances"):
 
         main_context_speaker = None
 
@@ -131,18 +133,34 @@ def iter_content():
             buffer.append(fmt_s)
 
         if filter_utterance_segments(buffer):
-            yield main_context_speaker, " ".join(buffer)
+            yield main_context_speaker, \
+                  ceb_api.get_char_name(main_context_speaker), \
+                  " ".join(buffer)
 
 
 parser = argparse.ArgumentParser(
     description="Context Extraction from the dialogues of the literature novel books." +
                 "We accomplish this via the rule-based approach of matching the key mentions.")
 
-parser.add_argument('--max', dest='max_length', type=int, default=200)
-parser.add_argument('--min', dest='min_length', type=int, default=100)
-parser.add_argument('--segments', dest='segments_per_context', type=int, default=3)
-parser.add_argument('--frames', dest='key_mentions', type=int, default=["said", "argreed", "asked"])
+parser.add_argument('--max', dest='max_length', type=int, default=300)
+parser.add_argument('--min', dest='min_length', type=int, default=50)
+parser.add_argument('--books', dest='books_dir', type=str, default=join(EMApi.output_dir, "books"))
+parser.add_argument('--segments', dest='segments_per_context', type=int, default=2)
+parser.add_argument('--frames', dest='key_mentions', type=str, default=["said", "argreed", "asked", "replied", "cried"])
+parser.add_argument('--output', dest="output", type=str, default=join(EMApi.output_dir, "utt_data.csv"))
 
 args = parser.parse_args()
 
-CsvService.write(target=join(EMApi.output_dir, "utt_data.csv"), lines_it=iter_content())
+gd_api = GuttenbergDialogApi(dialogues_source=join(utils.PROJECT_DIR, "./data/filtered/en/dialogs_clean.txt"))
+my_api = MyAPI(books_root=args.books_dir)
+
+ceb_api = CEBApi()
+ceb_api.read_char_map()
+
+utterance_segments_iter = iter_by_utterances(
+    dialogue_data=gd_api.iter_dialog_segments(
+        book_path_func=my_api.get_book_path, split_meta=True, skip_missed_books=True))
+
+CsvService.write(target=args.output,
+                 lines_it=iter_content(utterance_segments_iter),
+                 header=["speaker_id", "speaker_name", "text"])
