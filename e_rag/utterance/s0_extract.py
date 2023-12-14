@@ -57,7 +57,7 @@ def iter_book_utterances(f, requested_book_id):
             yield line
 
 
-filtered_dataset = join(EMApi.output_dir, f"/{EMApi.book_id}.txt")
+filtered_dataset = join(EMApi.output_dir, f"./{EMApi.book_id}.txt")
 with open(dataset_filepath, "r") as f:
     with open(filtered_dataset, "w") as o:
         for line in iter_book_utterances(f, EMApi.book_id):
