@@ -103,3 +103,16 @@ class NpArraySupportDatabaseTable(object):
 
         self.force_commit()
         self.con.close()
+
+
+class SQLiteService(object):
+
+    @staticmethod
+    def iter_content(target, column_names=None, table="content"):
+        print(f"Connecting: {target}")
+        with sqlite3.connect(target) as conn:
+            cursor = conn.cursor()
+            cols = "*" if column_names is None else ",".join(column_names)
+            cursor.execute(f"SELECT {cols} FROM {table}")
+            for row in cursor:
+                yield row
