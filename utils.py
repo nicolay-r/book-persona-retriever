@@ -1,5 +1,6 @@
 import csv
 import os
+from collections import Counter
 from os.path import join
 
 PROJECT_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -32,6 +33,7 @@ class CsvService:
     def write(target, lines_it, header=None, notify=True):
         assert(isinstance(header, list) or header is None)
 
+        counter = Counter()
         with open(target, "w") as f:
             w = csv.writer(f, delimiter="\t", quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
@@ -40,9 +42,11 @@ class CsvService:
 
             for content in lines_it:
                 w.writerow(content)
+                counter["written"] += 1
 
         if notify:
             print(f"Saved: {target}")
+            print("Total rows: {}".format(counter["written"]))
 
     @staticmethod
     def read(target, delimiter='\t', quotechar='"', skip_header=False):
