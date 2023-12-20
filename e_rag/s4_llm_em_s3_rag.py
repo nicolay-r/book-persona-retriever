@@ -6,6 +6,7 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 from tqdm import tqdm
 
+from core.database.sqlite3_api import SQLiteService
 from utils import CACHE_DIR, CsvService
 from utils_ceb import CEBApi
 from utils_em import EMApi
@@ -23,10 +24,11 @@ def iter_passages_kb(kb, req_cat, req_v):
                 yield cos_sim, [char_id, cat_name, empathy_text]
 
 
-def iter_rag(d, handle_selected_names):
+def iter_rag(rows_it, handle_selected_names):
 
-    for row in tqdm(d):
-        em = EMApi.mistral_parse_em(row["response"])
+    for row_id, prompt, response in tqdm(rows_it):
+
+        em = EMApi.mistral_parse_em(response)
 
         p_dict = {}
 
@@ -58,22 +60,22 @@ def iter_rag(d, handle_selected_names):
         handle_selected_names(selected_names)
 
         # Format prompt for the original utterance.
-        original_utterance = ''.join(row["prompt"].split(':')[1:])
+        original_utterance = ''.join(prompt.split(':')[1:])
 
         # Wrapping everything into a single prompt.
-        prompt = [f"Given {EMApi.K} passages:"] + \
-                 selected_passages + \
-                 [f"Determine speaker \"X\" for text: {original_utterance}"] + \
-                 ["From: {}".format(",".join(set(selected_names)))]
+        rag_prompt = [f"Given {EMApi.K} passages:"] + \
+                      selected_passages + \
+                      [f"Determine speaker \"X\" for text: {original_utterance}"] + \
+                      ["From: {}".format(",".join(set(selected_names)))]
 
-        yield row["id"], "\n".join(prompt)
+        yield row_id, "\n".join(rag_prompt)
 
 
 parser = argparse.ArgumentParser(description="Composing Prompts with RAG technique")
 
-parser.add_argument('--source', dest='src', type=str, default=join(EMApi.output_dir, u"./contexts_em.json"))
+parser.add_argument('--source', dest='src', type=str, default=join(EMApi.output_dir, u"./dialogue-ctx-default.csv_mistralai_Mistral-7B-Instruct-v0.1.sqlite"))
 parser.add_argument('--output', dest='output', type=str, default=join(EMApi.output_dir, f"./{EMApi.book_id}_{EMApi.K}_rag.csv"))
-parser.add_argument('--output-passages', dest='output_passages', type=str, default=join(EMApi.output_dir, f"./{EMApi.book_id}_{EMApi.K}_passages.txt"))
+parser.add_argument('--output', dest='output_passages', type=str, default=join(EMApi.output_dir, f"./{EMApi.book_id}_{EMApi.K}_passages.txt"))
 
 args = parser.parse_args()
 
@@ -83,16 +85,15 @@ ceb_api.read_char_map()
 # Using ChatGPT-4 inferred EM, compose embeddings.
 kb = EMApi.embed_kb_em()
 
-# Load source file.
-d = None
-with open(args.src, "r") as json_file:
-    d = json.load(json_file)
+# Loading source of em for dialogue lines.
+rows_it = SQLiteService.iter_content(target=args.src, table="contents")
 
 # Save the result.
 model = SentenceTransformer(EMApi.emb_model, cache_folder=CACHE_DIR)
 names_from_passages = []
 CsvService.write(target=args.output,
-                 lines_it=iter_rag(d=d, handle_selected_names=lambda names: names_from_passages.append(names)),
+                 lines_it=iter_rag(rows_it=rows_it,
+                                   handle_selected_names=lambda names: names_from_passages.append(names)),
                  header=["id", "text"])
 
 # Save names from passages.
