@@ -73,9 +73,9 @@ def iter_rag(rows_it, handle_selected_names):
 
 parser = argparse.ArgumentParser(description="Composing Prompts with RAG technique")
 
-parser.add_argument('--source', dest='src', type=str, default=join(EMApi.output_dir, u"./dialogue-ctx-default.csv_mistralai_Mistral-7B-Instruct-v0.1.sqlite"))
+parser.add_argument('--source', dest='src', type=str, default=join(EMApi.output_dir, u"./dialogue-ctx-default.csv_mistralai_Mistral-7B-Instruct-v0.1.sqlite:contents"))
 parser.add_argument('--output', dest='output', type=str, default=join(EMApi.output_dir, f"./{EMApi.book_id}_{EMApi.K}_rag.csv"))
-parser.add_argument('--output', dest='output_passages', type=str, default=join(EMApi.output_dir, f"./{EMApi.book_id}_{EMApi.K}_passages.txt"))
+parser.add_argument('--output-passages', dest='output_passages', type=str, default=join(EMApi.output_dir, f"./{EMApi.book_id}_{EMApi.K}_passages.txt"))
 
 args = parser.parse_args()
 
@@ -86,7 +86,8 @@ ceb_api.read_char_map()
 kb = EMApi.embed_kb_em()
 
 # Loading source of em for dialogue lines.
-rows_it = SQLiteService.iter_content(target=args.src, table="contents")
+src_filepath, src_table_name = args.src.split(':')
+rows_it = SQLiteService.iter_content(target=src_filepath, table=src_table_name)
 
 # Save the result.
 model = SentenceTransformer(EMApi.emb_model, cache_folder=CACHE_DIR)
