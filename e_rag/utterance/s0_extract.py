@@ -1,31 +1,11 @@
+import argparse
 from collections import Counter
 from os.path import join
+
+from utils import TextService
 from utils_ceb import CEBApi
 from utils_em import EMApi
 from utils_pg19 import PG19Api
-
-
-dataset_filepath = join(EMApi.output_dir, "dataset.txt")
-
-c = Counter()
-with open(dataset_filepath, "r") as f:
-    for line in f.readlines():
-        line = line.strip()
-        if len(line) == 0:
-            continue
-        args = line.split(": ")
-        meta = args[0]
-        if meta == "UNKN-X":
-            continue
-        book_id = meta.split("_")[0]
-        c[book_id] += 1
-
-pg19 = PG19Api()
-pg19.read()
-
-for b_id, count in sorted(c.items(), key=lambda item: int(item[1]), reverse=True)[:50]:
-    title = pg19.find_book_title(book_id=b_id)
-    print(count, title, b_id)
 
 
 def calc_speakers_stat(dataset_path):
@@ -43,8 +23,8 @@ def calc_speakers_stat(dataset_path):
     return c
 
 
-def iter_book_utterances(f, requested_book_id):
-    for line in f.readlines():
+def iter_annotated_utterances(lines_it, is_filter_book_id):
+    for line in lines_it:
         line = line.strip()
         if len(line) == 0:
             continue
@@ -52,21 +32,54 @@ def iter_book_utterances(f, requested_book_id):
         meta = args[0]
         if meta == "UNKN-X":
             continue
-        book_id = meta.split("_")[0]
-        if int(book_id) == requested_book_id:
+        params = meta.split("_")
+        if len(params) == 1:
+            continue
+        book_id = params[0]
+        if is_filter_book_id(int(book_id)):
             yield line
 
 
-filtered_dataset = join(EMApi.output_dir, f"./{EMApi.book_id}.txt")
-with open(dataset_filepath, "r") as f:
-    with open(filtered_dataset, "w") as o:
-        for line in iter_book_utterances(f, EMApi.book_id):
-            o.write(line + "\n")
+def calculate_utterances_per_book_stat(dataset_filepath):
+    counter = Counter()
+    with open(dataset_filepath, "r") as f:
+        for line in f.readlines():
+            line = line.strip()
+            if len(line) == 0:
+                continue
+            meta = line.split(": ")[0]
+            if meta == "UNKN-X":
+                continue
+            book_id = meta.split("_")[0]
+            counter[book_id] += 1
 
-c = calc_speakers_stat(dataset_path=filtered_dataset)
+    return counter
+
+
+def iter_utterances(filepath):
+    with open(filepath, "r") as f:
+        return iter_annotated_utterances(
+            lines_it=f.readlines(), is_filter_book_id=lambda book_id: book_id == EMApi.book_id)
+
+
+parser = argparse.ArgumentParser(description="Composing Prompts with RAG technique")
+
+parser.add_argument('--dataset', dest='dataset', type=str, default=join(EMApi.output_dir, "dataset.txt"))
+parser.add_argument('--output', dest='output', type=str, default=join(EMApi.output_dir, f"./{EMApi.book_id}.txt"))
+
+args = parser.parse_args()
+
+pg19 = PG19Api()
+pg19.read()
+
+# for b_id, count in sorted(c.items(), key=lambda item: int(item[1]), reverse=True)[:50]:
+#     title = pg19.find_book_title(book_id=b_id)
+#     print(count, title, b_id)
+
+TextService.write(target=args.output, lines_it=iter_utterances(args.dataset))
+counter = calc_speakers_stat(dataset_path=args.output)
 
 ceb_api = CEBApi()
 ceb_api.read_char_map()
-
-for cid in c.keys():
-    print(cid, ceb_api.get_char_names(cid))
+# for cid in c.keys():
+#     print(cid, ceb_api.get_char_names(cid))

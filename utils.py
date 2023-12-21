@@ -27,6 +27,20 @@ def range_exclude_middle(n):
     return [i for i in range(n) if i != middle]
 
 
+class TextService:
+
+    @staticmethod
+    def write(target, lines_it):
+        counter = Counter()
+        with open(target, "w") as o:
+            for line in lines_it:
+                o.write(line + "\n")
+                counter["total"] += 1
+
+        print("Saved: {}".format(target))
+        print("Rows written: {}".format(counter["total"]))
+
+
 class CsvService:
 
     @staticmethod
