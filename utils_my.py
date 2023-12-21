@@ -236,13 +236,13 @@ class MyAPI:
         file.write("\n")
 
     @staticmethod
-    def iter_dialog_question_response_pairs(dialogs_filapath, dialogue_filter_func=None, desc=None):
+    def iter_dialog_question_response_pairs(dialogs_filepath, dialogue_filter_func=None, desc=None):
         """ dialogue_filter_func: func (speaker_name, dialogue)
                 serves as a filtering function for a dialogue and a response speaker name.
         """
 
         qr_utterance_pair = []
-        for line in MyAPI._read_annotated_dialogs(filepath=dialogs_filapath, desc=desc):
+        for line in MyAPI._read_annotated_dialogs(filepath=dialogs_filepath, desc=desc):
 
             if line is None:
                 continue

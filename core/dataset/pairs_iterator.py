@@ -11,7 +11,7 @@ def get_dialog_qr_pairs_iter(filepath, desc):
         with optionally provided filter of the dialogues.
     """
     return MyAPI.iter_dialog_question_response_pairs(
-        dialogs_filapath=filepath,
+        dialogs_filepath=filepath,
         dialogue_filter_func=QRFilterFunctionObject(),
         desc=desc)
 

@@ -14,7 +14,7 @@ for speaker_id in MyAPI.predefined_speakers:
 
     # Part #1 composing dataset.
     pairs_it = MyAPI.iter_dialog_question_response_pairs(
-        dialogs_filapath=MyAPI.dialogs_filepath,
+        dialogs_filepath=MyAPI.dialogs_filepath,
         dialogue_filter_func=None,
         desc="Iter dialogues for speaker `{}`".format(speaker_id))
     speaker_id_dialogs_path = join(MyAPI.selected_output_dir, f"{speaker_id}.dataset.txt")

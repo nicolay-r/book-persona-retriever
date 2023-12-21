@@ -14,7 +14,7 @@ my_api = MyAPI()
 
 it_segments = gd_api.iter_dialog_segments(book_path_func=my_api.get_book_path, split_meta=True)
 it_dialogs = MyAPI._read_annotated_dialogs(filepath=filepath)
-it_qr_pairs = MyAPI.iter_dialog_question_response_pairs(dialogs_filapath=filepath, dialogue_filter_func=None)
+it_qr_pairs = MyAPI.iter_dialog_question_response_pairs(dialogs_filepath=filepath, dialogue_filter_func=None)
 
 c = Counter()
 for book_id, data in tqdm(it_segments):
