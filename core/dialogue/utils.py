@@ -1,3 +1,39 @@
+from core.dialogue.speaker_annotation import parse_meta_speaker_id
+
+
+def iter_by_utterances(dialogue_data):
+    """ Iter dialogue data obtained by pg19 API in a form of list of utterances.
+    """
+
+    for book_id, data in dialogue_data:
+
+        buffer = []
+        curr_speaker_id = None
+        for info in data:
+
+            meta, utt = info
+            speaker_id = parse_meta_speaker_id(meta)
+
+            # Append the utterance into the buffer.
+            if curr_speaker_id is None:
+                buffer.append(info)
+            elif curr_speaker_id == speaker_id:
+                buffer.append(info)
+            elif curr_speaker_id != speaker_id:
+                # release the buffer.
+                if len(buffer) > 0:
+                    yield book_id, buffer
+                    buffer.clear()
+                buffer.append(info)
+
+            curr_speaker_id = speaker_id
+
+        if len(buffer) > 0:
+            # release the buffer.
+            yield book_id, buffer
+            buffer.clear()
+
+
 def iter_terms_with_speakers(terms, is_term_has_char_func, map_func=None):
     assert(callable(is_term_has_char_func))
     assert(callable(map_func) or map_func is None)

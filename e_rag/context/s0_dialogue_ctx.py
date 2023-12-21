@@ -5,33 +5,13 @@ from tqdm import tqdm
 
 import utils
 from core.book.book_dialog import BookDialogue
-from core.dialogue.speaker_annotation import parse_meta_speaker_id, try_recognize
+from core.dialogue.speaker_annotation import try_recognize
+from core.dialogue.utils import iter_by_utterances
 from utils import CsvService
 from utils_ceb import CEBApi
 from utils_em import EMApi
 from utils_gd import GuttenbergDialogApi
 from utils_my import MyAPI
-
-
-def iter_by_utterances(dialogue_data):
-
-    for book_id, data in dialogue_data:
-
-        buffer = []
-        curr_speaker_id = None
-        for info in data:
-
-            meta, utt = info
-            speaker_id = parse_meta_speaker_id(meta)
-
-            # Append the utterance into the buffer.
-            if curr_speaker_id is None or (curr_speaker_id == speaker_id):
-                curr_speaker_id = speaker_id
-                buffer.append(info)
-            elif len(buffer) > 0:
-                # release the buffer.
-                yield book_id, buffer
-                buffer.clear()
 
 
 def filter_utterance_segments(buffer):
@@ -152,7 +132,7 @@ se_algorithms = {
 }
 
 
-parser.add_argument('--max', dest='max_length', type=int, default=300)
+parser.add_argument('--max', dest='max_length', type=int, default=200)
 parser.add_argument('--min', dest='min_length', type=int, default=100)
 parser.add_argument('--books', dest='books_dir', type=str, default=join(EMApi.output_dir, "books"))
 parser.add_argument('--segments', dest='segments_per_context', type=int, default=2)
@@ -160,11 +140,9 @@ parser.add_argument('--se-mode', dest='se_mode', type=str, default="default", ch
 parser.add_argument('--frames', dest='key_mentions', type=str, default=["said", "argreed", "asked", "replied", "cried"])
 parser.add_argument('--output', dest="output", type=str, default=None)
 
-
 args = parser.parse_args()
 
-
-gd_api = GuttenbergDialogApi(dialogues_source=join(utils.PROJECT_DIR, "./data/filtered/en/dialogs_clean.txt"))
+gd_api = GuttenbergDialogApi(dialogues_source=join(utils.PROJECT_DIR, "./data/filtered/en/dialogs.txt"))
 my_api = MyAPI(books_root=args.books_dir)
 
 ceb_api = CEBApi()
