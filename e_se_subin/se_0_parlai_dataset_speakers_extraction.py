@@ -1,5 +1,3 @@
-import random
-
 import zipstream
 
 from core.candidates.other_speakers import OtherSpeakersProvider

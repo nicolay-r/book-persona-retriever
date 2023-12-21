@@ -65,7 +65,7 @@ def eval(etalon, predicted, p_ctr):
 parser = argparse.ArgumentParser()
 
 parser.add_argument('--predict', dest='predict',
-                    default=join(EMApi.output_dir, f"./results/1184_10_rag.csv_mistralai_Mistral-7B-Instruct-v0.1.sqlite:contents"))
+                    default=join(EMApi.output_dir, f"./dialogue-ctx-default.csv_mistralai_Mistral-7B-Instruct-v0.1.sqlite:final_results"))
 parser.add_argument('--etalon', dest='etalon',
                     default=join(EMApi.output_dir, f"dialogue-ctx-default.csv"))
 parser.add_argument('--characters', dest='characters', type=list,
