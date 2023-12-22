@@ -5,6 +5,7 @@ from os.path import dirname, realpath, join
 from tqdm import tqdm
 
 from core.book.paragraph import Paragraph
+from core.utils import filter_whitespaces
 
 
 class CEBApi:
@@ -115,8 +116,16 @@ class CEBApi:
         return
 
     @staticmethod
+    def separate_character_entries(text):
+        """ This method allow us demarcate literature characters from other words and punctuation signs.
+        """
+        assert(isinstance(text, str))
+        text = text.replace("}", "} ").replace("{", " {")
+        return " ".join(filter_whitespaces(text.split()))
+
+    @staticmethod
     def iter_paragraphs(iter_book_ids, book_by_id_func):
-        """ Iter paragramps from the iter of books.
+        """ Iter paragraphs from the iter of books.
         """
         for book_id in iter_book_ids:
             with open(book_by_id_func(book_id), "r") as f:

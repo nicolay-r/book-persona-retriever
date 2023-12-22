@@ -28,6 +28,7 @@ speaker_spectrums = annot_spectrums_in_text(
                                            CEBApi.speaker_variant_to_speaker(
                                                GuttenbergDialogApi.try_parse_character(term, default=""),
                                                return_none=True),
+                                       paragraph_to_terms=lambda p: CEBApi.separate_character_entries(p.Text).split(),
                                        iter_paragraphs=CEBApi.iter_paragraphs(
                                            iter_book_ids=my_api.book_ids_from_directory(),
                                            book_by_id_func=my_api.get_book_path))),

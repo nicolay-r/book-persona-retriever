@@ -5,7 +5,7 @@ from tqdm import tqdm
 from core.book.paragraph import Paragraph
 
 
-def iter_paragraphs_with_n_speakers(speakers, iter_paragraphs, parse_speaker_or_none_func,
+def iter_paragraphs_with_n_speakers(speakers, iter_paragraphs, paragraph_to_terms, parse_speaker_or_none_func,
                                     n_speakers=1, multi_mentions=False):
     """ Iterate text paragraphs which contains only N mentioned speakers from `speakers` set.
         based on the Character-based-embedding API.
@@ -19,6 +19,8 @@ def iter_paragraphs_with_n_speakers(speakers, iter_paragraphs, parse_speaker_or_
             or speaker recognition function support this case. (#43)
     """
     assert(isinstance(speakers, set))
+    assert(callable(paragraph_to_terms))
+    assert(callable(parse_speaker_or_none_func))
     assert(isinstance(n_speakers, int) and n_speakers >= 0)
     assert(isinstance(multi_mentions, bool))
 
@@ -34,11 +36,9 @@ def iter_paragraphs_with_n_speakers(speakers, iter_paragraphs, parse_speaker_or_
 
         s_count["total"] += 1
 
-        terms = p.Text.split()
-
         p_speakers = []
         has_others = False
-        for term in terms:
+        for term in paragraph_to_terms(p):
 
             speaker_id = parse_speaker_or_none_func(term)
             if speaker_id is None:

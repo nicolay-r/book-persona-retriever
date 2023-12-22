@@ -16,42 +16,25 @@ def iter_iterator_by_param(param_list, it_func):
             yield data
 
 
-def filter_whitespaces(terms):
-    return [term.strip() for term in terms if term.strip()]
-
-
-def handle_text(text):
-    # TODO. This fix is expected to be adapted for the particular source type.
-    # TODO. This is related to issue #43.
-    text = text.replace("}", "} ").replace("{", " {")
-    return " ".join(filter_whitespaces(text.split()))
-
-
-def fix_paragraph_text(p):
-    assert(isinstance(p, Paragraph))
-    p.modify_text(handle_text)
-    return p
-
-
 def data_it():
 
     ceb_api = CEBApi()
     ceb_api.read_char_map()
 
-    paragraphs_it = lambda n_speakers: iter_paragraphs_with_n_speakers(
+    p_it = lambda n_speakers: iter_paragraphs_with_n_speakers(
         speakers=set(EMApi.char_ids),
         n_speakers=n_speakers,
-        iter_paragraphs=map(lambda t: fix_paragraph_text(t),
-                            CEBApi.iter_paragraphs(
-                                iter_book_ids=[EMApi.book_id],
-                                book_by_id_func=my_api.get_book_path)),
+        iter_paragraphs=CEBApi.iter_paragraphs(
+            iter_book_ids=[EMApi.book_id],
+            book_by_id_func=my_api.get_book_path),
+        paragraph_to_terms=lambda p: CEBApi.separate_character_entries(p.Text).split(),
         parse_speaker_or_none_func=lambda term:
             CEBApi.speaker_variant_to_speaker(
                 GuttenbergDialogApi.try_parse_character(term, default=""),
                 return_none=True),
         multi_mentions=True)
 
-    for paragraph, speakers in iter_iterator_by_param(param_list=args.speakers, it_func=paragraphs_it):
+    for paragraph, speakers in iter_iterator_by_param(param_list=args.speakers, it_func=p_it):
         assert(isinstance(paragraph, Paragraph))
 
         # Filter paragraph by length.
