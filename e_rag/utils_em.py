@@ -13,6 +13,7 @@ class EMApi:
     """
     K = 10
     book_id = 1184
+    char_ids = ["1184_0", "1184_3", "1184_4", "1184_5", "1184_6", "1184_7", "1184_10", "1184_12", "1184_14", "1184_17"]
     chars = [0, 3, 4, 5, 6, 7, 10, 12, 14, 17]
     emb_model = 'all-mpnet-base-v2'
     categories = ['thinking and feeling', 'hearing', 'seeing', 'saying and doing', 'gains', 'pains']
@@ -93,7 +94,3 @@ class EMApi:
                 if em_instance is not None:
                     em_dict[cat].append(em_instance)
         return em_dict
-
-    @staticmethod
-    def prompt_em(embeddings, character, empathy, e_id):
-        return ""

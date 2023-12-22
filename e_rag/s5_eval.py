@@ -66,10 +66,8 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('--predict', dest='predict',
                     default=join(EMApi.output_dir, f"./dialogue-ctx-default.csv_mistralai_Mistral-7B-Instruct-v0.1.sqlite:final_results"))
-parser.add_argument('--etalon', dest='etalon',
-                    default=join(EMApi.output_dir, f"dialogue-ctx-default.csv"))
-parser.add_argument('--characters', dest='characters', type=list,
-                    default=["1184_0", "1184_3", "1184_4", "1184_5", "1184_6", "1184_7", "1184_10", "1184_12", "1184_14", "1184_17"])
+parser.add_argument('--etalon', dest='etalon', default=join(EMApi.output_dir, f"dialogue-ctx-default.csv"))
+parser.add_argument('--characters', dest='characters', type=list, default=EMApi.char_ids)
 
 args = parser.parse_args()
 
