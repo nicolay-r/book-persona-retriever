@@ -22,6 +22,10 @@ def iter_all(speakers, my_api):
             iter_paragraphs=CEBApi.iter_paragraphs(
                 iter_book_ids=my_api.book_ids_from_directory(),
                 book_by_id_func=my_api.get_book_path),
+            parse_speaker_or_none_func=lambda term:
+                CEBApi.speaker_variant_to_speaker(
+                    GuttenbergDialogApi.try_parse_character(term, default=""),
+                    return_none=True),
             multi_mentions=False))
 
     # Iterate over comments.

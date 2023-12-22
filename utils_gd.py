@@ -92,17 +92,25 @@ class GuttenbergDialogApi:
         return self.__tokenizer.tokenize(' '.join(terms))
 
     @staticmethod
-    def is_character(term):
+    def try_parse_character(term, default=None):
         """ followed by CEB api.
+            For example: "{123_1_1} -> "123_1_1"
         """
         if term.count('_') != 2:
-            return False
-        term = term.replace('_', '')
-        if len(term) <= 2:
-            return False
+            return default
+
         if term[0] == '{' and term[-1] == '}':
             term = term[1:-1]
-        return term.isnumeric()
+
+        term_text_number = term.replace('_', '')
+
+        # We should have a number once underscore chars will be removed.
+        # We should have at least 3 numbers, which means 3 digits.
+        return term if term_text_number.isnumeric() and len(term_text_number) >= 3 else default
+
+    @staticmethod
+    def is_character(term):
+        return GuttenbergDialogApi.try_parse_character(term, default=None) is not None
 
     @staticmethod
     def has_character(term):

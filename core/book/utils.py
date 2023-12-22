@@ -3,11 +3,10 @@ from collections import Counter
 from tqdm import tqdm
 
 from core.book.paragraph import Paragraph
-from utils_ceb import CEBApi
-from utils_gd import GuttenbergDialogApi
 
 
-def iter_paragraphs_with_n_speakers(speakers, iter_paragraphs, n_speakers=1, multi_mentions=False):
+def iter_paragraphs_with_n_speakers(speakers, iter_paragraphs, parse_speaker_or_none_func,
+                                    n_speakers=1, multi_mentions=False):
     """ Iterate text paragraphs which contains only N mentioned speakers from `speakers` set.
         based on the Character-based-embedding API.
 
@@ -41,14 +40,11 @@ def iter_paragraphs_with_n_speakers(speakers, iter_paragraphs, n_speakers=1, mul
         has_others = False
         for term in terms:
 
-            # TODO. This is expected to be an outer function.
-            if not GuttenbergDialogApi.is_character(term):
+            speaker_id = parse_speaker_or_none_func(term)
+            if speaker_id is None:
                 continue
 
-            if term[0] == '{' and term[-1] == '}':
-                term = term[1:-1]
-
-            if CEBApi.speaker_variant_to_speaker(term) in speakers:
+            if speaker_id in speakers:
                 p_speakers.append(term)
             else:
                 has_others = True

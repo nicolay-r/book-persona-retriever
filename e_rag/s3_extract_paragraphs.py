@@ -6,6 +6,7 @@ from core.book.utils import iter_paragraphs_with_n_speakers
 from e_rag.utils_em import EMApi
 from utils import CsvService
 from utils_ceb import CEBApi
+from utils_gd import GuttenbergDialogApi
 from utils_my import MyAPI
 
 
@@ -44,6 +45,10 @@ def data_it():
                             CEBApi.iter_paragraphs(
                                 iter_book_ids=[EMApi.book_id],
                                 book_by_id_func=my_api.get_book_path)),
+        parse_speaker_or_none_func=lambda term:
+            CEBApi.speaker_variant_to_speaker(
+                GuttenbergDialogApi.try_parse_character(term, default=""),
+                return_none=True),
         multi_mentions=True)
 
     for paragraph, speakers in iter_iterator_by_param(param_list=args.speakers, it_func=paragraphs_it):

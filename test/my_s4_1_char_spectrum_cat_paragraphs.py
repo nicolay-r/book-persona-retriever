@@ -8,6 +8,7 @@ from test.const import MOST_DISTINCTIVE
 from utils_draw import draw_spectrums_stat
 from utils_ceb import CEBApi
 from utils_fcp import FcpApi
+from utils_gd import GuttenbergDialogApi
 from utils_my import MyAPI
 
 
@@ -23,6 +24,10 @@ speaker_spectrums = annot_spectrums_in_text(
                                        multi_mentions=False,
                                        speakers=set(ds_speakers),
                                        n_speakers=MyAPI.spectrum_speakers_in_paragraph,
+                                       parse_speaker_or_none_func=lambda term:
+                                           CEBApi.speaker_variant_to_speaker(
+                                               GuttenbergDialogApi.try_parse_character(term, default=""),
+                                               return_none=True),
                                        iter_paragraphs=CEBApi.iter_paragraphs(
                                            iter_book_ids=my_api.book_ids_from_directory(),
                                            book_by_id_func=my_api.get_book_path))),
