@@ -1,5 +1,4 @@
 import argparse
-import json
 from os.path import join
 
 import numpy as np
@@ -10,7 +9,6 @@ from core.database.sqlite3_api import SQLiteService
 from utils import CACHE_DIR, CsvService
 from utils_ceb import CEBApi
 from utils_em import EMApi
-
 
 
 def iter_passages_kb(kb, req_cat, req_v):
