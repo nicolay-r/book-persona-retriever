@@ -21,7 +21,8 @@ def iter_all(speakers, my_api):
             n_speakers=my_api.spectrum_speakers_in_paragraph,
             iter_paragraphs=CEBApi.iter_paragraphs(
                 iter_book_ids=my_api.book_ids_from_directory(),
-                book_by_id_func=my_api.get_book_path)))
+                book_by_id_func=my_api.get_book_path),
+            multi_mentions=False))
 
     # Iterate over comments.
     g_api = GuttenbergDialogApi()

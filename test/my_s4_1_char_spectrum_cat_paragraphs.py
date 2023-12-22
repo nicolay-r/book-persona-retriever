@@ -20,6 +20,7 @@ ds_speakers = my_api.read_speakers()
 speaker_spectrums = annot_spectrums_in_text(
     texts_and_speakervars_iter=map(lambda t: (t[0].Text, t[1]),
                                    iter_paragraphs_with_n_speakers(
+                                       multi_mentions=False,
                                        speakers=set(ds_speakers),
                                        n_speakers=MyAPI.spectrum_speakers_in_paragraph,
                                        iter_paragraphs=CEBApi.iter_paragraphs(
