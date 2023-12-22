@@ -8,15 +8,20 @@ from utils_gd import GuttenbergDialogApi
 
 
 def iter_paragraphs_with_n_speakers(speakers, iter_paragraphs, n_speakers=1, multi_mentions=False):
-    """ Iterate text paragraphs which contains only N mentioned speakers
+    """ Iterate text paragraphs which contains only N mentioned speakers from `speakers` set.
         based on the Character-based-embedding API.
+
+        multi_mentions: bool
+            denotes whether the same speaker could be mentioned multiple times, i.e. counted as mentioned once.
 
         NOTE:
         * This method excluded cases with such speakers that mentioned in paragraph but not mentioned in `speakers`
         * It is important that each speaker represent in a form of separated word /
-            or speaker recognition function support this case.
+            or speaker recognition function support this case. (#43)
     """
     assert(isinstance(speakers, set))
+    assert(isinstance(n_speakers, int) and n_speakers >= 0)
+    assert(isinstance(multi_mentions, bool))
 
     s_count = Counter()
     pbar = tqdm(iter_paragraphs, "Iter Paragraphs")
