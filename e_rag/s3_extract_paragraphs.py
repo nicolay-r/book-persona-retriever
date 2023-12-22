@@ -15,11 +15,15 @@ def iter_iterator_by_param(param_list, it_func):
             yield data
 
 
+def filter_whitespaces(terms):
+    return [term.strip() for term in terms if term.strip()]
+
+
 def handle_text(text):
     # TODO. This fix is expected to be adapted for the particular source type.
     # TODO. This is related to issue #43.
     text = text.replace("}", "} ").replace("{", " {")
-    return " ".join(text.split())
+    return " ".join(filter_whitespaces(text.split()))
 
 
 def fix_paragraph_text(p):
