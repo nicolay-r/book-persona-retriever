@@ -41,7 +41,14 @@ def data_it():
         if not(args.max_length > len(paragraph.Text) > args.min_length):
             continue
 
-        yield ",".join(speakers), paragraph.Text
+        text = paragraph.Text
+        if args.mask_speakers != "true":
+            for speaker in speakers:
+                char_id = "_".join(speaker[1:-1].split('_')[:-1])
+                name = ceb_api.get_char_name(char_id=char_id)
+                text = text.replace(speaker, name)
+
+        yield ",".join(speakers), text
 
 
 parser = argparse.ArgumentParser(
@@ -49,6 +56,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument('--max', dest='max_length', type=int, default=200)
 parser.add_argument('--min', dest='min_length', type=int, default=100)
 parser.add_argument('--speakers', dest='speakers', type=int, default=[1, 2, 3])
+parser.add_argument('--mask-speakers', dest='mask_speakers', type=str, default="false")
 args = parser.parse_args()
 
 my_api = MyAPI()
