@@ -44,7 +44,7 @@ def data_it():
         text = paragraph.Text
         if args.mask_speakers != "true":
             for speaker in speakers:
-                char_id = "_".join(speaker[1:-1].split('_')[:-1])
+                char_id = ceb_api.speaker_variant_to_speaker(speaker_variant=speaker[1:-1])
                 name = ceb_api.get_char_name(char_id=char_id)
                 text = text.replace(speaker, name)
 
