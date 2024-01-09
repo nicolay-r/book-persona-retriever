@@ -6,6 +6,8 @@ from sentence_transformers import SentenceTransformer
 from tqdm import tqdm
 
 from core.database.sqlite3_api import SQLiteService
+from core.utils import DictService
+from e_rag.utils_llm import iter_parse_mistral_parse_em
 from utils import CACHE_DIR, CsvService
 from utils_ceb import CEBApi
 from utils_em import EMApi
@@ -26,7 +28,9 @@ def iter_rag(rows_it, handle_selected_names):
 
     for row_id, prompt, response in tqdm(rows_it):
 
-        em = EMApi.mistral_parse_em(response)
+        # Parsing Empathy mappings.
+        pairs_iter = iter_parse_mistral_parse_em(text=response, line_to_cat_func=EMApi.map_category)
+        em = DictService.key_to_many_values(pairs_iter)
 
         p_dict = {}
 

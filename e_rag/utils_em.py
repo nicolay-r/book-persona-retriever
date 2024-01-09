@@ -5,6 +5,7 @@ from sentence_transformers import SentenceTransformer
 from tqdm import tqdm
 
 import utils
+from core.utils import DictService
 from utils import CACHE_DIR
 
 
@@ -13,11 +14,26 @@ class EMApi:
     """
     K = 10
     book_id = 1184
-    char_ids = ["1184_0", "1184_3", "1184_4", "1184_5", "1184_6", "1184_7", "1184_10", "1184_12", "1184_14", "1184_17"]
-    chars = [0, 3, 4, 5, 6, 7, 10, 12, 14, 17]
+
+    char_inds = [0, 3, 4, 5, 6, 7, 10, 12, 14, 17]
+    char_ids = [f"1184_{i}" for i in char_inds]
+
     emb_model = 'all-mpnet-base-v2'
     categories = ['thinking and feeling', 'hearing', 'seeing', 'saying and doing', 'gains', 'pains']
+
     output_dir = join(utils.PROJECT_DIR, "./data/llm_em/")
+
+    # Responses for EM extraction from different models.
+    chatgpt4_1105_responses = lambda char_index: \
+        join(EMApi.output_dir, f"./em-chatgpt4/{EMApi.book_id}_{char_index}.txt")
+    mistral_7b_responses_sqlite = \
+        join(output_dir, f"./dialogue-ctx-default.csv_mistralai_Mistral-7B-Instruct-v0.1.sqlite")
+    mistral_7b_source = \
+        join(output_dir, "dialogue-ctx-default.csv")
+
+    # Mapping to the places they are formatted and stored.
+    kb_em_chatgpt4_1106_summaries = lambda c: join(EMApi.output_dir, f"./kb/{EMApi.book_id}/em-chatgpt4-1106-summaries/{c}.json")
+    kb_em_mistral_7b_v1_contexts = lambda c: join(EMApi.output_dir, f"./kb/{EMApi.book_id}/em-mistral-7b-v1-summaries/{c}.json")
 
     @staticmethod
     def map_category(cat):
@@ -33,64 +49,36 @@ class EMApi:
         return cat
 
     @staticmethod
+    def iter_category_texts_from_json(json_src):
+        with open(json_src, "r") as f:
+            dict_data = json.load(f)
+            for item in dict_data.items():
+                yield item
+
+    @staticmethod
     def embed_kb_em():
         """ Create embedding of the graph-alike representation of the character empathy mappings.
         """
+
+        def iter_cat_data(cat_texts_iter):
+            for cat, texts in cat_texts_iter:
+                assert(isinstance(texts, list))
+                cat = EMApi.map_category(cat)
+                for text in texts:
+                    assert(isinstance(text, str))
+                    yield cat, (model.encode(text), text)
+
+        # Sources for the KB.
+        char_data_sources = [
+            EMApi.kb_em_chatgpt4_1106_summaries,
+            EMApi.kb_em_mistral_7b_v1_contexts
+        ]
+
         model = SentenceTransformer(EMApi.emb_model, cache_folder=CACHE_DIR)
         embeddings = {}
-        for speaker_id in tqdm(EMApi.chars, desc="Embed characters EM"):
-
-            json_src = join(EMApi.output_dir, f"./em-chatgpt4-fmt/{EMApi.book_id}_{speaker_id}.json")
-
-            with open(json_src, "r") as f:
-                emb_em = {}
-                for cat, texts in json.load(f).items():
-                    assert (isinstance(texts, list))
-                    cat = EMApi.map_category(cat)
-                    emb_em[cat] = []
-                    for text in texts:
-                        assert (isinstance(text, str))
-                        emb_em[cat].append((model.encode(text), text))
-
-                embeddings[speaker_id] = emb_em
+        for char_ind in tqdm(EMApi.char_inds, desc="Embed characters EM"):
+            for char_file_func in char_data_sources:
+                cat_texts_iter = EMApi.iter_category_texts_from_json(char_file_func(char_ind))
+                embeddings[char_ind] = DictService.key_to_many_values(pairs_iter=iter_cat_data(cat_texts_iter))
 
         return embeddings
-
-    @staticmethod
-    def mistral_clear_em_instance(text):
-
-        text = text.replace('</s>', '')
-
-        if len(text) > 0 and text[0] in ["*", '+']:
-            text = text[1:].strip()
-
-        if len(text) > 0 and text[-1] == '.':
-            text = text[:-1]
-
-        if text.lower() in ["none", "none specified", "none mentioned"]:
-            return None
-
-        if "overall," in text.lower():
-            return None
-
-        return text
-
-    @staticmethod
-    def mistral_parse_em(text):
-        em_dict = {}
-        cat = None
-        for line in text.split("\n"):
-            l = line.strip()
-            if len(l) < 1:
-                continue
-            if l[-1] == ':':
-                cat = EMApi.map_category(l)
-                if cat is None:
-                    continue
-                em_dict[cat] = []
-                continue
-            elif cat in em_dict:
-                em_instance = EMApi.mistral_clear_em_instance(l)
-                if em_instance is not None:
-                    em_dict[cat].append(em_instance)
-        return em_dict

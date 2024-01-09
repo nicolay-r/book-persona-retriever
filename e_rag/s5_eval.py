@@ -86,7 +86,7 @@ p_ctr = Counter()
 target, table_name = args.predict.split(':')
 predict_names = list(iter_predict(
     iter_lines=SQLiteService.iter_content(target=target, table=table_name),
-    character_names=[ceb_api.get_char_name(f"{EMApi.book_id}_{c}") for c in EMApi.chars],
+    character_names=[ceb_api.get_char_name(f"{EMApi.book_id}_{c}") for c in EMApi.char_inds],
     filter_mask=filter_mask,
     out_ctr=p_ctr
 ))
