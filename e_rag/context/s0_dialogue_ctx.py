@@ -7,9 +7,9 @@ import utils
 from core.book.book_dialog import BookDialogue
 from core.dialogue.speaker_annotation import try_recognize
 from core.dialogue.utils import iter_by_utterances
+from e_rag.utils_em import EMApi
 from utils import CsvService
 from utils_ceb import CEBApi
-from utils_em import EMApi
 from utils_gd import GuttenbergDialogApi
 from utils_my import MyAPI
 

@@ -2,9 +2,9 @@ import argparse
 from collections import Counter
 from os.path import join
 
+from e_rag.utils_em import EMApi
 from utils import TextService
 from utils_ceb import CEBApi
-from utils_em import EMApi
 from utils_pg19 import PG19Api
 
 
