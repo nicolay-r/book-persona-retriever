@@ -1,8 +1,7 @@
 import json
 from os.path import join
 
-from utils_em import EMApi
-
+from e_rag.utils_em import EMApi
 
 for c in EMApi.chars:
     src = join(EMApi.output_dir, f"./em-chatgpt4/{EMApi.book_id}_{c}")
