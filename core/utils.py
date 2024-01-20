@@ -35,7 +35,7 @@ def try_extract_entry(text, begin=0, open_bracket="\"", close_bracket="\""):
     if end is None:
         return None
 
-    return text[actual_begin + 1:end], end+1
+    return text[actual_begin + len(open_bracket):end], end+len(close_bracket)
 
 
 def extract_all_entries(text, open_bracket, close_bracket, begin=0):
