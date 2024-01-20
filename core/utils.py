@@ -28,9 +28,12 @@ def try_extract_entry(text, begin=0, open_bracket="\"", close_bracket="\""):
         return None
 
     try:
-        end = text.index(close_bracket, actual_begin + 1)
+        end = text.index(close_bracket, actual_begin + len(open_bracket))
     except Exception:
         end = None
+
+    if end is None:
+        return None
 
     return text[actual_begin + 1:end], end+1
 
