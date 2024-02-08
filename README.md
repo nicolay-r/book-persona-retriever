@@ -1,6 +1,6 @@
 # Book Processing Framework
 
-# Contents
+## Contents
 * [Workflow](#workflow)
 * [Research directions](#research-directions)
 * [Datasets](#datasets)
