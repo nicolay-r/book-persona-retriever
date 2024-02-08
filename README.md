@@ -1,25 +1,75 @@
 # Book Processing Framework
 
-<p align="center">
-    <img src="logo.png"/>
+# Contents
+* [Workflow](#workflow)
+* [Research directions](#research-directions)
+* [Datasets](#datasets)
+* [Dependencies](#dependencies)
+
+## Workflow
+
+This repository represents a core of the book processing aimed 
+at [**automatic dialogue extraction**](https://arxiv.org/abs/2004.12752)
+and allows forming **datasets** of conversations between characters.
+The content of dataset yields of dialogues, with utterances that 
+annotated with speakers 
+([**quotation annotation**](https://github.com/dbamman/litbank?tab=readme-ov-file#quotation-annotations) problem,
+[[paper]](https://arxiv.org/pdf/2004.13980.pdf)).
+
+<p align="center" width="1000">
+    <img src="pics/pipeline_architecture.png"/>
 </p>
 
-This repository represents a core of the book processing aimed at dialogue extraction [algorithm]
-for forming the related **datasets** of conversations between characters.
-The content of dataset yields of dialogues, with utterances that **automatically annotated with speakers** [quotation annotations].
+### Personalities
+We also provide API for collection information on characters and composing their personalities in a vector form.
+We adopt **spectrum** model for 
+vectorizing characters representation, using 
+[spectrums as features](https://github.com/tacookson/data/tree/master/fictional-character-personalities).
+By provide [personalities factorization model](https://github.com/newpro/aloha-chatbot) 
+over vectorized representation of characters:
 
-**Personalities**: We also provide API for collection information on characters and composing their personalities in a vector form.
-We adopt **spectrum** model for vectorizing characters representation [link to spectrums].
-By provide factorization model [aloha github] over vectorized representation of characters [t-sne].
+<p align="center" width="600">
+    <img src="pics/characters_embedding_visualization_tsne.png"/>
+</p>
 
-**Research Directions**. 
+## Research Directions
 The directions this project was aimed at the following research directions:
 * `e_pairs` -- extraction of dialogue pairs including speaker assignation;
-* `e_se_subin`  -- extraction of the speakers for utterances;
-* `e_rag` -- extraction of utterances and contexts as well as forming character knowledge based for RAG and augmenting transformers.
+* `e_se_subin`  -- extraction of the speakers for utterances, which is discovered by [Subin Jing](https://github.com/SubinJung-CS);
+* `e_rag` -- extraction of utterances and contexts as well as forming character knowledge based for RAG and augmenting Large Languge Models (LLM).
 
 For each direction we provide a pipeline (sequence of the separately ordered scripts) aimed at resource construction and evaluation.
 
-**Limitation:** we consider books from Project Gutenberg [link-to-project]. 
-We utilize CEB framework [link-to-project] with pre-annotated and grouped speakers.
-We also utilize PG19 as a source of metadata from books.
+## Datasets
+
+### Response Prediction and Speaker Recognition
+
+For `e_pairs` and `e_se_subin` research directions, 
+we utilize 
+[ParlAI](https://github.com/facebookresearch/ParlAI) 
+framework for conducting experiments.
+In order to embed extracted data, we utilize the related data formatter. 
+
+> **NOTE:** [Please use `nicolay-r/parlai_bookchar_tark` repository](https://github.com/nicolay-r/parlai_bookchar_task) on embedding task into ParlAI. 
+> All the resources below are automatically downloaded once the task is embedded into ParlAI framework. 
+
+Below are the links for the fine-cleaned dataset of dialogue pairs between **400 most-frequently appeared characters**:
+
+**Response Prediction**: [[from-parlai-agents]](https://github.com/nicolay-r/parlai_bookchar_task/blob/master/build.py)
+* #### [Download Train no HLA](https://www.dropbox.com/scl/fi/cmflno09yyvw70mpf4fli/dataset_parlai_train_original.txt.zip?rlkey=477zsekm5j0a4dpco0w9479uo&dl=1)
+* #### [Download Valid no HLA](https://www.dropbox.com/scl/fi/508zfhxewvweqtn4k7hfg/dataset_parlai_valid_original.txt.zip?rlkey=3a0syeturb84lxtmizq1o5bsx&dl=1)
+* #### [Download Train with HLA](https://www.dropbox.com/scl/fi/ax62dvkik12alxj604ute/dataset_parlai_train_spectrum.txt.zip?rlkey=xuvmvze6fnak413gst54qd4qz&dl=1)
+* #### [Download Valid with HLA](https://www.dropbox.com/scl/fi/lr96to0rzc6wpo84isscb/dataset_parlai_valid_spectrum.txt.zip?rlkey=5wrgtrtuulf3baxr724bcycdu&dl=1)
+
+**Speaker Recognition**: [[from-parlai-agents]](https://github.com/nicolay-r/parlai_bookchar_task/blob/speaker-recognition-task/build.py)
+* #### [Train with HLA](https://www.dropbox.com/scl/fi/r241a1ma2douus965h7lf/dataset_parlai_train_hla.txt.zip?rlkey=dwcnm0yxn2boujomd53nx0595&dl=1)
+* #### [Valid with HLA](https://www.dropbox.com/scl/fi/arzub1tmegklkf93dthpr/dataset_parlai_valid_hla.txt.zip?rlkey=lpa8vcs48f3bxegk3gtw22h2i&dl=1)
+
+## Dependencies 
+
+We consider books from [Project Gutenberg](https://www.gutenberg.org/).
+
+We utilize:
+* [CEB-framework](https://github.com/naoya-i/charembench) -- pre-annotated and grouped speakers from **Project Gutenberg**. [[paper]]()
+* [PG19](https://github.com/google-deepmind/pg19) -- source of metadata for 19'th Century books from **Project Gutenberg**.
+* [gutenberg-dialog](https://github.com/ricsinaruto/gutenberg-dialog) -- automatic dialogue annotation algorithm [[paper]]()
