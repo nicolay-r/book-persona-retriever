@@ -1,3 +1,6 @@
+from core.utils import try_extract_entry
+
+
 def iter_parse_chatgpt4_1106_em(src):
     """ Parse Empathy mappings from the ChatGPT-4 responses.
     """
@@ -39,17 +42,37 @@ def iter_parse_mistral_parse_em(text, line_to_cat_func):
 def mistral_clear_em_instance(text):
 
     text = text.replace('</s>', '')
+    words = text.split()
+    lowered = text.lower()
+
     if len(text) > 0 and text[0] in ["*", '+']:
         text = text[1:].strip()
     if len(text) > 0 and text[-1] == '.':
         text = text[:-1]
-    if text.lower() in ["none", "none specified", "none mentioned"]:
+    if len(text) < 2:
         return None
-    if "none specified" in text.lower():
+    if lowered in ["none", "none specified", "none mentioned"]:
         return None
-    if "none mentioned" in text.lower():
+    if "none specified" in lowered:
         return None
-    if "overall," in text.lower():
+    if "none mentioned" in lowered:
         return None
+    if "overall," in lowered:
+        return None
+    if " y " in lowered or 'y\'s' in lowered or " y" in lowered:
+        return None
+    if text[0] == text[-1] == '\"':
+        return None
+    if len(words) < 5:
+        return None
+
+    # Cleaning the text from utterances.
+    while True:
+        r = try_extract_entry(text)
+        if r is None:
+            break
+        entry, _ = r
+        text = text.replace(entry, "_")
+        text = text.replace("\"_\"", "_")
 
     return text
