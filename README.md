@@ -29,7 +29,7 @@ By provide [personalities factorization model](https://github.com/newpro/aloha-c
 over vectorized representation of characters:
 
 <p align="center">
-    <img src="pics/characters_embedding_visualization_tsne.png" width="450"/>
+    <img src="pics/characters_embedding_visualization_tsne.png" width="350"/>
 </p>
 
 ## Research Directions
