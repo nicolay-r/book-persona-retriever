@@ -16,8 +16,8 @@ annotated with speakers
 ([**quotation annotation**](https://github.com/dbamman/litbank?tab=readme-ov-file#quotation-annotations) problem,
 [[paper]](https://arxiv.org/pdf/2004.13980.pdf)).
 
-<p align="center" width="1000">
-    <img src="pics/pipeline_architecture.png"/>
+<p align="center">
+    <img src="pics/pipeline_architecture.png" width="1000"/>
 </p>
 
 ### Personalities
@@ -28,8 +28,8 @@ vectorizing characters representation, using
 By provide [personalities factorization model](https://github.com/newpro/aloha-chatbot) 
 over vectorized representation of characters:
 
-<p align="center" width="600">
-    <img src="pics/characters_embedding_visualization_tsne.png"/>
+<p align="center">
+    <img src="pics/characters_embedding_visualization_tsne.png" width="450"/>
 </p>
 
 ## Research Directions
