@@ -35,7 +35,7 @@ over vectorized representation of characters:
 ## Research Directions
 The directions this project was aimed at the following research directions:
 * `e_pairs` -- extraction of dialogue pairs including speaker assignation;
-* `e_se_subin`  -- extraction of the speakers for utterances, which is discovered by [Subin Jing](https://github.com/SubinJung-CS);
+* `e_se_subin`  -- extraction of the speakers for utterances, which is discovered by [Subin Jung](https://github.com/SubinJung-CS);
 * `e_rag` -- extraction of utterances and contexts as well as forming character knowledge based for RAG and augmenting Large Languge Models (LLM).
 
 For each direction we provide a pipeline (sequence of the separately ordered scripts) aimed at resource construction and evaluation.
