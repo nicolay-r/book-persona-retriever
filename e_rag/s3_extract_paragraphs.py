@@ -3,8 +3,8 @@ from os.path import join
 
 from core.book.paragraph import Paragraph
 from core.book.utils import iter_paragraphs_with_n_speakers
+from core.service_csv import CsvService
 from e_rag.utils_em import EMApi
-from utils import CsvService
 from utils_ceb import CEBApi
 from utils_gd import GuttenbergDialogApi
 from utils_my import MyAPI

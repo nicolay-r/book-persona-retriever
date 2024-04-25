@@ -1,10 +1,10 @@
 from tqdm import tqdm
 
 from core.database.sqlite3_api import SQLiteService
+from core.service_csv import CsvService
 from core.utils import DictService, JsonService
 from e_rag.utils_em import EMApi
 from e_rag.utils_llm import iter_parse_mistral_parse_em
-from utils import CsvService
 
 # Read speaker names.
 char_ids = [int(item[0].split("_")[1]) for item in

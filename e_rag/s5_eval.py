@@ -3,7 +3,7 @@ from collections import Counter
 from os.path import join
 
 from core.database.sqlite3_api import SQLiteService
-from utils import CsvService
+from core.service_csv import CsvService
 from utils_ceb import CEBApi
 from utils_em import EMApi
 

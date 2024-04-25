@@ -1,7 +1,7 @@
 from os.path import join
 
+from core.service_csv import CsvService
 from e_rag.utils_em import EMApi
-from utils import CsvService
 
 
 def iter_manual_chars():

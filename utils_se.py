@@ -8,6 +8,7 @@ class SEApi(object):
     # Main parameters.
     __current_dir = dirname(realpath(__file__))
     books_storage = join(__current_dir, "./data/se_task/")
+    books_storage_original = join(__current_dir, "./data/ceb_books_annot")
 
     selected_output_dir = join(__current_dir, "./data/se_task_selected/")
 
@@ -20,14 +21,13 @@ class SEApi(object):
     parlai_dataset_persona_prefix = ""
     parlai_dataset_candidates_limit = 20
     parlai_dataset_ovesampling_candidates_selection_seed = 42
-    dataset_fold_filepath = join(__current_dir, "./data/ceb_books_annot/dataset_f{fold_index}.txt")
+    dataset_fold_filepath = join(books_storage_original, "./dataset_f{fold_index}.txt")
     # HLA-related parameters.
     hla_spectrums_limit = 20            # ALOHA parameter which is proposes to keep the most representative traits.
     hla_spectrum_preset = "prompt_top_{}".format(str(hla_spectrums_limit))
-    hla_prompts_filepath = join(__current_dir, "./data/ceb_books_annot/spectrum_speaker_prompts-{preset}.txt".format(
-        preset=hla_spectrum_preset))
+    hla_prompts_filepath = join(books_storage_original, "./spectrum_speaker_prompts-{preset}.txt".format(preset=hla_spectrum_preset))
     # The result dataset details.
-    parlai_dataset_filepath = join(__current_dir, "./data/se_task/dataset_parlai_{}.zip")
+    parlai_dataset_filepath = join(books_storage, "./dataset_parlai_{}.zip")
     parlai_dataset_train_candidates_oversample_factor = 5
 
     predefined_speakers = ['153_2', '1257_7', '1257_9', '403_3', '1258_8']

@@ -6,9 +6,10 @@ from sentence_transformers import SentenceTransformer
 from tqdm import tqdm
 
 from core.database.sqlite3_api import SQLiteService
+from core.service_csv import CsvService
 from core.utils import DictService
 from e_rag.utils_llm import iter_parse_mistral_parse_em
-from utils import CACHE_DIR, CsvService
+from utils import CACHE_DIR
 from utils_ceb import CEBApi
 from utils_em import EMApi
 

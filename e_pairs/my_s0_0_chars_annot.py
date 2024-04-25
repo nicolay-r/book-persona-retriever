@@ -18,7 +18,7 @@ source_api = CEBApi(books_root=join(DATA_DIR, "books"), char_map_path=join(DATA_
 source_api.read_char_map()
 
 # Target API.
-target_api = CEBApi(books_root=MyAPI.books_storage_en)
+target_api = CEBApi(books_root=MyAPI.books_storage_en, char_map_path=join(DATA_DIR, "chr_map.json"))
 
 for book_id in tqdm(source_api.book_ids_from_directory(), desc="Annotating characters"):
     with open(source_api.get_book_path(book_id)) as f:

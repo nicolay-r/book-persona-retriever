@@ -23,22 +23,22 @@ class MyAPI:
     selected_output_dir = "./data/selected_books_annot/"
 
     # Prefixes lexicon storage configurations.
-    prefixes_storage_filepath = join(__current_dir, "./data/ceb_books_annot/prefixes.txt")
+    prefixes_storage_filepath = join(books_storage, "./prefixes.txt")
     # Dialogs with recognized speakers.
     dialogs_recongize_speaker_p_threshold = 0.01
     dialogs_recognize_speaker_at_positions = [0, 1, 2, 3]  # We consider only positions 0, 1, 2, and 3
                                                            # according to the related preliminary analysis.
-    dialogs_filepath = join(__current_dir, "./data/ceb_books_annot/dialogs.txt")
+    dialogs_filepath = join(__current_dir, books_storage, "./dialogs.txt")
     # Setup parameters for the dataset generation
-    filtered_speakers_filepath = join(__current_dir, "./data/ceb_books_annot/filtered_speakers.txt")
+    filtered_speakers_filepath = join(__current_dir, books_storage, "./filtered_speakers.txt")
     # Speakers filtering parameters.
     dataset_min_words_count_in_response = 10
     dataset_filter_speaker_total_speakers_count = 400
     dataset_predefined_speakers_count = 100
     dataset_filter_speaker_min_utterances_per_speaker = None
     dataset_filter_other_speakers_in_response = 0
-    dataset_filepath = join(__current_dir, "./data/ceb_books_annot/dataset.txt")
-    dataset_fold_filepath = join(__current_dir, "./data/ceb_books_annot/dataset_f{fold_index}.txt")
+    dataset_filepath = join(books_storage, "./dataset.txt")
+    dataset_fold_filepath = join(books_storage, "./dataset_f{fold_index}.txt")
     dataset_filter_dialogue_max_utterances_per_speaker = 100
     # Dataset folding.
     dataset_folding_parts = 5
@@ -46,19 +46,19 @@ class MyAPI:
         'train': range_exclude_middle(dataset_folding_parts),
         "valid": range_middle(dataset_folding_parts),
     }
-    dataset_st_embedding_query = join(__current_dir, "./data/ceb_books_annot/x.dataset-query-sent-transformers.npz")
-    dataset_st_embedding_response = join(__current_dir, "./data/ceb_books_annot/x.dataset-response-sent-transformers.txt")
-    dataset_dialog_db_path = join(__current_dir, "./data/ceb_books_annot/dataset_dialog.sqlite")
-    dataset_dialog_db_fold_path = join(__current_dir, "./data/ceb_books_annot/dataset_dialog_{fold_index}.sqlite")
+    dataset_st_embedding_query = join(books_storage, "./x.dataset-query-sent-transformers.npz")
+    dataset_st_embedding_response = join(books_storage, "./x.dataset-response-sent-transformers.txt")
+    dataset_dialog_db_path = join(books_storage, "./dataset_dialog.sqlite")
+    dataset_dialog_db_fold_path = join(books_storage, "./dataset_dialog_{fold_index}.sqlite")
     # spectrums-related data
     spectrum_speakers_in_paragraph = 1
     spectrum_comment_speaker_positions = [0, 1, 2]
     spectrum_per_user_count = 8
     spectrum_embedding_model_name = 'all-mpnet-base-v2'
-    spectrum_features_norm = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-norm.npz")
-    spectrum_features_diff = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-diff.npz")
-    spectrum_speakers = join(__current_dir, "./data/ceb_books_annot/y.spectrum-speakers.npz")
-    spectrum_st_embeddings = join(__current_dir, "./data/ceb_books_annot/x.spectrum-embeddings-sent-transformers-{preset}.npz")
+    spectrum_features_norm = join(books_storage, "./x.spectrum-embeddings-norm.npz")
+    spectrum_features_diff = join(books_storage, "./x.spectrum-embeddings-diff.npz")
+    spectrum_speakers = join(books_storage, "./y.spectrum-speakers.npz")
+    spectrum_st_embeddings = join(books_storage, "./x.spectrum-embeddings-sent-transformers-{preset}.npz")
     # This a models for the representation of the speakers.
     # ALOHA chatbot paper: https://arxiv.org/abs/1910.08293
     hla_melted_data_filepath = join(books_storage, "features_melted.txt")
@@ -71,16 +71,16 @@ class MyAPI:
                                         # We limit to 20 because of the 2 polarities of spectrums (two different values
                                         # per one trait).
     hla_spectrum_preset = "prompt_top_{}".format(str(hla_spectrums_limit))
-    hla_prompts_filepath = join(__current_dir, "./data/ceb_books_annot/spectrum_speaker_prompts-{preset}.txt".format(preset=hla_spectrum_preset))
+    hla_prompts_filepath = join(books_storage, "./spectrum_speaker_prompts-{preset}.txt".format(preset=hla_spectrum_preset))
     hla_neg_set_speakers_limit = 10     # The overall process might take so much time is what becomes a reason of limit.
-    hla_users_embedding_factor = join(__current_dir, "./data/ceb_books_annot/x.speakers-factor.npz")
+    hla_users_embedding_factor = join(books_storage, "./x.speakers-factor.npz")
 
     # ParlAI dataset creation related parameters.
     parlai_dataset_candidates_limit = 20
     parlai_dataset_persona_prefix = ""
     parlai_dataset_episode_candidates_and_traits_shuffle_seed = 42
     parlai_dataset_ovesampling_candidates_selection_seed = 42
-    parlai_dataset_filepath = join(__current_dir, "./data/ceb_books_annot/dataset_parlai_{}.zip")
+    parlai_dataset_filepath = join(books_storage, "./dataset_parlai_{}.zip")
     parlai_charmask_template = "_"      # We perform character masking for the ParlAI dataset of utterances.
     parlai_dataset_train_candidates_oversample_factor = 5   # In Aloha Paper, authors end up dealing with 1M dialogue lines.
                                                             # For the similar amount of speakers in books, we deal with ~40K
