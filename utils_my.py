@@ -6,7 +6,7 @@ from os.path import join, dirname, realpath, isfile
 from tqdm import tqdm
 
 from core.book.book_dialog import BookDialogue
-from embeddings.aloha.cfg import MatrixTrainingConfig, ClusterConfig
+from core.embeddings.aloha.cfg import MatrixTrainingConfig, ClusterConfig
 from utils import range_exclude_middle, range_middle
 
 

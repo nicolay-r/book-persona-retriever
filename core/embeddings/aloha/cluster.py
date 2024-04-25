@@ -1,7 +1,9 @@
 import math
 from collections import Counter
 import logging
-from embeddings.aloha.cfg import ClusterConfig
+
+from core.embeddings.aloha.cfg import ClusterConfig
+
 logger = logging.getLogger('example_logger')
 
 

@@ -3,7 +3,7 @@ import os
 import sys
 import requests
 from math import ceil
-from os.path import exists, dirname
+from os.path import exists
 
 from tqdm import tqdm
 
