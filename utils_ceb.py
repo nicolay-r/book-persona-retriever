@@ -14,20 +14,17 @@ class CEBApi:
         Github project: https://github.com/naoya-i/charembench
     """
 
-    __current_dir = dirname(realpath(__file__))
-    books_storage = join(__current_dir, "./data/ceb_books")
-    books_storage_en = join(__current_dir, books_storage, "./en")
-    character_map = join(__current_dir, "./data/charembench/data/chr_map.json")
-    gender_meta_path = join(__current_dir, "./data/charembench/data/char_level/gender.json")
-    role_meta_path = join(__current_dir, "./data/charembench/data/char_level/role.json")
+    __root_dir = dirname(realpath(__file__))
+    gender_meta_path = join(__root_dir, "./data/charembench/data/char_level/gender.json")
+    role_meta_path = join(__root_dir, "./data/charembench/data/char_level/role.json")
 
-    def __init__(self, books_root=None, char_map_path=None):
+    def __init__(self, books_root, char_map_path):
         """ Init API with the particular root provided for books and character mapping.
         """
-        assert(isinstance(books_root, str) or books_root is None)
-        assert(isinstance(char_map_path, str) or char_map_path is None)
-        self.__book_storage_root = CEBApi.books_storage_en if books_root is None else books_root
-        self.__character_map_path = CEBApi.character_map if char_map_path is None else char_map_path
+        assert(isinstance(books_root, str))
+        assert(isinstance(char_map_path, str))
+        self.__book_storage_root = books_root
+        self.__character_map_path = char_map_path
         self.__book_by_char = None
         self.__chars = None
 

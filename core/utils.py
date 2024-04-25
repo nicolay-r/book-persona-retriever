@@ -1,7 +1,11 @@
 import json
 import os
+import sys
+import requests
 from math import ceil
 from os.path import exists, dirname
+
+from tqdm import tqdm
 
 
 def chunk_into_n(lst, n):
@@ -54,15 +58,18 @@ def extract_all_entries(text, open_bracket, close_bracket, begin=0):
     return entry_list
 
 
+def create_dir_if_not_exist(target_dir):
+    if not exists(target_dir):
+        os.makedirs(target_dir)
+
+
 class JsonService:
 
     @staticmethod
     def write(d, target, silent=False):
 
         # Create target directory if the latter does not exist.
-        dir = dirname(target)
-        if not exists(dir):
-            os.makedirs(dir)
+        create_dir_if_not_exist(target)
 
         # Do save.
         with open(target, "w") as f:
@@ -84,3 +91,26 @@ class DictService:
             d[k].append(v)
 
         return d
+
+
+def download(dest_file_path, source_url, silent=False, **tqdm_kwargs):
+    if not silent:
+        print(('Downloading from {src} to {dest}'.format(src=source_url, dest=dest_file_path)))
+
+    sys.stdout.flush()
+    datapath = os.path.dirname(dest_file_path)
+
+    if not os.path.exists(datapath):
+        os.makedirs(datapath, mode=0o755)
+
+    dest_file_path = os.path.abspath(dest_file_path)
+
+    r = requests.get(source_url, stream=True)
+    total_length = int(r.headers.get('content-length', 0))
+
+    with open(dest_file_path, 'wb') as f:
+        pbar = tqdm(total=total_length, unit='B', unit_scale=True, **tqdm_kwargs)
+        for chunk in r.iter_content(chunk_size=32 * 1024):
+            if chunk:  # filter out keep-alive new chunks
+                pbar.update(len(chunk))
+                f.write(chunk)

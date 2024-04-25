@@ -1,6 +1,12 @@
 from collections import Counter
+from os.path import join
 
 from tqdm import tqdm
+import sys
+
+from utils import DATA_DIR
+
+sys.path.append('../')
 
 from utils_ceb import CEBApi
 from utils_my import MyAPI
@@ -8,7 +14,7 @@ from utils_my import MyAPI
 ctr = Counter()
 
 # Source API.
-source_api = CEBApi()
+source_api = CEBApi(books_root=join(DATA_DIR, "books"), char_map_path=join(DATA_DIR, "chr_map.json"))
 source_api.read_char_map()
 
 # Target API.
@@ -28,4 +34,7 @@ for book_id in tqdm(source_api.book_ids_from_directory(), desc="Annotating chara
 
     target_api.save_book(book_id=book_id, text=book_text)
 
-print("Found: {}%".format(round(ctr["found"] / (ctr["found"] + ctr["missed"]) * 100), 4))
+if ctr["found"] == 0:
+    print(f"No books were found at: {MyAPI.books_storage_en}")
+else:
+    print("Found: {}%".format(round(ctr["found"] / (ctr["found"] + ctr["missed"]) * 100), 4))

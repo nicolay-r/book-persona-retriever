@@ -7,16 +7,11 @@ class PG19Api:
     """ Books from Project Gutenberg for 19th Century.
     """
 
-    __current_dir = dirname(realpath(__file__))
-    books_storage = join(__current_dir, "./data/pg-19")
-    metadata = join(__current_dir, books_storage, "metadata.csv")
-
     def __init__(self):
         self.__pg19_titles = None
 
-    def read(self, path=None):
-        path = self.metadata if path is None else path
-        self.__pg19_titles = pd.read_csv(path, header=None)
+    def read(self, metadata_path):
+        self.__pg19_titles = pd.read_csv(metadata_path, header=None)
         self.__pg19_titles.columns = ["id", "title", "year", "link"]
 
     def find_book_title(self, book_id):
