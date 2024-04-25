@@ -71,5 +71,4 @@ We consider books from [Project Gutenberg](https://www.gutenberg.org/).
 
 We utilize:
 * [CEB-framework](https://github.com/naoya-i/charembench) -- pre-annotated and grouped speakers from **Project Gutenberg**. [[paper]]()
-* [PG19](https://github.com/google-deepmind/pg19) -- source of metadata for 19'th Century books from **Project Gutenberg**.
 * [gutenberg-dialog](https://github.com/ricsinaruto/gutenberg-dialog) -- automatic dialogue annotation algorithm [[paper]]()
