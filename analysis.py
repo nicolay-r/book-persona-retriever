@@ -1,11 +1,10 @@
 import json
 
 import pandas as pd
-from tqdm import tqdm
+
 
 personalities = pd.read_csv("data/fictional-character-personalities/personalities.txt", sep='\t')
 print(len(personalities))
-#print(personalities)
 all_works = set(personalities["fictional_work"])
 print(all_works)
 print(len(all_works))
