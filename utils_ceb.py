@@ -1,8 +1,6 @@
 import json
 import os
-from os.path import dirname, realpath, join
-
-from tqdm import tqdm
+from os.path import join
 
 from core.book.paragraph import Paragraph
 from core.utils import filter_whitespaces
@@ -14,10 +12,6 @@ class CEBApi:
         Github project: https://github.com/naoya-i/charembench
     """
 
-    __root_dir = dirname(realpath(__file__))
-    gender_meta_path = join(__root_dir, "./data/charembench/data/char_level/gender.json")
-    role_meta_path = join(__root_dir, "./data/charembench/data/char_level/role.json")
-
     def __init__(self, books_root, char_map_path):
         """ Init API with the particular root provided for books and character mapping.
         """
@@ -27,31 +21,6 @@ class CEBApi:
         self.__character_map_path = char_map_path
         self.__book_by_char = None
         self.__chars = None
-
-    def get_meta_gender(self):
-        gender_by_id = {}
-        with open(self.gender_meta_path, "r") as f:
-            content = json.load(f)
-
-            for task in content["data"]:
-                speaker_id, is_male = task
-                gender_by_id[speaker_id] = "Male" if is_male else "Female"
-
-        return gender_by_id
-
-    def get_meta_role(self):
-        d = {}
-
-        with open(CEBApi.role_meta_path, "r") as f:
-            content = json.load(f)
-
-            # output filepath.
-            for task in tqdm(content["data"]):
-                speaker_id = task["char_id"]
-                answer = task["answer"]
-                d[speaker_id] = answer
-
-        return d
 
     def save_book(self, book_id, text):
         """ Note: Used for annotated texts
