@@ -1,10 +1,8 @@
 torch==1.6.0
 transformers==3.4.0
-gutenberg_dialog @ git+https://github.com/nicolay-r/gutenberg-dialog@dev
 arekit @ git+https://github.com/nicolay-r/AREkit.git@0.23.1-rc
 pandas==0.25.3
 scikit-learn==1.2.2
-sentence_transformers==2.2.2
 nltk==3.4.5
 zipstream==1.1.4
 requests

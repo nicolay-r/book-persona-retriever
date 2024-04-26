@@ -6,7 +6,6 @@ from os.path import join, dirname, realpath, isfile
 from tqdm import tqdm
 
 from core.book.book_dialog import BookDialogue
-from e_pairs.embeddings.aloha.cfg import ClusterConfig, MatrixTrainingConfig
 from utils import range_exclude_middle, range_middle
 
 
@@ -62,9 +61,6 @@ class MyAPI:
     # This a models for the representation of the speakers.
     # ALOHA chatbot paper: https://arxiv.org/abs/1910.08293
     hla_melted_data_filepath = join(books_storage, "features_melted.txt")
-    hla_training_config = MatrixTrainingConfig(top_n=100, regularization=100, iterations=500, factor=36,
-                                               conf_scale=20, random_state=649128, safe_pass=0.2)
-    hla_cluster_config = ClusterConfig(perc_cutoff=10, level2_limit=30, acceptable_overlap=10, weighted=False)
     hla_users_melted_filepath = join(books_storage, "features_melted.txt")
     hla_speaker_clusters_path = join(books_storage, "clusters.jsonl")
     hla_spectrums_limit = 20            # ALOHA parameter which is proposes to keep the most representative traits.
