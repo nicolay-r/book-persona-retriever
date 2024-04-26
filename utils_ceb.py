@@ -22,17 +22,21 @@ class CEBApi:
         self.__book_by_char = None
         self.__chars = None
 
+    def _book_target(self, book_id):
+        assert(isinstance(book_id, int))
+        os.makedirs(self.__book_storage_root, exist_ok=True)
+        return join(self.__book_storage_root, "{}.txt".format(str(book_id)))
+
     def save_book(self, book_id, text):
         """ Note: Used for annotated texts
         """
-        assert(isinstance(book_id, int))
-        assert(isinstance(text, str))
-
-        os.makedirs(self.__book_storage_root, exist_ok=True)
-
-        target_filepath = join(self.__book_storage_root, "{}.txt".format(str(book_id)))
+        assert (isinstance(text, str))
+        target_filepath = self._book_target(book_id)
         with open(target_filepath, "w") as f:
             f.write(text)
+
+    def check_book_exist(self, book_id):
+        return os.path.exists(self._book_target(book_id))
 
     @staticmethod
     def is_speaker_id(value):

@@ -1,3 +1,5 @@
+import argparse
+
 from tqdm import tqdm
 from os.path import join
 from collections import Counter
@@ -11,6 +13,11 @@ sys.path.append('../')
 
 if __name__ == '__main__':
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-no-skip', dest='no_skip_existed', default="false", action="store_true")
+
+    args = parser.parse_args()
+
     # Source API.
     source_api = CEBApi(books_root=join(DATA_DIR, "books"), char_map_path=join(DATA_DIR, "chr_map.json"))
     source_api.read_char_map()
@@ -19,7 +26,12 @@ if __name__ == '__main__':
     target_api = CEBApi(books_root=MyAPI.books_storage_en, char_map_path=join(DATA_DIR, "chr_map.json"))
 
     ctr = Counter()
-    for book_id in tqdm(source_api.book_ids_from_directory(), desc="Annotating characters"):
+    for book_id in tqdm(source_api.book_ids_from_directory(), desc="Annotating characters", unit="book"):
+
+        # Skip those books that were already processed.
+        if target_api.check_book_exist(book_id) and args.no_skip_existed:
+            continue
+
         with open(source_api.get_book_path(book_id)) as f:
             book_text = f.read()
             for char_id in source_api.iter_book_chars(book_id):

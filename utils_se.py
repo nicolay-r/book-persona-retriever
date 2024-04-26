@@ -8,7 +8,7 @@ class SEApi(object):
     # Main parameters.
     __current_dir = dirname(realpath(__file__))
     books_storage = join(__current_dir, "./data/se_task/")
-    books_storage_original = join(__current_dir, "./data/ceb_books_annot")
+    books_storage_original = join(__current_dir, "./data/books_annot")
 
     selected_output_dir = join(__current_dir, "./data/se_task_selected/")
 
