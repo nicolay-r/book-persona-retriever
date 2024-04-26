@@ -16,7 +16,7 @@ class MyAPI:
 
     # Main parameters.
     __current_dir = dirname(realpath(__file__))
-    books_storage = join(__current_dir, "./data/ceb_books_annot")
+    books_storage = join(__current_dir, "./data/books_annot")
     books_storage_en = join(books_storage, "en")
 
     # Output directory for the selected speakers.
