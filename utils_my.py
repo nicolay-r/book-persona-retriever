@@ -6,6 +6,7 @@ from os.path import join, dirname, realpath, isfile
 from tqdm import tqdm
 
 from core.book.book_dialog import BookDialogue
+from core.utils import count_files_in_folder
 from utils import range_exclude_middle, range_middle
 
 
@@ -105,6 +106,9 @@ class MyAPI:
 
     def get_book_path(self, book_id):
         return join(self.__book_storage_root, "{book_id}.txt".format(book_id=book_id))
+
+    def get_total_books(self):
+        return count_files_in_folder(self.__book_storage_root)
 
     def books_count(self):
         count = 0

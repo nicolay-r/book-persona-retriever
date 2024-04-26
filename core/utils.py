@@ -16,6 +16,17 @@ def chunk_into_n(lst, n):
     )
 
 
+def count_files_in_folder(folder_path):
+    # Initialize a counter for the total number of files
+    total_files = 0
+
+    # Iterate over the files in the folder
+    for _, _, files in os.walk(folder_path):
+        total_files += len(files)
+
+    return total_files
+
+
 def filter_whitespaces(terms):
     return [term.strip() for term in terms if term.strip()]
 
