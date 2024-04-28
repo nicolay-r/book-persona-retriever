@@ -1,7 +1,7 @@
 import numpy as np
 
 from core.spectrums.stat import filter_most_distictive, order_traits_by_relevance
-from utils_fcp import FcpApi
+from e_pairs.api_fcp import FcpApi
 
 
 def to_prompts_top_k(X_norm, X_diff, fcp_api, k=None, limit=None):

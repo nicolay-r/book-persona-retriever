@@ -1,5 +1,7 @@
 from collections import OrderedDict
 
+from tqdm import tqdm
+
 from core.book.book_dialog import BookDialogue
 from utils_ceb import CEBApi
 from utils_gd import GuttenbergDialogApi
@@ -44,7 +46,8 @@ def parse_meta_speaker_id(meta):
     return int(meta[1:-1])
 
 
-def iter_speaker_annotated_dialogs(dialog_segments_iter_func, recognize_at_positions, prefix_lexicon=None):
+def iter_speaker_annotated_dialogs(dialog_segments_iter_func, recognize_at_positions,
+                                   prefix_lexicon=None, **tqdm_kwargs):
     """ This is a speaker annotation algorithm based on guttenberg-dialog
         project with additional annotation from my side (Rusnachenko Nicolay),
         that provides segmenting and author text part (comments) in between
@@ -54,10 +57,22 @@ def iter_speaker_annotated_dialogs(dialog_segments_iter_func, recognize_at_posit
 
     gd_api = GuttenbergDialogApi()
 
-    for _, dialog_segments in dialog_segments_iter_func:
+    pbar = tqdm(desc="Iter dialogue segments", unit="book", **tqdm_kwargs)
 
+    books_seen = set()
+    segments = 0
+    for book_id, dialog_segments in dialog_segments_iter_func:
+
+        # Update information.
         speakers = set()
         recognized_speakers = {}
+        segments += 1
+        books_seen.add(book_id)
+
+        # Update progress-bar related info.
+        if pbar.n < len(books_seen):
+            pbar.update(len(books_seen) - pbar.n)
+        pbar.set_postfix({"segments": segments})
 
         for meta, text in dialog_segments:
 
@@ -97,3 +112,8 @@ def iter_speaker_annotated_dialogs(dialog_segments_iter_func, recognize_at_posit
             dialog[speaker_id].append(text)
 
         yield dialog, recognized_speakers
+
+    # Manually update progress bar with the amount of the remaining books.
+    # Since some of the books might be skipped.
+    pbar.update(pbar.total - pbar.n)
+

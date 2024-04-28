@@ -31,11 +31,13 @@ def filter_response_speakers(dialogue_qr_pairs_it):
         ordered_speaker_ids = sorted(speaker_ids,
                                      key=cmp_to_key(lambda a, b: (__compare(a, b))),
                                      reverse=True)
-        print([speaker_entries[sid] for sid in ordered_speaker_ids])
+        print(f"\nMost Frequent speakers (total): {len(ordered_speaker_ids)}")
+        print("\n".join(["{}: {}".format(sid, speaker_entries[sid]) for sid in ordered_speaker_ids]))
         speaker_ids = ordered_speaker_ids[:MyAPI.dataset_filter_speaker_total_speakers_count]
         predefined_ids = ordered_speaker_ids[MyAPI.dataset_filter_speaker_total_speakers_count:
                                              MyAPI.dataset_filter_speaker_total_speakers_count + MyAPI.dataset_predefined_speakers_count]
-        print("Predefined Speakers", predefined_ids)
+        print(f"Predefined Speakers (total): {len(predefined_ids)}")
+        print(", ".join(predefined_ids))
 
     for speaker_id in speaker_ids:
 

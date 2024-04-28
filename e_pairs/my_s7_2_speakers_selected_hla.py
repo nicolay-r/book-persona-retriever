@@ -3,18 +3,22 @@ from os.path import join
 from core.spectrums.text_source import iter_all
 from core.spectrums_annot import annot_spectrums_in_text, annot_to_min_max_grouped
 from core.utils_npz import NpzUtils
+from e_pairs.api_fcp import FcpApi
+from e_pairs.cfg_spectrum import SpectrumConfig
 from test.const import MOST_DISTINCTIVE
 from test.utils_draw import draw_spectrums_stat
-from utils_fcp import FcpApi
+from utils import DATA_DIR
 from utils_my import MyAPI
 
 ############################################
 # SPECTRUMS: Calculation.
 ############################################
 my_api = MyAPI()
-fcp_api = FcpApi()
+fcp_api = FcpApi(personalities_path=join(DATA_DIR, "personalities.txt"))
+spectrum_cfg = SpectrumConfig(books_storage=MyAPI.books_storage)
 speaker_spectrums_dict = annot_spectrums_in_text(
-    texts_and_speakervars_iter=iter_all(speakers=my_api.predefined_speakers, my_api=my_api),
+    texts_and_speakervars_iter=iter_all(
+        speakers=my_api.predefined_speakers, my_api=my_api, spectrum_cfg=spectrum_cfg),
     rev_spectrums=fcp_api.reversed_spectrums())
 
 print("speaker spectrums dict len:", len(speaker_spectrums_dict))
@@ -23,9 +27,9 @@ print("speaker spectrums dict len:", len(speaker_spectrums_dict))
 spectrums_count = len(fcp_api._lexicon)+1
 data = {
     "speakers-selected-norm.npz": lambda speakers: annot_to_min_max_grouped(
-        speakers, do_norm=True, as_vectors=True, spectrums_count=spectrums_count),
+        speakers, do_norm=True, as_vectors=True, spectrums_count=spectrums_count, ind_func=FcpApi.spectrum_to_ind),
     "speakers-selected-diff.npz": lambda speakers: annot_to_min_max_grouped(
-        speakers, do_norm=False, as_vectors=True, spectrums_count=spectrums_count),
+        speakers, do_norm=False, as_vectors=True, spectrums_count=spectrums_count, ind_func=FcpApi.spectrum_to_ind),
 }
 
 for x_path, f in data.items():

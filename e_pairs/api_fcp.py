@@ -1,5 +1,3 @@
-from os.path import join, dirname, realpath
-
 import pandas as pd
 from tqdm import tqdm
 
@@ -8,19 +6,17 @@ class FcpApi:
     """ Fictional character personalities API.
     """
 
-    __current_dir = dirname(realpath(__file__))
-    personalities = join(__current_dir, "./data/fictional-character-personalities/personalities.txt")
-
     lex_low = "low"
     lex_high = "high"
 
-    def __init__(self):
+    def __init__(self, personalities_path):
         self._lexicon = None
         self._reversed = None
+        self.personalities_path = personalities_path
 
     def extract_as_lexicon(self, path=None):
         assert(isinstance(path, str) or path is None)
-        path = self.personalities if path is None else path
+        path = self.personalities_path if path is None else path
         df = pd.read_csv(path, sep="\t")
 
         lexicon = {}

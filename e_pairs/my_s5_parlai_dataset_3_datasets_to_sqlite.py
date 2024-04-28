@@ -1,4 +1,5 @@
 from core.database.dialogs import DialogDatabaseWithEmbeddedTargetsHandler
+from e_pairs.cfg_spectrum import SpectrumConfig
 from utils import CACHE_DIR
 from utils_my import MyAPI
 
@@ -11,27 +12,30 @@ def handle_responses(dialog_it, handle_func):
         handle_func(dialog_id, speaker_q_id, speaker_t_id, query, target)
 
 
-for fold in MyAPI.dataset_folding_fixed_parts.keys():
+if __name__ == '__main__':
 
-    if fold is None:
-        source = MyAPI.dataset_filepath
-        target = MyAPI.dataset_dialog_db_path
-    else:
-        source = MyAPI.dataset_fold_filepath.format(fold_index=fold)
-        target = MyAPI.dataset_dialog_db_fold_path.format(fold_index=fold)
+    spectrum_cfg = SpectrumConfig(books_storage=MyAPI.books_storage)
+    for fold in MyAPI.dataset_folding_fixed_parts.keys():
 
-    dialog_db = DialogDatabaseWithEmbeddedTargetsHandler(
-        model_name=MyAPI.spectrum_embedding_model_name,
-        cache_dir=CACHE_DIR,
-        storage_filepath=target)
+        if fold is None:
+            source = MyAPI.dataset_filepath
+            target = MyAPI.dataset_dialog_db_path
+        else:
+            source = MyAPI.dataset_fold_filepath.format(fold_index=fold)
+            target = MyAPI.dataset_dialog_db_fold_path.format(fold_index=fold)
 
-    dialog_it = MyAPI.iter_dataset_as_dialogs(
-        dataset_lines_iter=MyAPI.read_dataset(
-            source, keep_usep=False, split_meta=True,
-            desc="Compose for `{}` fold part".format(fold),
-            pbar=True)
-    )
+        dialog_db = DialogDatabaseWithEmbeddedTargetsHandler(
+            model_name=spectrum_cfg.embedding_model_name,
+            cache_dir=CACHE_DIR,
+            storage_filepath=target)
 
-    with dialog_db:
-        handle_responses(handle_func=dialog_db.handler,
-                         dialog_it=dialog_it)
+        dialog_it = MyAPI.iter_dataset_as_dialogs(
+            dataset_lines_iter=MyAPI.read_dataset(
+                source, keep_usep=False, split_meta=True,
+                desc="Compose ParlAI dataset for `{}` fold part".format(fold),
+                pbar=True)
+        )
+
+        with dialog_db:
+            handle_responses(handle_func=dialog_db.handler,
+                             dialog_it=dialog_it)

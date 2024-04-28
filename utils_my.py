@@ -50,15 +50,6 @@ class MyAPI:
     dataset_st_embedding_response = join(books_storage, "./x.dataset-response-sent-transformers.txt")
     dataset_dialog_db_path = join(books_storage, "./dataset_dialog.sqlite")
     dataset_dialog_db_fold_path = join(books_storage, "./dataset_dialog_{fold_index}.sqlite")
-    # spectrums-related data
-    spectrum_speakers_in_paragraph = 1
-    spectrum_comment_speaker_positions = [0, 1, 2]
-    spectrum_per_user_count = 8
-    spectrum_embedding_model_name = 'all-mpnet-base-v2'
-    spectrum_features_norm = join(books_storage, "./x.spectrum-embeddings-norm.npz")
-    spectrum_features_diff = join(books_storage, "./x.spectrum-embeddings-diff.npz")
-    spectrum_speakers = join(books_storage, "./y.spectrum-speakers.npz")
-    spectrum_st_embeddings = join(books_storage, "./x.spectrum-embeddings-sent-transformers-{preset}.npz")
     # This a models for the representation of the speakers.
     # ALOHA chatbot paper: https://arxiv.org/abs/1910.08293
     hla_melted_data_filepath = join(books_storage, "features_melted.txt")
@@ -139,8 +130,7 @@ class MyAPI:
         filepath = MyAPI.dialogs_filepath if filepath is None else filepath
 
         with open(filepath, "w") as file:
-            it = tqdm(iter_dialogs_and_speakers, desc="writing dialogues")
-            for dialog, recognized_speakers in it:
+            for dialog, recognized_speakers in iter_dialogs_and_speakers:
                 assert(isinstance(dialog, OrderedDict))
 
                 for speaker_id, segments in dialog.items():
@@ -198,7 +188,7 @@ class MyAPI:
             for speaker_name in speaker_names_list:
                 f.write("{}\n".format(speaker_name))
 
-        print("Speakers saved: {}".format(filepath))
+        print(f"Speakers saved: {filepath}")
 
     @staticmethod
     def read_speakers(filepath=None):
