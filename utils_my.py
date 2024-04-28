@@ -19,9 +19,6 @@ class MyAPI:
     books_storage = join(__current_dir, "./data/books_annot")
     books_storage_en = join(books_storage, "en")
 
-    # Output directory for the selected speakers.
-    selected_output_dir = "./data/selected_books_annot/"
-
     # Prefixes lexicon storage configurations.
     prefixes_storage_filepath = join(books_storage, "./prefixes.txt")
     # Dialogs with recognized speakers.
@@ -50,18 +47,6 @@ class MyAPI:
     dataset_st_embedding_response = join(books_storage, "./x.dataset-response-sent-transformers.txt")
     dataset_dialog_db_path = join(books_storage, "./dataset_dialog.sqlite")
     dataset_dialog_db_fold_path = join(books_storage, "./dataset_dialog_{fold_index}.sqlite")
-    # This a models for the representation of the speakers.
-    # ALOHA chatbot paper: https://arxiv.org/abs/1910.08293
-    hla_melted_data_filepath = join(books_storage, "features_melted.txt")
-    hla_users_melted_filepath = join(books_storage, "features_melted.txt")
-    hla_speaker_clusters_path = join(books_storage, "clusters.jsonl")
-    hla_spectrums_limit = 20            # ALOHA parameter which is proposes to keep the most representative traits.
-                                        # We limit to 20 because of the 2 polarities of spectrums (two different values
-                                        # per one trait).
-    hla_spectrum_preset = "prompt_top_{}".format(str(hla_spectrums_limit))
-    hla_prompts_filepath = join(books_storage, "./spectrum_speaker_prompts-{preset}.txt".format(preset=hla_spectrum_preset))
-    hla_neg_set_speakers_limit = 10     # The overall process might take so much time is what becomes a reason of limit.
-    hla_users_embedding_factor = join(books_storage, "./x.speakers-factor.npz")
 
     # ParlAI dataset creation related parameters.
     parlai_dataset_candidates_limit = 20

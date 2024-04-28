@@ -16,6 +16,7 @@ if __name__ == '__main__':
 
     data = {
         join(DATA_DIR, "chr_map.json"): "https://raw.githubusercontent.com/naoya-i/charembench/main/data/chr_map.json",
+        join(DATA_DIR, "pg19-metadata.txt"): "https://raw.githubusercontent.com/google-deepmind/pg19/master/metadata.csv",
     }
 
     for target, url in data.items():

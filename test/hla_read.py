@@ -1,7 +1,8 @@
 from core.spectrums.io_utils import SpectrumIOUtils
 from utils_my import MyAPI
 
-r = SpectrumIOUtils.read(filepath=MyAPI.hla_prompts_filepath.format(MyAPI.hla_spectrum_preset))
+
+r = SpectrumIOUtils.read(filepaths=MyAPI.hla_prompts_filepath.format(MyAPI.hla_spectrum_preset))
 e = set()
 same = 0
 same_speakers = []

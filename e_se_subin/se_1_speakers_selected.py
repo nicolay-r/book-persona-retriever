@@ -4,9 +4,10 @@ from os.path import join, exists
 from core.spectrums.text_source import iter_all
 from core.spectrums_annot import annot_spectrums_in_text, annot_to_min_max_grouped
 from core.utils_npz import NpzUtils
+from e_pairs.api_fcp import FcpApi
 from test.const import MOST_DISTINCTIVE
 from test.utils_draw import draw_spectrums_stat
-from utils_fcp import FcpApi
+from utils import DATA_DIR
 from utils_my import MyAPI
 from utils_se import SEApi
 
@@ -16,7 +17,7 @@ from utils_se import SEApi
 
 se_api = SEApi()
 my_api = MyAPI()
-fcp_api = FcpApi()
+fcp_api = FcpApi(personalities_path=join(DATA_DIR, "personalities.txt"))
 speaker_spectrums_dict = annot_spectrums_in_text(
     texts_and_speakervars_iter=iter_all(speakers=se_api.predefined_speakers, my_api=my_api),
     rev_spectrums=fcp_api.reversed_spectrums())

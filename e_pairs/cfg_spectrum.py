@@ -3,9 +3,9 @@ from os.path import join
 
 class SpectrumConfig:
 
-    spectrum_speakers_in_paragraph = 1
-    spectrum_comment_speaker_positions = [0, 1, 2]
+    speakers_in_paragraph = 1
     spectrum_per_user_count = 8
+    comment_speaker_positions = [0, 1, 2]
     embedding_model_name = 'all-mpnet-base-v2'
 
     def __init__(self, books_storage):

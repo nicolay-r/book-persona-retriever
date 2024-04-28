@@ -1,3 +1,5 @@
+from os.path import join
+
 import zipstream
 
 from core.candidates.other_speakers import OtherSpeakersProvider
@@ -5,6 +7,7 @@ from core.dataset.pairs_iterator import common_iter_dialogs
 from core.dataset.pairs_with_candidates import provide_formatter_pairs_speaker_extraction
 from core.spectrums.io_utils import SpectrumIOUtils
 from core.utils_npz import save_zip_stream
+from utils import DATA_DIR
 from utils_ceb import CEBApi
 from utils_se import SEApi
 
@@ -15,7 +18,7 @@ z = zipstream.ZipFile()
 dataset_filepaths = {part_name: se_api.dataset_fold_filepath.format(fold_index=part_name)
                      for part_name in SEApi.dataset_folding_fixed_parts}
 
-ceb_api = CEBApi()
+ceb_api = CEBApi(books_root=join(DATA_DIR, "books"), char_map_path=join(DATA_DIR, "chr_map.json"))
 ceb_api.read_char_map()
 speaker_spectrums = SpectrumIOUtils.read(SEApi.hla_prompts_filepath)
 

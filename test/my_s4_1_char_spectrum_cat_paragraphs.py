@@ -4,10 +4,12 @@ from os.path import join
 from core.book.utils import iter_paragraphs_with_n_speakers
 from core.plot import draw_hist_plot
 from core.spectrums_annot import annot_spectrums_in_text
+from e_pairs.api_fcp import FcpApi
+from e_pairs.cfg_spectrum import SpectrumConfig
 from test.const import MOST_DISTINCTIVE
+from utils import DATA_DIR
 from utils_draw import draw_spectrums_stat
 from utils_ceb import CEBApi
-from utils_fcp import FcpApi
 from utils_gd import GuttenbergDialogApi
 from utils_my import MyAPI
 
@@ -15,15 +17,16 @@ from utils_my import MyAPI
 # We connect the CEB API for our books in English,
 # for which annotation of the characters has been applied.
 my_api = MyAPI()
-fcp_api = FcpApi()
+fcp_api = FcpApi(personalities_path=join(DATA_DIR, "personalities.txt"))
 ds_speakers = my_api.read_speakers()
+spectrum_cfg = SpectrumConfig(books_storage=MyAPI.books_storage)
 
 speaker_spectrums = annot_spectrums_in_text(
     texts_and_speakervars_iter=map(lambda t: (t[0].Text, t[1]),
                                    iter_paragraphs_with_n_speakers(
                                        multi_mentions=False,
                                        speakers=set(ds_speakers),
-                                       n_speakers=MyAPI.spectrum_speakers_in_paragraph,
+                                       n_speakers=spectrum_cfg.speakers,
                                        parse_speaker_or_none_func=lambda term:
                                            CEBApi.speaker_variant_to_speaker(
                                                GuttenbergDialogApi.try_parse_character(term, default=""),

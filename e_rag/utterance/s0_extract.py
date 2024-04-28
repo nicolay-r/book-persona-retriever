@@ -4,6 +4,7 @@ from os.path import join
 
 from core.service_txt import TextService
 from e_rag.utils_em import EMApi
+from utils import DATA_DIR
 from utils_ceb import CEBApi
 from utils_pg19 import PG19Api
 
@@ -70,7 +71,7 @@ parser.add_argument('--output', dest='output', type=str, default=join(EMApi.outp
 args = parser.parse_args()
 
 pg19 = PG19Api()
-pg19.read()
+pg19.read(metadata_path=join(DATA_DIR, "pg19-metadata.txt"))
 
 # for b_id, count in sorted(c.items(), key=lambda item: int(item[1]), reverse=True)[:50]:
 #     title = pg19.find_book_title(book_id=b_id)

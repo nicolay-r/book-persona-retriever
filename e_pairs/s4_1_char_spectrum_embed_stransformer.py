@@ -30,4 +30,6 @@ if __name__ == '__main__':
         X_st.append(model.encode(prompt))
 
     # Save the result.
-    NpzUtils.save(X_st, spectrum_cfg.st_embeddings.format(preset=preset))
+    target = spectrum_cfg.st_embeddings.format(preset=preset)
+    NpzUtils.save(data=X_st, target=target)
+    print(f"Saved: {target}")

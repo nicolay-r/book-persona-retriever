@@ -18,7 +18,7 @@ def iter_all(speakers, my_api, spectrum_cfg):
         lambda t: (t[0].Text, t[1]),
         iter_paragraphs_with_n_speakers(
             speakers=set(speakers),
-            n_speakers=spectrum_cfg.spectrum_speakers_in_paragraph,
+            n_speakers=spectrum_cfg.speakers_in_paragraph,
             iter_paragraphs=CEBApi.iter_paragraphs(
                 iter_book_ids=my_api.book_ids_from_directory(),
                 book_by_id_func=my_api.get_book_path),
@@ -34,7 +34,7 @@ def iter_all(speakers, my_api, spectrum_cfg):
     g_api = GuttenbergDialogApi()
     comments_it = filter_relevant_text_comments(
         is_term_speaker_func=GuttenbergDialogApi.is_character,
-        speaker_positions=spectrum_cfg.spectrum_comment_speaker_positions,
+        speaker_positions=spectrum_cfg.comment_speaker_positions,
         speakers=set(speakers),
         iter_comments_at_k_func=lambda k: g_api.filter_comment_with_speaker_at_k(
             book_path_func=my_api.get_book_path, k=k))

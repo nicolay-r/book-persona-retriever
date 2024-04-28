@@ -4,6 +4,7 @@ from core.spectrums.io_utils import SpectrumIOUtils
 from core.spectrums.presets import PROMPT_PRESETS
 from core.utils_npz import NpzUtils
 from e_pairs.api_fcp import FcpApi
+from e_pairs.cfg_hla import HlaExperimentConfig
 from e_pairs.cfg_spectrum import SpectrumConfig
 from utils import DATA_DIR
 from utils_my import MyAPI
@@ -18,7 +19,10 @@ if __name__ == '__main__':
     y = NpzUtils.load(spectrum_cfg.speakers)
 
     fcp_api = FcpApi(personalities_path=join(DATA_DIR, "personalities.txt"))
-    prompts, weights = PROMPT_PRESETS[MyAPI.hla_spectrum_preset](X_norm, X_diff, fcp_api)
+    hla_cfg = HlaExperimentConfig(books_storage=MyAPI.books_storage)
 
-    SpectrumIOUtils.write(filepath=MyAPI.hla_prompts_filepath,
-                          speaker_names=y, speaker_prompts=prompts, weights=weights)
+    prompts, weights = PROMPT_PRESETS[hla_cfg.hla_spectrum_preset](X_norm, X_diff, fcp_api)
+
+    target = hla_cfg.hla_prompts_filepath
+    SpectrumIOUtils.write(filepath=target, speaker_names=y, speaker_prompts=prompts, weights=weights)
+    print(f"Saved: {target}")
