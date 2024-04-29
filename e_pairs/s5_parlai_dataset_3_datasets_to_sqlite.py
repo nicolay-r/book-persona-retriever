@@ -1,7 +1,7 @@
+from api.my import MyAPI
 from core.database.dialogs import DialogDatabaseWithEmbeddedTargetsHandler
 from e_pairs.cfg_spectrum import SpectrumConfig
 from utils import CACHE_DIR
-from utils_my import MyAPI
 
 
 def handle_responses(dialog_it, handle_func):
@@ -14,7 +14,7 @@ def handle_responses(dialog_it, handle_func):
 
 if __name__ == '__main__':
 
-    spectrum_cfg = SpectrumConfig(books_storage=MyAPI.books_storage)
+    spectrum_cfg = SpectrumConfig()
     for fold in MyAPI.dataset_folding_fixed_parts.keys():
 
         if fold is None:

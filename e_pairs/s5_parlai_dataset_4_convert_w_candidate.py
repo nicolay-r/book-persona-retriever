@@ -3,6 +3,8 @@ from os.path import join
 import numpy as np
 import zipstream
 
+from api.ceb import CEBApi
+from api.my import MyAPI
 from core.candidates.clustering import ALOHANegBasedClusteringCandidatesProvider
 from core.candidates.uniform_collection import UniformCandidatesProvider
 from core.dataset.pairs_iterator import common_iter_dialogs
@@ -10,10 +12,9 @@ from core.dataset.pairs_with_candidates import provide_formatted_pairs
 from core.spectrums.io_utils import SpectrumIOUtils
 from core.utils_math import random_choice_non_repetitive
 from core.utils_npz import save_zip_stream
+from e_pairs.cfg_hla import HlaExperimentConfig
 from e_pairs.cfg_spectrum import SpectrumConfig
 from utils import DATA_DIR
-from utils_ceb import CEBApi
-from utils_my import MyAPI
 
 
 if __name__ == '__main__':
@@ -26,8 +27,9 @@ if __name__ == '__main__':
 
     ceb_api = CEBApi(books_root=join(DATA_DIR, "books"), char_map_path=join(DATA_DIR, "chr_map.json"))
     ceb_api.read_char_map()
-    speaker_spectrums = SpectrumIOUtils.read(MyAPI.hla_prompts_filepath)
-    spectrum_cfg = SpectrumConfig(books_storage=MyAPI.books_storage)
+    hla_cfg = HlaExperimentConfig(books_storage=MyAPI.books_storage)
+    speaker_spectrums = SpectrumIOUtils.read(hla_cfg.hla_prompts_filepath)
+    spectrum_cfg = SpectrumConfig()
 
     TRAITS_NO = "original"
     TRAITS_SPECTRUM = "spectrum"
@@ -51,9 +53,9 @@ if __name__ == '__main__':
         CANDIDATES_HLA_CLUSTER: lambda fold_index: ALOHANegBasedClusteringCandidatesProvider(
             cache_embeddings_in_memory=True,
             candidates_limit=MyAPI.parlai_dataset_candidates_limit - 1,
-            neg_speakers_limit=MyAPI.hla_neg_set_speakers_limit,
+            neg_speakers_limit=hla_cfg.hla_neg_set_speakers_limit,
             dataset_filepath=MyAPI.dataset_filepath,
-            cluster_filepath=MyAPI.hla_speaker_clusters_path,
+            cluster_filepath=hla_cfg.hla_speaker_clusters_path,
             sqlite_dialog_db=MyAPI.dataset_dialog_db_fold_path.format(fold_index=fold_index))
     }
 

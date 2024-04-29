@@ -1,6 +1,9 @@
 from collections import Counter
 from os.path import join
 
+from api.ceb import CEBApi
+from api.gd import GuttenbergDialogApi
+from api.my import MyAPI
 from core.book.utils import iter_paragraphs_with_n_speakers
 from core.plot import draw_hist_plot
 from core.spectrums_annot import annot_spectrums_in_text
@@ -9,9 +12,6 @@ from e_pairs.cfg_spectrum import SpectrumConfig
 from test.const import MOST_DISTINCTIVE
 from utils import DATA_DIR
 from utils_draw import draw_spectrums_stat
-from utils_ceb import CEBApi
-from utils_gd import GuttenbergDialogApi
-from utils_my import MyAPI
 
 
 # We connect the CEB API for our books in English,

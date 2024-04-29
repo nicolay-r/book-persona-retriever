@@ -1,11 +1,13 @@
 from sentence_transformers import SentenceTransformer
 
+from api.my import MyAPI
 from core.utils_npz import NpzUtils
+from e_pairs.cfg_spectrum import SpectrumConfig
 from utils import CACHE_DIR
-from utils_my import MyAPI
 
 
-model = SentenceTransformer(MyAPI.spectrum_embedding_model_name, cache_folder=CACHE_DIR)
+spectrum_cfg = SpectrumConfig(books_storage=MyAPI.books_storage)
+model = SentenceTransformer(spectrum_cfg.embedding_model_name, cache_folder=CACHE_DIR)
 
 X_q = []
 X_r = []

@@ -1,10 +1,12 @@
+from api.my import MyAPI
 from core.spectrums.to_prompts import filter_most_distictive
 from core.utils_npz import NpzUtils
-from utils_my import MyAPI
+from e_pairs.cfg_spectrum import SpectrumConfig
 
 
-X_norm = NpzUtils.load(MyAPI.spectrum_features_norm)
-X_diff = NpzUtils.load(MyAPI.spectrum_features_diff)
+spectrum_cfg = SpectrumConfig(books_storage=MyAPI.books_storage)
+X_norm = NpzUtils.load(spectrum_cfg.features_norm)
+X_diff = NpzUtils.load(spectrum_cfg.features_diff)
 
 distinctive = filter_most_distictive(X_norm, limit=20)
 print(X_norm[:, distinctive].shape)

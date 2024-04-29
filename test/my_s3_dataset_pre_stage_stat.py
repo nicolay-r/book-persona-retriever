@@ -2,9 +2,9 @@ from collections import Counter
 
 from tqdm import tqdm
 
+from api.gd import GuttenbergDialogApi
+from api.my import MyAPI
 from core.book.book_dialog import BookDialogue
-from utils_gd import GuttenbergDialogApi
-from utils_my import MyAPI
 
 
 fold_index = None

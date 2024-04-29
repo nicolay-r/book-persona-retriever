@@ -1,6 +1,7 @@
 import os
 from os.path import join, exists
 
+from api.my import MyAPI
 from core.spectrums.text_source import iter_all
 from core.spectrums_annot import annot_spectrums_in_text, annot_to_min_max_grouped
 from core.utils_npz import NpzUtils
@@ -9,7 +10,6 @@ from e_pairs.cfg_spectrum import SpectrumConfig
 from test.const import MOST_DISTINCTIVE
 from test.utils_draw import draw_spectrums_stat
 from utils import DATA_DIR
-from utils_my import MyAPI
 
 
 if __name__ == '__main__':

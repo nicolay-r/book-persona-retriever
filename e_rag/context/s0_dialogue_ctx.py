@@ -4,14 +4,14 @@ from os.path import join
 from tqdm import tqdm
 
 import utils
+from api.ceb import CEBApi
+from api.gd import GuttenbergDialogApi
+from api.my import MyAPI
 from core.book.book_dialog import BookDialogue
 from core.dialogue.speaker_annotation import try_recognize
 from core.dialogue.utils import iter_by_utterances
 from core.service_csv import CsvService
 from e_rag.utils_em import EMApi
-from utils_ceb import CEBApi
-from utils_gd import GuttenbergDialogApi
-from utils_my import MyAPI
 
 
 def filter_utterance_segments(buffer):
@@ -145,7 +145,7 @@ args = parser.parse_args()
 gd_api = GuttenbergDialogApi(dialogues_source=join(utils.PROJECT_DIR, "./data/filtered/en/dialogs.txt"))
 my_api = MyAPI(books_root=args.books_dir)
 
-ceb_api = CEBApi()
+ceb_api = CEBApi(books_root=join(utils.DATA_DIR, "books"), char_map_path=join(utils.DATA_DIR, "chr_map.json"))
 ceb_api.read_char_map()
 
 utterance_segments_iter = iter_by_utterances(

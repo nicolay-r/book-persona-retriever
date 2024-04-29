@@ -2,9 +2,9 @@ from tqdm import tqdm
 from os import listdir
 from os.path import isfile, join
 
+from api.my import MyAPI
 from e_pairs.api_fcp import FcpApi
 from utils import DATA_DIR
-from utils_my import MyAPI
 
 
 if __name__ == '__main__':

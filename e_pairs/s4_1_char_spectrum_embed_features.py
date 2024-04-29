@@ -1,19 +1,19 @@
 from os.path import join
 
+from api.my import MyAPI
 from core.spectrums.text_source import iter_all
 from core.spectrums_annot import annot_to_min_max_grouped, annot_spectrums_in_text
 from core.utils_npz import NpzUtils
 from e_pairs.api_fcp import FcpApi
 from e_pairs.cfg_spectrum import SpectrumConfig
 from utils import DATA_DIR
-from utils_my import MyAPI
 
 
 if __name__ == '__main__':
 
     my_api = MyAPI()
     fcp_api = FcpApi(personalities_path=join(DATA_DIR, "personalities.txt"))
-    spectrum_cfg = SpectrumConfig(books_storage=my_api.books_storage)
+    spectrum_cfg = SpectrumConfig()
 
     speaker_spectrums_dict = annot_spectrums_in_text(
         texts_and_speakervars_iter=iter_all(speakers=my_api.read_speakers(),

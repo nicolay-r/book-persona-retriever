@@ -1,8 +1,9 @@
 from collections import Counter
 from os.path import join
+
+from api.my import MyAPI
 from core.dataset.pairs_iterator import get_dialog_qr_pairs_iter
 from core.plot import draw_hist_plot
-from utils_my import MyAPI
 
 
 def calc_words_count(fold_index, filter_func):

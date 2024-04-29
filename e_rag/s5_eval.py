@@ -2,10 +2,10 @@ import argparse
 from collections import Counter
 from os.path import join
 
+from api.ceb import CEBApi
 from core.database.sqlite3_api import SQLiteService
 from core.service_csv import CsvService
 from utils import DATA_DIR
-from utils_ceb import CEBApi
 from utils_em import EMApi
 
 

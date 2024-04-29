@@ -1,8 +1,8 @@
 from os.path import join
 
+from api.ceb import CEBApi
+from api.pg19 import PG19Api
 from utils import DATA_DIR
-from utils_ceb import CEBApi
-from utils_pg19 import PG19Api
 
 
 ############################################

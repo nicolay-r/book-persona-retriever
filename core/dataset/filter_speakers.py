@@ -1,7 +1,7 @@
 from collections import Counter
 from functools import cmp_to_key
 
-from utils_my import MyAPI
+from api.my import MyAPI
 
 
 def filter_response_speakers(dialogue_qr_pairs_it):

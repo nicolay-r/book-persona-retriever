@@ -1,6 +1,6 @@
+from api.my import MyAPI
 from core.dataset.filter_speakers import filter_response_speakers
 from core.dataset.pairs_iterator import get_dialog_qr_pairs_iter
-from utils_my import MyAPI
 
 
 if __name__ == '__main__':

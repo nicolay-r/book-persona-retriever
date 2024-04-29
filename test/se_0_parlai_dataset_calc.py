@@ -2,7 +2,7 @@ from collections import Counter
 from os.path import join
 from zipfile import ZipFile
 
-from utils_se import SEApi
+from api.se import SEApi
 
 my_api = SEApi()
 dataset_names = [

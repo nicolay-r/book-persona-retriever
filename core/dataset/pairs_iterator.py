@@ -1,9 +1,11 @@
 from os.path import basename
 
+# TODO. The core code should not depend on API.
+from api.gd import GuttenbergDialogApi
+from api.my import MyAPI
+
 from core.dataset.filter_qr_pairs import QRFilterFunctionObject
 from core.dialogue.utils import mask_text_entities
-from utils_gd import GuttenbergDialogApi
-from utils_my import MyAPI
 
 
 def get_dialog_qr_pairs_iter(filepath, desc):

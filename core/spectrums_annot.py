@@ -2,8 +2,9 @@ from collections import Counter
 
 import numpy as np
 
-from utils_ceb import CEBApi
-from utils_gd import GuttenbergDialogApi
+# TODO. This should be moved outside the core.
+from api.ceb import CEBApi
+from api.gd import GuttenbergDialogApi
 
 
 def annot_spectrums_in_text(texts_and_speakervars_iter, rev_spectrums):

@@ -1,13 +1,17 @@
 from os.path import join
 
+from api.my import MyAPI
 from core.plot import plot_tsne_series
-from core.spectrums.presets import FILTER_PRESETS
 from core.utils_npz import NpzUtils
-from utils_my import MyAPI
+from e_pairs.cfg_hla import HlaExperimentConfig
+from e_pairs.cfg_spectrum import SpectrumConfig
+from e_pairs.spectrum.presets import FILTER_PRESETS
 
-preset = MyAPI.hla_spectrum_preset
-X = NpzUtils.load(MyAPI.spectrum_st_embeddings.format(preset=preset))
-y = NpzUtils.load(MyAPI.spectrum_speakers)
+
+preset = HlaExperimentConfig.hla_spectrum_preset
+spectrum_cfg = SpectrumConfig()
+X = NpzUtils.load(spectrum_cfg.st_embeddings.format(preset=preset))
+y = NpzUtils.load(spectrum_cfg.speakers)
 
 # Blank painting.
 y = [0 for s_name in y]

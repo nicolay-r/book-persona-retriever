@@ -1,5 +1,7 @@
 from os.path import join
 
+from api.gd import GuttenbergDialogApi
+from api.my import MyAPI
 from core.dialogue.comments import filter_relevant_text_comments
 from core.spectrums_annot import annot_spectrums_in_text
 from e_pairs.api_fcp import FcpApi
@@ -7,8 +9,6 @@ from e_pairs.cfg_spectrum import SpectrumConfig
 from test.const import MOST_DISTINCTIVE
 from utils import DATA_DIR
 from utils_draw import draw_spectrums_stat
-from utils_gd import GuttenbergDialogApi
-from utils_my import MyAPI
 
 
 fcp_api = FcpApi(personalities_path=join(DATA_DIR, "personalities.txt"))

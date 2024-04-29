@@ -1,6 +1,6 @@
+from api.gd import GuttenbergDialogApi
+from api.my import MyAPI
 from core.dialogue.speaker_annotation import iter_speaker_annotated_dialogs
-from utils_gd import GuttenbergDialogApi
-from utils_my import MyAPI
 
 
 if __name__ == '__main__':

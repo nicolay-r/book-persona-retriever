@@ -2,9 +2,11 @@ from collections import OrderedDict
 
 from tqdm import tqdm
 
+# TODO. This should be removed from the core.
+from api.ceb import CEBApi
+from api.gd import GuttenbergDialogApi
+
 from core.book.book_dialog import BookDialogue
-from utils_ceb import CEBApi
-from utils_gd import GuttenbergDialogApi
 
 
 def try_recognize(terms, prefix_lexicon, k_list, is_character_func):

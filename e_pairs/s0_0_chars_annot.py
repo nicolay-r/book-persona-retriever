@@ -3,9 +3,10 @@ import argparse
 from tqdm import tqdm
 from os.path import join
 from collections import Counter
+
+from api.ceb import CEBApi
+from api.my import MyAPI
 from utils import DATA_DIR
-from utils_ceb import CEBApi
-from utils_my import MyAPI
 
 import sys
 sys.path.append('../')

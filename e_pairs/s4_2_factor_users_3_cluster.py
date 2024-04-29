@@ -3,24 +3,26 @@ import json
 import pandas as pd
 from tqdm import tqdm
 
+from api.my import MyAPI
 from core.utils_npz import NpzUtils
 from e_pairs.cfg_embeding import PairsExperimentEmbeddingConfig
+from e_pairs.cfg_hla import HlaExperimentConfig
 from e_pairs.cfg_spectrum import SpectrumConfig
 from embeddings.aloha.cluster import CharCluster
 from embeddings.aloha.matrix import MatrixWrapper
-from utils_my import MyAPI
 
 
 if __name__ == '__main__':
 
-    df = pd.read_csv(MyAPI.hla_melted_data_filepath)
+    hla_cfg = HlaExperimentConfig(books_storage=MyAPI.books_storage)
+    df = pd.read_csv(hla_cfg.hla_melted_data_filepath)
     mw = MatrixWrapper(df, user_col='user', feature_col='feature', value_col="value")
     mw.get_train(PairsExperimentEmbeddingConfig.hla_training_config, report_test=True)
 
     # Complete clusters for every speaker
-    spectrum_cfg = SpectrumConfig(books_storage=MyAPI.books_storage)
+    spectrum_cfg = SpectrumConfig()
     Y = NpzUtils.load(spectrum_cfg.speakers)
-    with open(MyAPI.hla_speaker_clusters_path, "w") as out_file:
+    with open(hla_cfg.hla_speaker_clusters_path, "w") as out_file:
         for speaker_index, speaker_id in tqdm(enumerate(Y), desc="Clustering speakers", total=len(Y)):
             cc = CharCluster(speaker_index, matrix_wrapper=mw)
             pos, neg = cc.retrieve(config=PairsExperimentEmbeddingConfig.hla_cluster_config)

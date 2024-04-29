@@ -2,14 +2,16 @@ from os.path import join
 
 import numpy as np
 import zipstream
+
+from api.ceb import CEBApi
+from api.my import MyAPI
 from core.dataset.pairs_iterator import common_iter_dialogs
 from core.dataset.pairs_with_candidates import provide_formatted_pairs
 from core.spectrums.io_utils import SpectrumIOUtils
 from core.utils_math import random_choice_non_repetitive
+from e_pairs.cfg_hla import HlaExperimentConfig
 from e_pairs.cfg_spectrum import SpectrumConfig
 from utils import DATA_DIR
-from utils_ceb import CEBApi
-from utils_my import MyAPI
 
 
 if __name__ == '__main__':
@@ -22,7 +24,8 @@ if __name__ == '__main__':
 
     ceb_api = CEBApi(books_root=join(DATA_DIR, "books"), char_map_path=join(DATA_DIR, "chr_map.json"))
     ceb_api.read_char_map()
-    speaker_spectrums = SpectrumIOUtils.read(MyAPI.hla_prompts_filepath)
+    hla_cfg = HlaExperimentConfig(books_storage=MyAPI.books_storage)
+    speaker_spectrums = SpectrumIOUtils.read(hla_cfg.hla_prompts_filepath)
     spectrum_cfg = SpectrumConfig(books_storage=MyAPI.books_storage)
 
     TRAITS_NO = "original"

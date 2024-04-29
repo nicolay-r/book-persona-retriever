@@ -5,15 +5,15 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
+from api.ceb import CEBApi
+from api.my import MyAPI
+from api.pg19 import PG19Api
 from core.factor.utils import melt_to_csv
 from core.plot import plot_tsne_series
 from core.utils_npz import NpzUtils
 from e_pairs.cfg_embeding import PairsExperimentEmbeddingConfig
 from embeddings.aloha.matrix import MatrixWrapper
 from utils import DATA_DIR
-from utils_ceb import CEBApi
-from utils_my import MyAPI
-from utils_pg19 import PG19Api
 
 
 def get_book_id(v):

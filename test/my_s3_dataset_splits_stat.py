@@ -1,4 +1,4 @@
-from utils_my import MyAPI
+from api.my import MyAPI
 
 
 def calc_dataset_info(fold_index=None):

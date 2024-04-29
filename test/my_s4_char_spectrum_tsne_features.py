@@ -1,11 +1,14 @@
 from os.path import join
 
+from api.my import MyAPI
 from core.plot import plot_tsne_series
 from core.utils_npz import NpzUtils
-from utils_my import MyAPI
+from e_pairs.cfg_spectrum import SpectrumConfig
 
-X = NpzUtils.load(MyAPI.spectrum_features_norm)
-y = NpzUtils.load(MyAPI.spectrum_speakers)
+
+spectrum_cfg = SpectrumConfig(books_storage=MyAPI.books_storage)
+X = NpzUtils.load(spectrum_cfg.features_norm)
+y = NpzUtils.load(spectrum_cfg.speakers)
 y = [0 for s_name in y]
 
 perplexies = [5, 10, 30, 50, 100]

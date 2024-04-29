@@ -2,10 +2,10 @@ from itertools import chain
 
 from core.book.utils import iter_paragraphs_with_n_speakers
 from core.dialogue.comments import filter_relevant_text_comments
+
 # TODO. this is expected to be refactored (no need dependence from API).
-from utils_ceb import CEBApi
-from utils_gd import GuttenbergDialogApi
-from utils_my import MyAPI
+from api.ceb import CEBApi
+from api.gd import GuttenbergDialogApi
 
 
 def iter_all(speakers, my_api, spectrum_cfg):

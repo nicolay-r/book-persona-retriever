@@ -5,9 +5,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
+from api.gd import GuttenbergDialogApi
+from api.my import MyAPI
 from core.dialogue.speaker_annotation import iter_speaker_annotated_dialogs
-from utils_gd import GuttenbergDialogApi
-from utils_my import MyAPI
 
 
 def calc_annotated_dialogs_stat(iter_dialogs_and_speakers):

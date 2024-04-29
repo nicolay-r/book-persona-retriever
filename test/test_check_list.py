@@ -1,8 +1,11 @@
-from utils_my import MyAPI
+from api.my import MyAPI
+from e_pairs.cfg_hla import HlaExperimentConfig
+
 
 s = set()
-print(MyAPI.hla_prompts_filepath)
-with open(MyAPI.hla_prompts_filepath, "r") as f:
+hla_cfg = HlaExperimentConfig(books_storage=MyAPI.books_storage)
+print(hla_cfg.hla_prompts_filepath)
+with open(hla_cfg.hla_prompts_filepath, "r") as f:
     for line in f.readlines():
         line = line.split(":")[1]
         words = [s.strip() for s in line.split(",")]

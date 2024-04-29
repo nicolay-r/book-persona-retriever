@@ -1,8 +1,11 @@
 import random
+
+# TODO. The code should not depend on API.
+from api.my import MyAPI
+from api.se import SEApi
+
 from core.candidates.base import CandidatesProvider
 from core.dataset.formatters.parlai_facebook import format_episode
-from utils_my import MyAPI
-from utils_se import SEApi
 
 
 def provide_formatted_pairs(dialogs_iter, traits_func, candidates_provider, candidates_oversample_factor=None):

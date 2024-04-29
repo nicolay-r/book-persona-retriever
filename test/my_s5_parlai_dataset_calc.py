@@ -2,8 +2,7 @@ from collections import Counter
 from os import path
 from zipfile import ZipFile
 
-from utils_my import MyAPI
-
+from api.my import MyAPI
 
 my_api = MyAPI()
 dataset_names = [

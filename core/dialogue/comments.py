@@ -1,4 +1,5 @@
-from utils_ceb import CEBApi
+# TODO. The core code should not depend on API.
+from api.ceb import CEBApi
 
 
 def filter_relevant_text_comments(is_term_speaker_func, speaker_positions, iter_comments_at_k_func, speakers):

@@ -1,9 +1,11 @@
 from collections import Counter
 
+# TODO. The core code should not depend on API.
+from api.ceb import CEBApi
+from api.gd import GuttenbergDialogApi
+from api.my import MyAPI
+
 from core.dialogue.utils import iter_terms_with_speakers
-from utils_ceb import CEBApi
-from utils_gd import GuttenbergDialogApi
-from utils_my import MyAPI
 
 
 class QRFilterFunctionObject(object):

@@ -2,8 +2,8 @@ import itertools
 
 from tqdm import tqdm
 
+from api.gd import GuttenbergDialogApi
 from core.utils_stat import TermsStat
-from utils_gd import GuttenbergDialogApi
 
 
 def prefix_analysis(k, p_threshold, books_path_func, filter_func, **tqdm_kwargs):

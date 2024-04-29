@@ -2,11 +2,11 @@ import argparse
 from collections import Counter
 from os.path import join
 
+from api.ceb import CEBApi
+from api.pg19 import PG19Api
 from core.service_txt import TextService
 from e_rag.utils_em import EMApi
 from utils import DATA_DIR
-from utils_ceb import CEBApi
-from utils_pg19 import PG19Api
 
 
 def calc_speakers_stat(dataset_path):
@@ -80,7 +80,7 @@ pg19.read(metadata_path=join(DATA_DIR, "pg19-metadata.txt"))
 TextService.write(target=args.output, lines_it=iter_utterances(args.dataset))
 counter = calc_speakers_stat(dataset_path=args.output)
 
-ceb_api = CEBApi()
+ceb_api = CEBApi(books_root=join(DATA_DIR, "books"), char_map_path=join(DATA_DIR, "chr_map.json"))
 ceb_api.read_char_map()
 # for cid in c.keys():
 #     print(cid, ceb_api.get_char_names(cid))

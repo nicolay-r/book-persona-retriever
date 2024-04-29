@@ -5,12 +5,12 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 from tqdm import tqdm
 
+from api.ceb import CEBApi
 from core.database.sqlite3_api import SQLiteService
 from core.service_csv import CsvService
 from core.utils import DictService
 from e_rag.utils_llm import iter_parse_mistral_parse_em
-from utils import CACHE_DIR
-from utils_ceb import CEBApi
+from utils import CACHE_DIR, DATA_DIR
 from utils_em import EMApi
 
 
@@ -82,7 +82,7 @@ parser.add_argument('--output-passages', dest='output_passages', type=str, defau
 
 args = parser.parse_args()
 
-ceb_api = CEBApi()
+ceb_api = CEBApi(books_root=join(DATA_DIR, "books"), char_map_path=join(DATA_DIR, "chr_map.json"))
 ceb_api.read_char_map()
 
 # Using ChatGPT-4 inferred EM, compose embeddings.

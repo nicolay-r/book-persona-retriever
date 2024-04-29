@@ -1,11 +1,13 @@
 import numpy as np
 
-from core.spectrums.presets import FILTER_PRESETS
 from core.utils_npz import NpzUtils
-from utils_my import MyAPI
+from e_pairs.cfg_spectrum import SpectrumConfig
+from e_pairs.spectrum.presets import FILTER_PRESETS
 
-X = list(NpzUtils.load(MyAPI.spectrum_features_norm))
-y = list(NpzUtils.load(MyAPI.spectrum_speakers))
+
+spectrum_cfg = SpectrumConfig()
+X = list(NpzUtils.load(spectrum_cfg.features_norm))
+y = list(NpzUtils.load(spectrum_cfg.speakers))
 
 X, y = FILTER_PRESETS["original-no-color"](X, y)
 

@@ -2,9 +2,10 @@ from os.path import realpath, dirname, join
 
 from gutenberg_dialog.pipeline.utils import DialogMetaHelper
 
+from api.gd import GuttenbergDialogApi
+from api.my import MyAPI
 from core.book.book_dialog import BookDialogue
-from utils_gd import GuttenbergDialogApi
-from utils_my import MyAPI
+
 
 my_api = MyAPI()
 books_dialogue = BookDialogue()

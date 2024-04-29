@@ -1,7 +1,7 @@
 import os
 import nltk
-from utils_my import MyAPI
 
+from api.my import MyAPI
 
 if __name__ == '__main__':
 

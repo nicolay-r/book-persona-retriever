@@ -3,9 +3,9 @@ from os.path import join, exists
 
 from tqdm import tqdm
 
+from api.ceb import CEBApi
 from core.utils import download, create_dir_if_not_exist
 from utils import DATA_DIR
-from utils_ceb import CEBApi
 
 sys.path.append('../')
 

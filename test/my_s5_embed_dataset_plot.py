@@ -2,9 +2,9 @@ from os.path import join
 
 import numpy as np
 
+from api.my import MyAPI
 from core.plot import plot_tsne_series
 from core.utils_npz import NpzUtils
-from utils_my import MyAPI
 
 
 def __tsne_plot(X, save_prefix):

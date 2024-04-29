@@ -1,7 +1,8 @@
-from utils_gd import GuttenbergDialogApi
-from utils_my import MyAPI
 
 # Setup API.
+from api.gd import GuttenbergDialogApi
+from api.my import MyAPI
+
 my_api = MyAPI()
 gd_api = GuttenbergDialogApi()
 

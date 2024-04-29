@@ -1,13 +1,13 @@
 import os
 from os.path import join, exists
 
+from api.my import MyAPI
 from core.candidates.uniform_collection import UniformCandidatesProvider
 from core.dataset.pairs_iterator import common_iter_dialogs
 from core.dataset.pairs_with_candidates import provide_formatted_pairs
 from core.spectrums.io_utils import SpectrumIOUtils
 from core.utils_npz import save_zip_stream
 from utils import DATA_DIR
-from utils_my import MyAPI
 
 
 if __name__ == '__main__':
