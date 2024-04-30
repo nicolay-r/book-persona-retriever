@@ -4,7 +4,7 @@ from core.utils_npz import NpzUtils
 from e_pairs.cfg_spectrum import SpectrumConfig
 
 
-spectrum_cfg = SpectrumConfig(books_storage=MyAPI.books_storage)
+spectrum_cfg = SpectrumConfig()
 X_norm = NpzUtils.load(spectrum_cfg.features_norm)
 X_diff = NpzUtils.load(spectrum_cfg.features_diff)
 

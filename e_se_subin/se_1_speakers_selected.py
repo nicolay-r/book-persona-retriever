@@ -4,10 +4,10 @@ from os.path import join, exists
 from api.my import MyAPI
 from api.se import SEApi
 from core.spectrums.text_source import iter_all
-from core.spectrums_annot import annot_spectrums_in_text, annot_to_min_max_grouped
 from core.utils_npz import NpzUtils
 from e_pairs.api_fcp import FcpApi
 from e_pairs.cfg_spectrum import SpectrumConfig
+from e_pairs.spectrum.annot import annot_to_min_max_grouped, annot_spectrums_in_text
 from test.const import MOST_DISTINCTIVE
 from test.utils_draw import draw_spectrums_stat
 from utils import DATA_DIR
@@ -18,7 +18,7 @@ if __name__ == '__main__':
     se_api = SEApi()
     my_api = MyAPI()
     fcp_api = FcpApi(personalities_path=join(DATA_DIR, "personalities.txt"))
-    spectrum_cfg = SpectrumConfig(books_storage=MyAPI.books_storage)
+    spectrum_cfg = SpectrumConfig()
     speaker_spectrums_dict = annot_spectrums_in_text(
         texts_and_speakervars_iter=iter_all(speakers=se_api.predefined_speakers,
                                             my_api=my_api,

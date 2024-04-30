@@ -2,10 +2,10 @@ from os.path import join
 
 from api.my import MyAPI
 from core.spectrums.text_source import iter_all
-from core.spectrums_annot import annot_to_min_max_grouped, annot_spectrums_in_text
 from core.utils_npz import NpzUtils
 from e_pairs.api_fcp import FcpApi
 from e_pairs.cfg_spectrum import SpectrumConfig
+from e_pairs.spectrum.annot import annot_spectrums_in_text, annot_to_min_max_grouped
 from utils import DATA_DIR
 
 

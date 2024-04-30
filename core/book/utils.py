@@ -18,11 +18,11 @@ def iter_paragraphs_with_n_speakers(speakers, iter_paragraphs, paragraph_to_term
         * It is important that each speaker represent in a form of separated word /
             or speaker recognition function support this case. (#43)
     """
-    assert(isinstance(speakers, set))
-    assert(callable(paragraph_to_terms))
-    assert(callable(parse_speaker_or_none_func))
-    assert(isinstance(n_speakers, int) and n_speakers >= 0)
-    assert(isinstance(multi_mentions, bool))
+    assert (isinstance(speakers, set))
+    assert (callable(paragraph_to_terms))
+    assert (callable(parse_speaker_or_none_func))
+    assert (isinstance(n_speakers, int) and n_speakers >= 0)
+    assert (isinstance(multi_mentions, bool))
 
     s_count = Counter()
     pbar = tqdm(iter_paragraphs, "Iter Paragraphs")

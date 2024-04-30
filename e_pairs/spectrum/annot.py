@@ -2,7 +2,6 @@ from collections import Counter
 
 import numpy as np
 
-# TODO. This should be moved outside the core.
 from api.ceb import CEBApi
 from api.gd import GuttenbergDialogApi
 
