@@ -1,13 +1,13 @@
 import os
 from collections import OrderedDict, Counter
 from os import listdir
-from os.path import join, dirname, realpath, isfile
+from os.path import join, isfile
 
 from tqdm import tqdm
 
 from core.book.book_dialog import BookDialogue
 from core.utils import count_files_in_folder
-from utils import range_exclude_middle, range_middle
+from utils import range_exclude_middle, range_middle, DATA_DIR
 
 
 class MyAPI:
@@ -15,8 +15,7 @@ class MyAPI:
     """
 
     # Main parameters.
-    __current_dir = dirname(realpath(__file__))
-    books_storage = join(__current_dir, "./data/books_annot")
+    books_storage = join(DATA_DIR, "books_annot")
     books_storage_en = join(books_storage, "en")
 
     # Prefixes lexicon storage configurations.
@@ -25,9 +24,9 @@ class MyAPI:
     dialogs_recongize_speaker_p_threshold = 0.01
     dialogs_recognize_speaker_at_positions = [0, 1, 2, 3]  # We consider only positions 0, 1, 2, and 3
                                                            # according to the related preliminary analysis.
-    dialogs_filepath = join(__current_dir, books_storage, "./dialogs.txt")
+    dialogs_filepath = join(books_storage, "./dialogs.txt")
     # Setup parameters for the dataset generation
-    filtered_speakers_filepath = join(__current_dir, books_storage, "./filtered_speakers.txt")
+    filtered_speakers_filepath = join(books_storage, "./filtered_speakers.txt")
     # Speakers filtering parameters.
     dataset_min_words_count_in_response = 10
     dataset_filter_speaker_total_speakers_count = 400

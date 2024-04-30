@@ -4,13 +4,13 @@ from gutenberg_dialog.pipeline.utils import DialogMetaHelper
 from nltk import RegexpTokenizer
 
 from core.book.book_dialog import BookDialogue
+from utils import DATA_DIR
 
 
 class GuttenbergDialogApi:
 
     __tokenizer = RegexpTokenizer(r'\w+')
-    __current_dir = dirname(realpath(__file__))
-    dialogues_en = join(__current_dir, "./data/filtered/en/dialogs_clean.txt")
+    dialogues_en = join(DATA_DIR, "filtered/en/dialogs_clean.txt")
 
     def __init__(self, dialogues_source=None):
         self.__dialogues_en = dialogues_source if dialogues_source is not None else GuttenbergDialogApi.dialogues_en

@@ -1,16 +1,15 @@
-from os.path import dirname, realpath, join
+from os.path import join
 
-from utils import range_exclude_middle, range_middle
+from utils import range_exclude_middle, range_middle, DATA_DIR
 
 
 class SEApi(object):
 
     # Main parameters.
-    __current_dir = dirname(realpath(__file__))
-    books_storage = join(__current_dir, "./data/se_task/")
-    books_storage_original = join(__current_dir, "./data/books_annot")
+    books_storage = join(DATA_DIR, "./se_task/")
+    books_storage_original = join(DATA_DIR, "./books_annot")
 
-    selected_output_dir = join(__current_dir, "./data/se_task_selected/")
+    selected_output_dir = join(DATA_DIR, "./se_task_selected/")
 
     dataset_folding_parts = 5
     dataset_folding_fixed_parts = {
