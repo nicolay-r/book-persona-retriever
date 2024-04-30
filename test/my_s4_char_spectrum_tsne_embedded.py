@@ -5,8 +5,7 @@ from core.plot import plot_tsne_series
 from core.utils_npz import NpzUtils
 from e_pairs.cfg_hla import HlaExperimentConfig
 from e_pairs.cfg_spectrum import SpectrumConfig
-from e_pairs.spectrum.presets import FILTER_PRESETS
-
+from e_pairs.hla_models.spectrum.presets import FILTER_PRESETS
 
 preset = HlaExperimentConfig.hla_spectrum_preset
 spectrum_cfg = SpectrumConfig()

@@ -6,7 +6,7 @@ from core.utils_npz import NpzUtils
 from e_pairs.api_fcp import FcpApi
 from e_pairs.cfg_hla import HlaExperimentConfig
 from e_pairs.cfg_spectrum import SpectrumConfig
-from e_pairs.spectrum.presets import PROMPT_PRESETS
+from e_pairs.hla_models.spectrum.presets import PROMPT_PRESETS
 from utils import DATA_DIR
 
 

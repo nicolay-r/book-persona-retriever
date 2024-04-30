@@ -7,7 +7,7 @@ from core.spectrums.text_source import iter_all
 from core.utils_npz import NpzUtils
 from e_pairs.api_fcp import FcpApi
 from e_pairs.cfg_spectrum import SpectrumConfig
-from e_pairs.spectrum.annot import annot_to_min_max_grouped, annot_spectrums_in_text
+from e_pairs.hla_models.spectrum.annot import annot_to_min_max_grouped, annot_spectrums_in_text
 from test.const import MOST_DISTINCTIVE
 from test.utils_draw import draw_spectrums_stat
 from utils import DATA_DIR
