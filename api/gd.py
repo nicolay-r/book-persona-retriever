@@ -1,5 +1,5 @@
 import os
-from os.path import join, dirname, realpath
+from os.path import join
 from gutenberg_dialog.pipeline.utils import DialogMetaHelper
 from nltk import RegexpTokenizer
 
