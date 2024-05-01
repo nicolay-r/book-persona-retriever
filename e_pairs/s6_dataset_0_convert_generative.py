@@ -26,7 +26,7 @@ if __name__ == '__main__':
     ceb_api.read_char_map()
     hla_cfg = HlaExperimentConfig(books_storage=MyAPI.books_storage)
     speaker_spectrums = SpectrumIOUtils.read(hla_cfg.hla_prompts_filepath)
-    spectrum_cfg = SpectrumConfig(books_storage=MyAPI.books_storage)
+    spectrum_cfg = SpectrumConfig()
 
     TRAITS_NO = "original"
     TRAITS_SPECTRUM = "spectrum"

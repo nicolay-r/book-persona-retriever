@@ -1,8 +1,12 @@
 import sqlite3
+from os.path import join
 
 import numpy as np
 import pandas as pd
 from parlai.core.metrics import BleuMetric, F1Metric, RougeMetric
+
+from core.utils import create_dir_if_not_exist
+from utils import DATA_DIR
 
 
 def calc(compute_func):
@@ -22,22 +26,22 @@ if __name__ == '__main__':
     limit = 3136
     table = "original"
 
-    con = sqlite3.connect("data/eval-llm/answers.sqlite3")
+    # Create dir for experiments.
+    experiment_dir = join(DATA_DIR, "eval_llm")
+    create_dir_if_not_exist(experiment_dir)
+
+    con = sqlite3.connect(join(experiment_dir, "answers.sqlite3"))
     responses = {}
 
-    ####################
     # Extract responses.
-    ####################
     cursor = con.cursor()
     cursor.execute(f'SELECT * FROM {table}')
     for row in cursor:
         r_id, response = row
         responses[int(r_id)] = response
 
-    #################
     # Extract labels.
-    #################
-    df = pd.read_csv("data/eval-llm/valid_original_no-cand-labeled.csv", sep="\t")
+    df = pd.read_csv(join(experiment_dir, "valid_original_no-cand-labeled.csv"), sep="\t")
     labels = {}
     for i, r in list(df.iterrows())[:limit]:
         d = r.to_dict()

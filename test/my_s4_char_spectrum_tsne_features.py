@@ -6,16 +6,18 @@ from core.utils_npz import NpzUtils
 from e_pairs.cfg_spectrum import SpectrumConfig
 
 
-spectrum_cfg = SpectrumConfig(books_storage=MyAPI.books_storage)
-X = NpzUtils.load(spectrum_cfg.features_norm)
-y = NpzUtils.load(spectrum_cfg.speakers)
-y = [0 for s_name in y]
+if __name__ == '__main__':
 
-perplexies = [5, 10, 30, 50, 100]
+    spectrum_cfg = SpectrumConfig()
+    X = NpzUtils.load(spectrum_cfg.features_norm)
+    y = NpzUtils.load(spectrum_cfg.speakers)
+    y = [0 for s_name in y]
 
-png_path = join(MyAPI.books_storage, "features_p{preset}_all{total}".format(
-    preset='-'.join([str(p) for p in perplexies]),
-    total=len(X)))
+    perplexies = [5, 10, 30, 50, 100]
 
-plot_tsne_series(X=X, y=y, perplexies=perplexies, n_iter=1000,
-                 save_png_path=png_path)
+    png_path = join(MyAPI.books_storage, "features_p{preset}_all{total}".format(
+        preset='-'.join([str(p) for p in perplexies]),
+        total=len(X)))
+
+    plot_tsne_series(X=X, y=y, perplexies=perplexies, n_iter=1000,
+                     save_png_path=png_path)
