@@ -16,11 +16,12 @@ class MatrixWrapper:
         coo = coo_matrix((data[self.col3], (user_cat.cat.codes.copy(), feature_cat.cat.codes.copy())))
         return coo, user_cat, feature_cat
 
-    def __init__(self, df, user_col, feature_col, value_col):
+    def __init__(self, df, user_col, feature_col, value_col, use_gpu):
         assert len(df) > 0
         self.col1 = user_col
         self.col2 = feature_col
         self.col3 = value_col
+        self.use_gpu = use_gpu
 
         # build coo for col1, 2
         self.coo, self.cat1, self.cat2 = self.to_coo(df)
@@ -58,7 +59,8 @@ class MatrixWrapper:
                 test_csr, _, _ = self.to_coo(test_df)
             _model = implicit.als.AlternatingLeastSquares(factors=train_config.factor,
                                                           regularization=train_config.regularization,
-                                                          iterations=train_config.iterations)
+                                                          iterations=train_config.iterations,
+                                                          use_gpu=self.use_gpu)
             _model.fit(train_csr * train_config.conf_scale)
             prec = precision_at_k(_model, train_csr, test_csr, K=train_config.top_n)
             logger.warning('ACCURACY REPORT at top {}: {:.5f}'.format(train_config.top_n, prec))
@@ -69,7 +71,8 @@ class MatrixWrapper:
         logger.info('Training on complete matrix')
         _model = implicit.als.AlternatingLeastSquares(factors=train_config.factor,
                                                       regularization=train_config.regularization,
-                                                      iterations=train_config.iterations)
+                                                      iterations=train_config.iterations,
+                                                      use_gpu=self.use_gpu)
         _model.fit(self.coo * train_config.conf_scale)
         self.model = _model
 

@@ -16,7 +16,7 @@ if __name__ == '__main__':
 
     hla_cfg = HlaExperimentConfig(books_storage=MyAPI.books_storage)
     df = pd.read_csv(hla_cfg.hla_melted_data_filepath)
-    mw = MatrixWrapper(df, user_col='user', feature_col='feature', value_col="value")
+    mw = MatrixWrapper(df, user_col='user', feature_col='feature', value_col="value", use_gpu=False)
     mw.get_train(PairsExperimentEmbeddingConfig.hla_training_config, report_test=True)
 
     # Complete clusters for every speaker

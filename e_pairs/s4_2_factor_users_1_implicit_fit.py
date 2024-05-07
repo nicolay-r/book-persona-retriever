@@ -12,7 +12,8 @@ if __name__ == '__main__':
 
     hla_cfg = HlaExperimentConfig(books_storage=MyAPI.books_storage)
     df = pd.read_csv(hla_cfg.hla_melted_data_filepath)
-    mw = MatrixWrapper(df, user_col='user', feature_col='feature', value_col="value")
+    # NOTE: We force disable GPU support in order to perform NpzUtils.save correctly.
+    mw = MatrixWrapper(df, user_col='user', feature_col='feature', value_col="value", use_gpu=False)
     mw.get_train(PairsExperimentEmbeddingConfig.hla_training_config, report_test=False)
 
     # Save the result model.

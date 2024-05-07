@@ -70,8 +70,8 @@ if __name__ == '__main__':
     melt_to_csv(X=u_X, y=u_speaker_names, out_filepath=melted_filepath,
                 user_col_name="user", feature_col_name="feature", value_col_name="value")
 
-    mw = MatrixWrapper(pd.read_csv(melted_filepath),
-                       user_col='user', feature_col='feature', value_col="value")
+    mw = MatrixWrapper(pd.read_csv(melted_filepath), user_col='user',
+                       feature_col='feature', value_col="value", use_gpu=False)
     mw.get_train(PairsExperimentEmbeddingConfig.hla_training_config, report_test=False)
     factors_list = []
     for user_id in tqdm(range(mw.model.user_factors.shape[0])):
