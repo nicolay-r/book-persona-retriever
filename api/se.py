@@ -24,7 +24,7 @@ class SEApi(object):
     # HLA-related parameters.
     hla_spectrums_limit = 20            # ALOHA parameter which is proposes to keep the most representative traits.
     hla_spectrum_preset = "prompt_top_{}".format(str(hla_spectrums_limit))
-    hla_prompts_filepath = join(books_storage_original, "./spectrum_speaker_prompts-{preset}.txt".format(preset=hla_spectrum_preset))
+    hla_prompts_filepath = join(books_storage_original, "./spectrum_speaker_prompts-{preset}.jsonl".format(preset=hla_spectrum_preset))
     # The result dataset details.
     parlai_dataset_filepath = join(books_storage, "./dataset_parlai_{}.zip")
     parlai_dataset_train_candidates_oversample_factor = 5

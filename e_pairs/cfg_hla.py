@@ -14,5 +14,5 @@ class HlaExperimentConfig:
         self.hla_users_melted_filepath = join(books_storage, "features_melted.txt")
         self.hla_speaker_clusters_path = join(books_storage, "clusters.jsonl")
         # We limit to 20 because of the 2 polarities of spectrums (two different values per one trait).
-        self.hla_prompts_filepath = join(books_storage, f"./spectrum_speaker_prompts-{self.hla_spectrum_preset}.txt")
+        self.hla_prompts_filepath = join(books_storage, f"./spectrum_speaker_prompts-{self.hla_spectrum_preset}.jsonl")
         self.hla_users_embedding_factor = join(books_storage, "./x.speakers-factor.npz")

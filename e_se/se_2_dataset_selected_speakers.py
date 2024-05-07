@@ -16,7 +16,7 @@ if __name__ == '__main__':
     speaker_spectrums = SpectrumIOUtils.read([
         # We use speaker prompts from the MyAPI dataset (for the filtered speakers, i.e. 400 in past experiments).
         hla_cfg.hla_prompts_filepath,
-        # In addition we consider the selected speakers to add in that list.
+        # In addition, we consider the selected speakers to add in that list.
         join(SEApi.selected_output_dir, "hla.txt")])
 
     for speaker_id in SEApi.predefined_speakers:
