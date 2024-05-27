@@ -3,33 +3,35 @@
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/nicolay-r/deep-book-processing/blob/master/parlai_gutenberg_experiments.ipynb)
 
 This repository represents source code 
-for the *literature character personality formation* **workflow**, 
+for the *literature character personality formation* **workflow** which is 
+🔥 **solely relies on book content only** 🔥, 
 described in paper 
 [Personality Profiling for Literary Character
 Dialogue Agents with Human Level Attributes]().
 
 ## Contents
 * [**Workflow**](#workflow)
-    * [Personalities](#personalities)
+    * [Personality Profiling Model](#personality-profiling-model)
     * [Applications](#applications)
 * [**Datasets**](#datasets)
 * [**Experiments**](#experiments)
+* [Organizations](#experiments)
 * [Dependencies](#dependencies)
 
 ## Workflow
 
-This repository represents a source code for book [processing workflow implementation](e_pairs).
+This repository represents a source code for literature novel book [processing workflow implementation](e_pairs).
 
 > **Task**: Studies propose the novel *Character Comments Annotation* problem, which refers to [**quotation annotation**](https://github.com/dbamman/litbank?tab=readme-ov-file#quotation-annotations)
 [[paper]](https://arxiv.org/pdf/2004.13980.pdf).
 
 <p align="center">
-    <img src="pics/e_pairs_pipeline_architecture.png" width="1000"/>
+    <img src="resources/e_pairs_pipeline_architecture.png" width="1000"/>
 </p>
 
-This workflow relies on the third-party studies and components aimed at character dialogues extraction, which inlude:
-named entities recognition,
-[**automatic dialogue extraction**](https://arxiv.org/abs/2004.12752).
+This workflow relies on **external text processing components**:
+(1) NER,
+(2) [**automatic dialogue annotation**](https://arxiv.org/abs/2004.12752).
 See [dependencies](#dependencies) section for greater detail.
 
 The formation of [**datasets**](#datasets) of character conversations
@@ -37,13 +39,13 @@ represent a byproduct of the related data flow.
 The content of dataset yields of dialogues, with utterances that
 annotated with speakers.
 
-### Personalities
+### Personality Profiling Model
 We adopt adjective-pair lexicon as a source for the 
 **[spectrum-based](https://github.com/tacookson/data/tree/master/fictional-character-personalities) character profiling model**.
 We provide API for collection information on characters and composing their personalities in a form of **output matrices**:
 
 <p align="center">
-    <img src="pics/e_pairs_spectrum_profiling_model.png" width="1000"/>
+    <img src="resources/e_pairs_spectrum_profiling_model.png" width="1000"/>
 </p>
 
 Each row of the matrix represent **character** and columns related to their **personality traits**.
@@ -52,10 +54,10 @@ based on [personalities factorization model](https://github.com/newpro/aloha-cha
 
 
 <p align="center">
-    <img src="pics/e_pairs_character_profiling_model_output.png" width="1024"/>
+    <img src="resources/e_pairs_character_profiling_model_output.png" width="1024"/>
 </p>
 
-### Applications 
+## Applications 
 
 The directions this project was aimed at the following research directions:
 * `e_pairs` -- response generation and response prediction for the given **dialogue pairs** aka CONV-turns;
@@ -74,7 +76,7 @@ For each direction we provide a pipeline (sequence of the separately ordered scr
 
 The common version of the resource dubbed as Literature Dialogue Collection (`LDC`).
 
-It consists of dialogues extracted from 17K books of the Project Gutenberg platform.
+It consists of dialogues extracted from 17K books of the [Project Gutenberg](https://www.gutenberg.org/) platform.
 This resource could be automatically constructed using the following steps:
 1. [Downloading](download_data.py) all the necessary books 📚 and resources (Downloading takes: **~3.5 hours** ☕)
 2. Executing the scripts from `e_pairs` directory.
@@ -129,8 +131,23 @@ Link for **ParlAI** agents / task: [[parlai-agents]](https://github.com/nicolay-
 
 ## Dependencies 
 
-We consider books from [Project Gutenberg](https://www.gutenberg.org/).
+1. **NER**:
+    * [CEB-framework](https://github.com/naoya-i/charembench) -- pre-annotated and grouped speakers from **Project Gutenberg**. [[paper]]()
+2. **Dialogue utterances extraction** from literature novel books:
+    * [gutenberg-dialog](https://github.com/ricsinaruto/gutenberg-dialog) -- automatic dialogue annotation algorithm [[paper]]()
+    
+## Organizations
 
-We utilize:
-* [CEB-framework](https://github.com/naoya-i/charembench) -- pre-annotated and grouped speakers from **Project Gutenberg**. [[paper]]()
-* [gutenberg-dialog](https://github.com/ricsinaruto/gutenberg-dialog) -- automatic dialogue annotation algorithm [[paper]]()
+This work has been accomplished as a part of my Research Fellow position at Newcastle University.
+<p align="left">
+    <img src="resources/logo_newcastle_university.png" width="200"/>
+</p>
+
+
+## References
+
+You can cite this work as follows:
+
+```bibtex
+TO BE ADDED
+```
