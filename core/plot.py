@@ -95,7 +95,9 @@ def draw_hist_plot(c, desc=None, min_val=None, max_val=None, n_bins=None, show=T
     val_width = max_val - min_val
     n_bins = abs(max_val - min_val) if n_bins is None else n_bins
     bin_width = val_width/n_bins
-    plt.xticks(np.arange(min_val - bin_width, max_val + bin_width, bin_width))
+    x_ticks = np.arange(min_val - bin_width, max_val + bin_width, bin_width)           
+    plt.xticks(x_ticks)                         
+    plt.xlim(min(x_ticks), max(x_ticks)) 
 
     desc = "" if desc is None else desc
 
