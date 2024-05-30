@@ -77,40 +77,37 @@ def draw_spectrum_barplot(c, x_name, y_name, val_to_x=lambda v: v, asp_hor=2, as
     plt.clf()
 
 
-def draw_hist_plot(c, desc=None, min_val=None, max_val=None, n_bins=None, show=True,
-                   save_png_path=None, asp_hor=8, asp_ver=2, log_scale=False):
-    assert(isinstance(c, Counter))
-
-    if min_val is None:
-        min_val = int(min(c.keys()))
-        for x in list(c.keys()):
-            if x < min_val:
-                del c[x]
-    if max_val is None:
-        max_val = int(max(c.keys()))
-        for x in list(c.keys()):
-            if x > max_val:
-                del c[x]
-
+def __hist_fix_x_asis(min_val, max_val, bins=None):
     val_width = max_val - min_val
-    n_bins = abs(max_val - min_val) if n_bins is None else n_bins
+    n_bins = abs(max_val - min_val) if bins is None else bins
     bin_width = val_width/n_bins
-    x_ticks = np.arange(min_val - bin_width, max_val + bin_width, bin_width)           
-    plt.xticks(x_ticks)                         
-    plt.xlim(min(x_ticks), max(x_ticks)) 
+    x_ticks = np.arange(min_val - bin_width, max_val + bin_width, bin_width)
+    plt.xticks(x_ticks)
+    plt.xlim(min(x_ticks), max(x_ticks))
 
+
+def draw_hist_plot(data, desc=None, x_min=None, x_max=None, n_bins=None, show=True,
+                   save_png_path=None, asp_hor=8, asp_ver=2, log_scale=False, start_from_zero=True):
+
+    min_x_tick = x_min
+    if min_x_tick is None:
+        min_x_tick = min(data)
+        if min_x_tick > 0 and start_from_zero:
+            min_x_tick = 0
+
+    max_x_tick = x_max
+    if max_x_tick is None:
+        max_x_tick = len(data)
+
+    # Setup x axis.
+    __hist_fix_x_asis(min_val=min_x_tick, max_val=max_x_tick, bins=n_bins)
+
+    # Launch drawing code.
     desc = "" if desc is None else desc
-
-    # Compose data.
-    data = []
-    for e, count in c.items():
-        for _ in range(count):
-            data.append(e)
-
     g = sns.histplot(data=pd.DataFrame({desc: data}),
                      x=desc,
                      bins=n_bins,
-                     binrange=(min_val, max_val),
+                     binrange=(x_min, x_max),
                      legend=True)
 
     if log_scale:

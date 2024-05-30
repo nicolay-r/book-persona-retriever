@@ -4,6 +4,8 @@ from os.path import join
 from api.my import MyAPI
 from core.dataset.pairs_iterator import get_dialog_qr_pairs_iter
 from core.plot import draw_hist_plot
+from core.utils_counter import CounterService
+from utils import TEST_DIR
 
 
 def calc_words_count(fold_index, filter_func):
@@ -34,11 +36,10 @@ for f_type, f_func in filters.items():
     for data_type in folding_parts:
         c = calc_words_count(data_type, filter_func=f_func)
         sdt = data_type if data_type is not None else "all"
-        png_path = join(MyAPI.books_storage, f"dataset_{f_type}_p{sdt}.png")
+        png_path = join(TEST_DIR, f"dataset_{f_type}_p{sdt}.png")
         print(f_type, sdt, c.most_common(10))
-        draw_hist_plot(c,
+        draw_hist_plot(CounterService.to_melt_list(ctr=c),
                        desc=f"Histogram of {f_type} utterance lengths in words (`{sdt}` dataset)",
                        n_bins=20, save_png_path=png_path, show=False, asp_hor=14, asp_ver=2,
-                       # Round to the closest 10.
-                       max_val=round(max(c.keys()), -1),
+                       x_min=0, x_max=round(max(c.keys()), -1),
                        log_scale=False)

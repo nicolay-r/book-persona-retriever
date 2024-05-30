@@ -7,6 +7,7 @@ from api.my import MyAPI
 from core.book.utils import iter_paragraphs_with_n_speakers
 from core.plot import draw_hist_plot
 from core.utils import create_dir_if_not_exist
+from core.utils_counter import CounterService
 from e_pairs.api_fcp import FcpApi
 from e_pairs.cfg_spectrum import SpectrumConfig
 from e_pairs.hla_models.spectrum.annot import annot_spectrums_in_text
@@ -62,6 +63,9 @@ if __name__ == '__main__':
     for name, spectrum_ctr in speaker_spectrums.items():
         s_counter[name] = len(spectrum_ctr)
 
-    draw_hist_plot(c=s_counter, desc='Spectrums Per Speaker',
+    s_counter_common = CounterService.from_most_common(s_counter, n=20)
+    draw_hist_plot(data=CounterService.to_melt_list(ctr=s_counter_common),
+                   desc='Spectrums Per Speaker',
                    save_png_path=join(TEST_DIR, f"spectrums_per_speaker.png"),
-                   min_val=0, max_val=20, asp_hor=14, asp_ver=2, show=False)
+                   x_min=0, x_max=len(s_counter_common),
+                   asp_hor=14, asp_ver=2, show=False)
