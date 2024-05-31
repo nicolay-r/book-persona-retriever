@@ -56,6 +56,9 @@ class CEBApi:
                 of the following format: BOOK_SID
         """
         assert(isinstance(speaker_variant, str))
+        assert("{" not in speaker_variant)
+        assert("}" not in speaker_variant)
+
         if speaker_variant.count("_") != 2:
             if return_none:
                 return None

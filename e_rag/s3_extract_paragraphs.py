@@ -22,6 +22,10 @@ def data_it():
     ceb_api = CEBApi(books_root=join(DATA_DIR, "books"), char_map_path=join(DATA_DIR, "chr_map.json"))
     ceb_api.read_char_map()
 
+    # Extracting paragraphs
+    # (Non utterance related comments)
+    # TODO. This part probably could be refactored by calling iter_all method but keeping only paragraphs.
+    # TODO. at the moment this is a legacy code.
     p_it = lambda n_speakers: iter_paragraphs_with_n_speakers(
         speakers=set(EMApi.char_ids),
         n_speakers=n_speakers,
@@ -29,10 +33,12 @@ def data_it():
             iter_book_ids=[EMApi.book_id],
             book_by_id_func=my_api.get_book_path),
         paragraph_to_terms=lambda p: CEBApi.separate_character_entries(p.Text).split(),
-        parse_speaker_or_none_func=lambda term:
+        cast_to_id_or_none=lambda term:
             CEBApi.speaker_variant_to_speaker(
                 GuttenbergDialogApi.try_parse_character(term, default=""),
                 return_none=True),
+        cast_to_variant_or_none=lambda term:
+            GuttenbergDialogApi.try_parse_character(term, default=None),
         multi_mentions=True)
 
     for paragraph, speakers in iter_iterator_by_param(param_list=args.speakers, it_func=p_it):

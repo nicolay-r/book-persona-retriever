@@ -5,7 +5,8 @@ from tqdm import tqdm
 from core.book.paragraph import Paragraph
 
 
-def iter_paragraphs_with_n_speakers(speakers, iter_paragraphs, paragraph_to_terms, parse_speaker_or_none_func,
+def iter_paragraphs_with_n_speakers(speakers, iter_paragraphs, paragraph_to_terms,
+                                    cast_to_id_or_none, cast_to_variant_or_none,
                                     n_speakers=1, multi_mentions=False):
     """ Iterate text paragraphs which contains only N mentioned speakers from `speakers` set.
         based on the Character-based-embedding API.
@@ -20,7 +21,7 @@ def iter_paragraphs_with_n_speakers(speakers, iter_paragraphs, paragraph_to_term
     """
     assert (isinstance(speakers, set))
     assert (callable(paragraph_to_terms))
-    assert (callable(parse_speaker_or_none_func))
+    assert (callable(cast_to_id_or_none))
     assert (isinstance(n_speakers, int) and n_speakers >= 0)
     assert (isinstance(multi_mentions, bool))
 
@@ -40,12 +41,18 @@ def iter_paragraphs_with_n_speakers(speakers, iter_paragraphs, paragraph_to_term
         has_others = False
         for term in paragraph_to_terms(p):
 
-            speaker_id = parse_speaker_or_none_func(term)
+            # {book_charindex_variant}
+            speaker_variant = cast_to_variant_or_none(term)
+            if speaker_variant is None:
+                continue
+
+            # {book_charindex}
+            speaker_id = cast_to_id_or_none(speaker_variant)
             if speaker_id is None:
                 continue
 
             if speaker_id in speakers:
-                p_speakers.append(term)
+                p_speakers.append(speaker_variant)
             else:
                 has_others = True
 

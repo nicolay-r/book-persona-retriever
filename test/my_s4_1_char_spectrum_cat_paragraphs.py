@@ -31,11 +31,13 @@ if __name__ == '__main__':
                                            multi_mentions=False,
                                            speakers=set(ds_speakers),
                                            n_speakers=spectrum_cfg.speakers_in_paragraph,
-                                           parse_speaker_or_none_func=lambda term:
+                                           cast_to_id_or_none=lambda term:
                                                CEBApi.speaker_variant_to_speaker(
                                                    GuttenbergDialogApi.try_parse_character(term, default=""),
                                                    return_none=True),
                                            paragraph_to_terms=lambda p: CEBApi.separate_character_entries(p.Text).split(),
+                                           cast_to_variant_or_none=lambda term:
+                                               GuttenbergDialogApi.try_parse_character(term, default=None),
                                            iter_paragraphs=CEBApi.iter_paragraphs(
                                                iter_book_ids=my_api.book_ids_from_directory(),
                                                book_by_id_func=my_api.get_book_path))),

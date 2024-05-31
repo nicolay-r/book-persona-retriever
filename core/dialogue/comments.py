@@ -1,8 +1,5 @@
-# TODO. The core code should not depend on API.
-from api.ceb import CEBApi
-
-
-def filter_relevant_text_comments(is_term_speaker_func, speaker_positions, iter_comments_at_k_func, speakers):
+def filter_relevant_text_comments(is_term_speaker_func, speaker_positions, iter_comments_at_k_func,
+                                  cast_to_id_or_none, speakers):
     assert(callable(is_term_speaker_func))
     assert(isinstance(speaker_positions, list))
     assert(callable(iter_comments_at_k_func))
@@ -17,7 +14,13 @@ def filter_relevant_text_comments(is_term_speaker_func, speaker_positions, iter_
 
                     if not is_term_speaker_func(term):
                         continue
-                    if CEBApi.speaker_variant_to_speaker(term) not in speakers:
+
+                    # {book_charindex}
+                    speaker_id = cast_to_id_or_none(term)
+                    if speaker_id is None:
+                        continue
+
+                    if speaker_id not in speakers:
                         continue
 
                     yield comment, [term]
