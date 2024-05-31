@@ -67,5 +67,5 @@ if __name__ == '__main__':
     draw_hist_plot(data=CounterService.to_melt_list(ctr=s_counter_common),
                    desc='Spectrums Per Speaker',
                    save_png_path=join(TEST_DIR, f"spectrums_per_speaker.png"),
-                   x_min=0, x_max=len(s_counter_common),
+                   x_min=-1, x_max=len(s_counter_common),
                    asp_hor=14, asp_ver=2, show=False)

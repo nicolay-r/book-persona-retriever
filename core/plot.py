@@ -77,30 +77,25 @@ def draw_spectrum_barplot(c, x_name, y_name, val_to_x=lambda v: v, asp_hor=2, as
     plt.clf()
 
 
-def __hist_fix_x_asis(min_val, max_val, bins=None):
+def __hist_fix_x_axis(min_val, max_val, bins=None):
     val_width = max_val - min_val
     n_bins = abs(max_val - min_val) if bins is None else bins
     bin_width = val_width/n_bins
-    x_ticks = np.arange(min_val - bin_width, max_val + bin_width, bin_width)
+    x_ticks = np.arange(min_val, max_val + bin_width, bin_width)
     plt.xticks(x_ticks)
     plt.xlim(min(x_ticks), max(x_ticks))
 
 
-def draw_hist_plot(data, desc=None, x_min=None, x_max=None, n_bins=None, show=True,
-                   save_png_path=None, asp_hor=8, asp_ver=2, log_scale=False, start_from_zero=True):
-
-    min_x_tick = x_min
-    if min_x_tick is None:
-        min_x_tick = min(data)
-        if min_x_tick > 0 and start_from_zero:
-            min_x_tick = 0
+def draw_hist_plot(data, desc=None, x_min=0, x_max=None, n_bins=None, show=True,
+                   save_png_path=None, asp_hor=8, asp_ver=2, log_scale=False):
+    assert(isinstance(x_min, int))
 
     max_x_tick = x_max
     if max_x_tick is None:
         max_x_tick = len(data)
 
     # Setup x axis.
-    __hist_fix_x_asis(min_val=min_x_tick, max_val=max_x_tick, bins=n_bins)
+    __hist_fix_x_axis(min_val=x_min, max_val=max_x_tick, bins=n_bins)
 
     # Launch drawing code.
     desc = "" if desc is None else desc
