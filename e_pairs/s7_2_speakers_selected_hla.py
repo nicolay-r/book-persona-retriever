@@ -2,10 +2,10 @@ import os
 from os.path import join, exists
 
 from api.my import MyAPI
-from core.spectrums.text_source import iter_all
 from core.utils_npz import NpzUtils
 from e_pairs.api_fcp import FcpApi
 from e_pairs.cfg_spectrum import SpectrumConfig
+from e_pairs.comments.default import iter_all_speaker_comments
 from e_pairs.hla_models.spectrum.annot import annot_spectrums_in_text, annot_to_min_max_grouped
 from test.const import MOST_DISTINCTIVE
 from test.utils_draw import draw_spectrums_stat
@@ -19,7 +19,7 @@ if __name__ == '__main__':
 
     spectrum_cfg = SpectrumConfig()
     speaker_spectrums_dict = annot_spectrums_in_text(
-        texts_and_speakervars_iter=iter_all(
+        texts_and_speakervars_iter=iter_all_speaker_comments(
             speakers=my_api.predefined_speakers, my_api=my_api, spectrum_cfg=spectrum_cfg),
         rev_spectrums=fcp_api.reversed_spectrums())
 

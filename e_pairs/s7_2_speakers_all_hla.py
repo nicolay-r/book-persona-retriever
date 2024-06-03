@@ -3,10 +3,10 @@ from os.path import join, exists
 
 from api.ceb import CEBApi
 from api.my import MyAPI
-from core.spectrums.text_source import iter_all
 from core.utils_npz import NpzUtils
 from e_pairs.api_fcp import FcpApi
 from e_pairs.cfg_spectrum import SpectrumConfig
+from e_pairs.comments.default import iter_all_speaker_comments
 from e_pairs.hla_models.spectrum.annot import annot_spectrums_in_text, annot_to_min_max_grouped
 from utils import DATA_DIR
 
@@ -22,7 +22,7 @@ if __name__ == '__main__':
     speakers = list(ceb_api.iter_chars())
     print("Speakers considered: {}".format(len(speakers)))
     speaker_spectrums_dict = annot_spectrums_in_text(
-        texts_and_speakervars_iter=iter_all(speakers=speakers, my_api=my_api, spectrum_cfg=spectrum_cfg),
+        texts_and_speakervars_iter=iter_all_speaker_comments(speakers=speakers, my_api=my_api, spectrum_cfg=spectrum_cfg),
         rev_spectrums=fcp_api.reversed_spectrums())
 
     print("speaker spectrums dict len:", len(speaker_spectrums_dict))

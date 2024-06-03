@@ -3,10 +3,10 @@ from os.path import join, exists
 
 from api.my import MyAPI
 from api.se import SEApi
-from core.spectrums.text_source import iter_all
 from core.utils_npz import NpzUtils
 from e_pairs.api_fcp import FcpApi
 from e_pairs.cfg_spectrum import SpectrumConfig
+from e_pairs.comments.default import iter_all_speaker_comments
 from e_pairs.hla_models.spectrum.annot import annot_to_min_max_grouped, annot_spectrums_in_text
 from test.const import MOST_DISTINCTIVE
 from test.utils_draw import draw_spectrums_stat
@@ -20,9 +20,9 @@ if __name__ == '__main__':
     fcp_api = FcpApi(personalities_path=join(DATA_DIR, "personalities.txt"))
     spectrum_cfg = SpectrumConfig()
     speaker_spectrums_dict = annot_spectrums_in_text(
-        texts_and_speakervars_iter=iter_all(speakers=se_api.predefined_speakers,
-                                            my_api=my_api,
-                                            spectrum_cfg=spectrum_cfg),
+        texts_and_speakervars_iter=iter_all_speaker_comments(speakers=se_api.predefined_speakers,
+                                                             my_api=my_api,
+                                                             spectrum_cfg=spectrum_cfg),
         rev_spectrums=fcp_api.reversed_spectrums())
 
     print("speaker spectrums dict len:", len(speaker_spectrums_dict))
