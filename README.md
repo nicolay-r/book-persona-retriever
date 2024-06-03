@@ -1,9 +1,9 @@
-# Book Processing Framework
+# Book-based Fictional Character Profiling Workflow
 ![](https://img.shields.io/badge/Python-3.10-lightgreen.svg)
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/nicolay-r/deep-book-processing/blob/master/parlai_gutenberg_experiments.ipynb)
 
 This repository represents source code 
-for the *literature character personality formation* **workflow** which is 
+for the *literature 📚 character personality formation* **workflow** which is 
 🔥 **solely relies on book content only** 🔥, 
 described in paper 
 [Personality Profiling for Literary Character
