@@ -1,4 +1,4 @@
-# Book-based Fictional Character Profiling Workflow
+# Book-based Fictional Character Profiling Workflow • [![twitter](https://img.shields.io/twitter/url/https/shields.io.svg?style=social)](https://x.com/nicolayr_/status/1801009815784677862)
 ![](https://img.shields.io/badge/Python-3.10-lightgreen.svg)
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/nicolay-r/deep-book-processing/blob/master/parlai_gutenberg_experiments.ipynb)
 
