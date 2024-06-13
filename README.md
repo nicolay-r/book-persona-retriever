@@ -7,7 +7,9 @@ for the *literature 📚 character personality formation* **workflow** which is
 🔥 **solely relies on book content only** 🔥, 
 described in paper 
 [Personality Profiling for Literary Character
-Dialogue Agents with Human Level Attributes]().
+Dialogue Agents with Human Level Attributes]()
+that has been accepted as a part of 
+[LOD-2024](https://lod2024.icas.events/).
 
 ## Contents
 * [**Workflow**](#workflow)
