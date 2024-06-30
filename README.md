@@ -75,7 +75,7 @@ For each direction we provide a pipeline (sequence of the separately ordered scr
   1. **[LDC-400-RP](#ldc-400-rp)**
   2. **[LDC-400-SR](#ldc-400-sr)**
 
-## `LDC`
+## `LDR`
 
 The common version of the resource dubbed as Literature Dialogue Collection (`LDC`).
 
@@ -86,7 +86,7 @@ This resource could be automatically constructed using the following steps:
 
 We fine-cleaned dataset of dialogue pairs between `400` **most-frequently** appeared characters which results in `LDC-400` datasets.
 
-## `LDC-400-RP`
+## `LDR-400-RP`
 
 This dataset if for the **Response Prediction** problem.
 
@@ -97,13 +97,20 @@ In order to embed extracted data, we utilize the related data formatter.
 
 Link for **ParlAI** agents / task: [[parlai-agents]](https://github.com/nicolay-r/parlai_bookchar_task/blob/master/build.py)
 
-**Candidates count:** 20
-
 | Collection-type | Format | train                                                                                                                                             | valid                                                                                                                                             | test                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 |-----------------|--------|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **NO-HLA**      | ParlAI | [Train w/o HLA](https://www.dropbox.com/scl/fi/cmflno09yyvw70mpf4fli/dataset_parlai_train_original.txt.zip?rlkey=477zsekm5j0a4dpco0w9479uo&dl=1)  | [Valid w/o HLA](https://www.dropbox.com/scl/fi/508zfhxewvweqtn4k7hfg/dataset_parlai_valid_original.txt.zip?rlkey=3a0syeturb84lxtmizq1o5bsx&dl=1)  | Not Applicable                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | **HLA**-spectrum| ParlAI | [Train with HLA](https://www.dropbox.com/scl/fi/ax62dvkik12alxj604ute/dataset_parlai_train_spectrum.txt.zip?rlkey=xuvmvze6fnak413gst54qd4qz&dl=1) | [Valid with HLA](https://www.dropbox.com/scl/fi/lr96to0rzc6wpo84isscb/dataset_parlai_valid_spectrum.txt.zip?rlkey=5wrgtrtuulf3baxr724bcycdu&dl=1) | Five speakers: [[1]](https://www.dropbox.com/scl/fi/59pcnfytpckv34dbvm2x0/139_1.parlai_dataset.txt.zip?rlkey=c9fwoxbyta9f05f79l4bkym8o&dl=1) [[2]](https://www.dropbox.com/scl/fi/q07aph6we2x2wkwid65en/155_21.parlai_dataset.txt.zip?rlkey=qzs9cj4uk01vir2k46ztr7934&dl=1) [[3]](https://www.dropbox.com/scl/fi/214biikj5wianib7517ou/403_3.parlai_dataset.txt.zip?rlkey=qo6f7kr2mw6gafix467vl2cxe&dl=1) [[4]](https://www.dropbox.com/scl/fi/rhfukpgaxvpevqw4jnhmg/507_3.parlai_dataset.txt.zip?rlkey=6qcxui6a7mtc5b8xhp4zsoy7n&dl=1) [[5]](https://www.dropbox.com/scl/fi/07mp58p0fnw531tptdit4/1257_9.parlai_dataset.txt.zip?rlkey=1wesdzd1hqj668ztirh5yqidc&dl=1) |
 | Human Evaluation| Text | -- | -- | Five speakers: [[1]](resources/human_eval/139_1.txt.zip) [[2]](resources/human_eval/155_21.txt.zip) [[3]](resources/human_eval/403_3.txt.zip) [[4]](resources/human_eval/507_3.txt.zip) [[5]](resources/human_eval/1257_9.txt.zip) |
+
+**Candidates count:** 20
+
+**Test Speakers**:
+1. *Mr. Summerlee* The Lost World by Conan Doyle
+2. *Sergeant Cuff* from The Moonstone by Wilkie Collins
+3. *Mr. MacWilliams* from Soldiers of Fortune by Richard Harding Davis 
+4. *Arthur Donnithorne* from Adam Bede by George Elio
+5. *Lord Duke* from Tree Musketeers by Alexandre Dumas Per
 
 > **NOTE:** [Please use `nicolay-r/parlai_bookchar_task` repository](https://github.com/nicolay-r/parlai_bookchar_task) on embedding task into ParlAI.
 > All the resources below are automatically downloaded once the task is embedded into ParlAI framework. 
