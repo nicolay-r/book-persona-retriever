@@ -2,14 +2,14 @@ from os.path import join
 
 import numpy as np
 
-from api.my import MyAPI
+from api.ldc import LdcAPI
 from core.plot import plot_tsne_series
 from core.utils_npz import NpzUtils
 
 
 def __tsne_plot(X, save_prefix):
     perplexies = [50]
-    png_path = join(MyAPI.books_storage, "{prefix}_p{preset}_all{total}".format(
+    png_path = join(LdcAPI.books_storage, "{prefix}_p{preset}_all{total}".format(
         prefix=save_prefix,
         preset='-'.join([str(p) for p in perplexies]),
         total=len(X)))
@@ -17,5 +17,5 @@ def __tsne_plot(X, save_prefix):
                      save_png_path=png_path)
 
 
-__tsne_plot(X=list(NpzUtils.load(MyAPI.dataset_st_embedding_query)), save_prefix="dataset_query")
-__tsne_plot(X=list(NpzUtils.load(MyAPI.dataset_st_embedding_response)), save_prefix="dataset_response")
+__tsne_plot(X=list(NpzUtils.load(LdcAPI.dataset_st_embedding_query)), save_prefix="dataset_query")
+__tsne_plot(X=list(NpzUtils.load(LdcAPI.dataset_st_embedding_response)), save_prefix="dataset_response")

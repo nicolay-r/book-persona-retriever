@@ -3,7 +3,7 @@ from os.path import join
 
 from api.ceb import CEBApi
 from api.gd import GuttenbergDialogApi
-from api.my import MyAPI
+from api.ldc import LdcAPI
 from core.book.utils import iter_paragraphs_with_n_speakers
 from core.plot import draw_hist_plot
 from core.utils import create_dir_if_not_exist
@@ -20,9 +20,9 @@ if __name__ == '__main__':
 
     # We connect the CEB API for our books in English,
     # for which annotation of the characters has been applied.
-    my_api = MyAPI()
+    ldc_api = LdcAPI()
     fcp_api = FcpApi(personalities_path=join(DATA_DIR, "personalities.txt"))
-    ds_speakers = my_api.read_speakers()
+    ds_speakers = ldc_api.read_speakers()
     spectrum_cfg = SpectrumConfig()
 
     speaker_spectrums = annot_spectrums_in_text(
@@ -39,8 +39,8 @@ if __name__ == '__main__':
                                            cast_to_variant_or_none=lambda term:
                                                GuttenbergDialogApi.try_parse_character(term, default=None),
                                            iter_paragraphs=CEBApi.iter_paragraphs(
-                                               iter_book_ids=my_api.book_ids_from_directory(),
-                                               book_by_id_func=my_api.get_book_path))),
+                                               iter_book_ids=ldc_api.book_ids_from_directory(),
+                                               book_by_id_func=ldc_api.get_book_path))),
         rev_spectrums=fcp_api.reversed_spectrums())
 
     # Create test directory.

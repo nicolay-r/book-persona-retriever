@@ -2,7 +2,7 @@ from tqdm import tqdm
 from os import listdir
 from os.path import isfile, join
 
-from api.my import MyAPI
+from api.ldc import LdcAPI
 from e_pairs.api_fcp import FcpApi
 from utils import DATA_DIR
 
@@ -15,7 +15,7 @@ if __name__ == '__main__':
     for key, value in d.items():
         print(key, value)
 
-    in_dir = MyAPI.books_storage_en
+    in_dir = LdcAPI.books_storage_en
     f_names = [f for f in listdir(in_dir) if isfile(join(in_dir, f))]
 
     lexicon_entries = [next(iter(v["low"])) for v in d.values()] + [next(iter(v["high"])) for v in d.values()]

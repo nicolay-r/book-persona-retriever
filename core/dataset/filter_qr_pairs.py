@@ -3,7 +3,7 @@ from collections import Counter
 # TODO. The core code should not depend on API.
 from api.ceb import CEBApi
 from api.gd import GuttenbergDialogApi
-from api.my import MyAPI
+from api.ldc import LdcAPI
 
 from core.dialogue.utils import iter_terms_with_speakers
 
@@ -33,7 +33,7 @@ class QRFilterFunctionObject(object):
         if not CEBApi.is_speaker_id(r_speaker_id):
             return False
 
-        if self.s_ctr[r_speaker_id] >= MyAPI.dataset_filter_dialogue_max_utterances_per_speaker:
+        if self.s_ctr[r_speaker_id] >= LdcAPI.dataset_filter_dialogue_max_utterances_per_speaker:
             return False
 
         # We consider only those utterances that is not contain information
@@ -42,12 +42,12 @@ class QRFilterFunctionObject(object):
         iter_terms_with_speakers(terms=dialogue[1].split(' '),
                                  is_term_has_char_func=GuttenbergDialogApi.has_character,
                                  map_func=lambda x: r_speakers.append(x))
-        if len(r_speakers) > MyAPI.dataset_filter_other_speakers_in_response:
+        if len(r_speakers) > LdcAPI.dataset_filter_other_speakers_in_response:
             return False
 
         # Limit by the minimum amount of words in the response.
         for utterance in dialogue:
-            if len(utterance.split(' ')) < MyAPI.dataset_min_words_count_in_response:
+            if len(utterance.split(' ')) < LdcAPI.dataset_min_words_count_in_response:
                 return False
 
         self.s_ctr[r_speaker_id] += 1

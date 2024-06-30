@@ -1,6 +1,6 @@
 from os.path import join
 
-from api.my import MyAPI
+from api.ldc import LdcAPI
 from core.plot import plot_tsne_series
 from core.utils_npz import NpzUtils
 from e_pairs.cfg_hla import HlaExperimentConfig
@@ -25,7 +25,7 @@ print("V-size: {}".format(len(X[0])))
 
 perplexies=[5, 10, 30, 50, 100]
 
-png_path = join(MyAPI.books_storage, "embedded_{preset}_p{prompt}_all{total}".format(
+png_path = join(LdcAPI.books_storage, "embedded_{preset}_p{prompt}_all{total}".format(
     preset=preset,
     prompt='-'.join([str(p) for p in perplexies]),
     total=len(X)))

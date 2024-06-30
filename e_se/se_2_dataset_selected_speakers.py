@@ -1,6 +1,6 @@
 from os.path import join
 
-from api.my import MyAPI
+from api.ldc import LdcAPI
 from api.se import SEApi
 from core.candidates.other_speakers import OtherSpeakersProvider
 from core.dataset.pairs_iterator import common_iter_dialogs
@@ -12,7 +12,7 @@ from e_pairs.cfg_hla import HlaExperimentConfig
 
 if __name__ == '__main__':
 
-    hla_cfg = HlaExperimentConfig(books_storage=MyAPI.books_storage)
+    hla_cfg = HlaExperimentConfig(books_storage=LdcAPI.books_storage)
     speaker_spectrums = SpectrumIOUtils.read([
         # We use speaker prompts from the MyAPI dataset (for the filtered speakers, i.e. 400 in past experiments).
         hla_cfg.hla_prompts_filepath,
@@ -22,17 +22,17 @@ if __name__ == '__main__':
     for speaker_id in SEApi.predefined_speakers:
 
         # Part #1 composing dataset.
-        pairs_it = MyAPI.iter_dialog_question_response_pairs(
-            dialogs_filepath=MyAPI.dialogs_filepath,
+        pairs_it = LdcAPI.iter_dialog_question_response_pairs(
+            dialogs_filepath=LdcAPI.dialogs_filepath,
             dialogue_filter_func=None,
             desc="Iter dialogues for speaker `{}`".format(speaker_id))
 
         # Speaker id dialogs output filepath.
         speaker_id_dialogs_path = join(SEApi.selected_output_dir, speaker_id + ".dataset.txt")
 
-        MyAPI.write_dataset(dialog_qr_pairs_iter=pairs_it,
-                            filepath=speaker_id_dialogs_path,
-                            speakers_set={speaker_id})
+        LdcAPI.write_dataset(dialog_qr_pairs_iter=pairs_it,
+                             filepath=speaker_id_dialogs_path,
+                             speakers_set={speaker_id})
 
         # We consider provider of other speakers.
         candidates_provider = OtherSpeakersProvider(

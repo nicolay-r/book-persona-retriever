@@ -2,17 +2,17 @@ import json
 import os
 from os.path import join
 
-from api.my import MyAPI
+from api.ldc import LdcAPI
 from core.plot import plot_tsne_series
 from core.utils_npz import NpzUtils
 from e_pairs.cfg_hla import HlaExperimentConfig
 
-hla_cfg = HlaExperimentConfig(books_storage=MyAPI.books_storage)
+hla_cfg = HlaExperimentConfig(books_storage=LdcAPI.books_storage)
 X = NpzUtils.load(hla_cfg.hla_users_embedding_factor)
 category = [0] * len(X)
 perplexies = [50]
 
-png_path = join(MyAPI.books_storage, "factor_users")
+png_path = join(LdcAPI.books_storage, "factor_users")
 clusters_path = join(hla_cfg.hla_speaker_clusters_path)
 
 # Visualize clustering.

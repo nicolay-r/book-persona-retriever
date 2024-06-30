@@ -1,9 +1,9 @@
-from api.my import MyAPI
+from api.ldc import LdcAPI
 from e_pairs.cfg_hla import HlaExperimentConfig
 
 
 s = set()
-hla_cfg = HlaExperimentConfig(books_storage=MyAPI.books_storage)
+hla_cfg = HlaExperimentConfig(books_storage=LdcAPI.books_storage)
 print(hla_cfg.hla_prompts_filepath)
 with open(hla_cfg.hla_prompts_filepath, "r") as f:
     for line in f.readlines():

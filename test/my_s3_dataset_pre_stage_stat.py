@@ -3,18 +3,18 @@ from collections import Counter
 from tqdm import tqdm
 
 from api.gd import GuttenbergDialogApi
-from api.my import MyAPI
+from api.ldc import LdcAPI
 from core.book.book_dialog import BookDialogue
 
 
 fold_index = None
-filepath = MyAPI.dialogs_filepath
+filepath = LdcAPI.dialogs_filepath
 gd_api = GuttenbergDialogApi()
-my_api = MyAPI()
+ldc_api = LdcAPI()
 
-it_segments = gd_api.iter_dialog_segments(book_path_func=my_api.get_book_path, split_meta=True)
-it_dialogs = MyAPI._read_annotated_dialogs(filepath=filepath)
-it_qr_pairs = MyAPI.iter_dialog_question_response_pairs(dialogs_filepath=filepath, dialogue_filter_func=None)
+it_segments = gd_api.iter_dialog_segments(book_path_func=ldc_api.get_book_path, split_meta=True)
+it_dialogs = LdcAPI._read_annotated_dialogs(filepath=filepath)
+it_qr_pairs = LdcAPI.iter_dialog_question_response_pairs(dialogs_filepath=filepath, dialogue_filter_func=None)
 
 c = Counter()
 for book_id, data in tqdm(it_segments):

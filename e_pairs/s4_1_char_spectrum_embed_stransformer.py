@@ -3,7 +3,7 @@ from os.path import join
 from sentence_transformers import SentenceTransformer
 from tqdm import tqdm
 
-from api.my import MyAPI
+from api.ldc import LdcAPI
 from core.utils_npz import NpzUtils
 from e_pairs.api_fcp import FcpApi
 from e_pairs.cfg_hla import HlaExperimentConfig
@@ -16,7 +16,7 @@ if __name__ == '__main__':
 
     fcp_api = FcpApi(personalities_path=join(DATA_DIR, "personalities.txt"))
     spectrum_cfg = SpectrumConfig()
-    hla_cfg = HlaExperimentConfig(books_storage=MyAPI.books_storage)
+    hla_cfg = HlaExperimentConfig(books_storage=LdcAPI.books_storage)
     model = SentenceTransformer(spectrum_cfg.embedding_model_name, cache_folder=CACHE_DIR)
 
     X_norm = NpzUtils.load(spectrum_cfg.features_norm)

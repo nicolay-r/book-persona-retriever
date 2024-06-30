@@ -1,7 +1,7 @@
 from collections import Counter
 from functools import cmp_to_key
 
-from api.my import MyAPI
+from api.ldc import LdcAPI
 
 
 def filter_response_speakers(dialogue_qr_pairs_it):
@@ -27,15 +27,15 @@ def filter_response_speakers(dialogue_qr_pairs_it):
         speaker_ids.add(r_speaker_id)
 
     # Optional parameter. Keep the most frequent.
-    if MyAPI.dataset_filter_speaker_total_speakers_count is not None:
+    if LdcAPI.dataset_filter_speaker_total_speakers_count is not None:
         ordered_speaker_ids = sorted(speaker_ids,
                                      key=cmp_to_key(lambda a, b: (__compare(a, b))),
                                      reverse=True)
         print(f"\nMost Frequent speakers (total): {len(ordered_speaker_ids)}")
         print("\n".join(["{}: {}".format(sid, speaker_entries[sid]) for sid in ordered_speaker_ids]))
-        speaker_ids = ordered_speaker_ids[:MyAPI.dataset_filter_speaker_total_speakers_count]
-        predefined_ids = ordered_speaker_ids[MyAPI.dataset_filter_speaker_total_speakers_count:
-                                             MyAPI.dataset_filter_speaker_total_speakers_count + MyAPI.dataset_predefined_speakers_count]
+        speaker_ids = ordered_speaker_ids[:LdcAPI.dataset_filter_speaker_total_speakers_count]
+        predefined_ids = ordered_speaker_ids[LdcAPI.dataset_filter_speaker_total_speakers_count:
+                                             LdcAPI.dataset_filter_speaker_total_speakers_count + LdcAPI.dataset_predefined_speakers_count]
         print(f"Predefined Speakers (total): {len(predefined_ids)}")
         print(", ".join(predefined_ids))
 
@@ -44,8 +44,8 @@ def filter_response_speakers(dialogue_qr_pairs_it):
         entries = speaker_entries[speaker_id]
 
         # Optional check whether we meet the criteria of the min. amount of the utterances per speaker.
-        if MyAPI.dataset_filter_speaker_min_utterances_per_speaker is not None:
-            if entries < MyAPI.dataset_filter_speaker_min_utterances_per_speaker:
+        if LdcAPI.dataset_filter_speaker_min_utterances_per_speaker is not None:
+            if entries < LdcAPI.dataset_filter_speaker_min_utterances_per_speaker:
                 continue
 
         yield speaker_id

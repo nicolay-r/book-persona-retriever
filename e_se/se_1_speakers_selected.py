@@ -1,7 +1,7 @@
 import os
 from os.path import join, exists
 
-from api.my import MyAPI
+from api.ldc import LdcAPI
 from api.se import SEApi
 from core.utils_npz import NpzUtils
 from e_pairs.api_fcp import FcpApi
@@ -16,12 +16,12 @@ from utils import DATA_DIR
 if __name__ == '__main__':
 
     se_api = SEApi()
-    my_api = MyAPI()
+    ldc_api = LdcAPI()
     fcp_api = FcpApi(personalities_path=join(DATA_DIR, "personalities.txt"))
     spectrum_cfg = SpectrumConfig()
     speaker_spectrums_dict = annot_spectrums_in_text(
         texts_and_speakervars_iter=iter_all_speaker_comments(speakers=se_api.predefined_speakers,
-                                                             my_api=my_api,
+                                                             ldc_api=ldc_api,
                                                              spectrum_cfg=spectrum_cfg),
         rev_spectrums=fcp_api.reversed_spectrums())
 

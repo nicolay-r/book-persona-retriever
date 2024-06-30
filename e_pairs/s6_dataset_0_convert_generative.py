@@ -4,7 +4,7 @@ import numpy as np
 import zipstream
 
 from api.ceb import CEBApi
-from api.my import MyAPI
+from api.ldc import LdcAPI
 from core.dataset.pairs_iterator import common_iter_dialogs
 from core.dataset.pairs_with_candidates import provide_formatted_pairs
 from core.spectrums.io_utils import SpectrumIOUtils
@@ -16,15 +16,15 @@ from utils import DATA_DIR
 
 if __name__ == '__main__':
 
-    my_api = MyAPI()
+    ldc_api = LdcAPI()
     z = zipstream.ZipFile()
 
-    dataset_filepaths = {part_name: my_api.dataset_fold_filepath.format(fold_index=part_name)
-                         for part_name in MyAPI.dataset_folding_fixed_parts}
+    dataset_filepaths = {part_name: ldc_api.dataset_fold_filepath.format(fold_index=part_name)
+                         for part_name in LdcAPI.dataset_folding_fixed_parts}
 
     ceb_api = CEBApi(books_root=join(DATA_DIR, "books"), char_map_path=join(DATA_DIR, "chr_map.json"))
     ceb_api.read_char_map()
-    hla_cfg = HlaExperimentConfig(books_storage=MyAPI.books_storage)
+    hla_cfg = HlaExperimentConfig(books_storage=LdcAPI.books_storage)
     speaker_spectrums = SpectrumIOUtils.read(hla_cfg.hla_prompts_filepath)
     spectrum_cfg = SpectrumConfig()
 
@@ -65,7 +65,7 @@ if __name__ == '__main__':
 
                 # There is no need to perform oversampling for non-train dataset type.
                 oversample_factor = None if data_fold_type != "train" else \
-                    my_api.parlai_dataset_train_candidates_oversample_factor
+                    ldc_api.parlai_dataset_train_candidates_oversample_factor
 
                 data_it = provide_formatted_pairs(
                     dialogs_iter=common_iter_dialogs(data_fold_source),
@@ -77,8 +77,8 @@ if __name__ == '__main__':
 
                 filename = '{}.txt'.format("_".join(args))
                 z.write_iter(filename, data_it)
-                target = my_api.parlai_dataset_filepath.format(filename)
-                with open(my_api.parlai_dataset_filepath.format(filename), "wb") as f:
+                target = ldc_api.parlai_dataset_filepath.format(filename)
+                with open(ldc_api.parlai_dataset_filepath.format(filename), "wb") as f:
                     for episode_line in z:
                         f.write(episode_line)
 

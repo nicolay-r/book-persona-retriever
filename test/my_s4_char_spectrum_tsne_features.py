@@ -1,6 +1,6 @@
 from os.path import join
 
-from api.my import MyAPI
+from api.ldc import LdcAPI
 from core.plot import plot_tsne_series
 from core.utils_npz import NpzUtils
 from e_pairs.cfg_spectrum import SpectrumConfig
@@ -15,7 +15,7 @@ if __name__ == '__main__':
 
     perplexies = [5, 10, 30, 50, 100]
 
-    png_path = join(MyAPI.books_storage, "features_p{preset}_all{total}".format(
+    png_path = join(LdcAPI.books_storage, "features_p{preset}_all{total}".format(
         preset='-'.join([str(p) for p in perplexies]),
         total=len(X)))
 

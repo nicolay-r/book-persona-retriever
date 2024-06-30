@@ -1,7 +1,7 @@
-from api.my import MyAPI
+from api.ldc import LdcAPI
 from core.utils import chunk_into_n
 
-l = chunk_into_n(MyAPI.read_speakers(), n=5)
+l = chunk_into_n(LdcAPI.read_speakers(), n=5)
 for i in l:
     print(len(i))
 print("----")

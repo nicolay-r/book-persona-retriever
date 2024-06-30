@@ -3,7 +3,7 @@ from os.path import join
 
 from api.ceb import CEBApi
 from api.gd import GuttenbergDialogApi
-from api.my import MyAPI
+from api.ldc import LdcAPI
 from core.book.paragraph import Paragraph
 from core.book.utils import iter_paragraphs_with_n_speakers
 from core.service_csv import CsvService
@@ -31,7 +31,7 @@ def data_it():
         n_speakers=n_speakers,
         iter_paragraphs=CEBApi.iter_paragraphs(
             iter_book_ids=[EMApi.book_id],
-            book_by_id_func=my_api.get_book_path),
+            book_by_id_func=ldc_api.get_book_path),
         paragraph_to_terms=lambda p: CEBApi.separate_character_entries(p.Text).split(),
         cast_to_id_or_none=lambda term:
             CEBApi.speaker_variant_to_speaker(
@@ -66,7 +66,7 @@ parser.add_argument('--speakers', dest='speakers', type=int, default=[1, 2, 3])
 parser.add_argument('--mask-speakers', dest='mask_speakers', type=str, default="false")
 args = parser.parse_args()
 
-my_api = MyAPI()
+ldc_api = LdcAPI()
 
 CsvService.write(target=join(EMApi.output_dir, "paragraphs.csv"),
                  header=["speaker_id", "paragraph"],

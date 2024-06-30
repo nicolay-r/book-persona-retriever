@@ -10,8 +10,8 @@ from core.utils import count_files_in_folder
 from utils import range_exclude_middle, range_middle, DATA_DIR
 
 
-class MyAPI:
-    """ Dataset developed for this particular studies
+class LdcAPI:
+    """ Literature Dialogue Dataset (LDC) API
     """
 
     # Main parameters.
@@ -77,7 +77,7 @@ class MyAPI:
     dialogs_unknown_speaker = "UNKN-"
 
     def __init__(self, books_root=None):
-        self.__book_storage_root = MyAPI.books_storage_en if books_root is None else books_root
+        self.__book_storage_root = LdcAPI.books_storage_en if books_root is None else books_root
 
     def get_book_path(self, book_id):
         return join(self.__book_storage_root, "{book_id}.txt".format(book_id=book_id))
@@ -111,7 +111,7 @@ class MyAPI:
 
     @staticmethod
     def write_annotated_dialogs(iter_dialogs_and_speakers, filepath=None, print_sep=True):
-        filepath = MyAPI.dialogs_filepath if filepath is None else filepath
+        filepath = LdcAPI.dialogs_filepath if filepath is None else filepath
 
         with open(filepath, "w") as file:
             for dialog, recognized_speakers in iter_dialogs_and_speakers:
@@ -124,9 +124,9 @@ class MyAPI:
                     sep = " " if print_sep is False else " {} ".format(BookDialogue.utterance_sep)
                     utterance = sep.join(segments)
                     speaker = recognized_speakers[speaker_id] \
-                        if speaker_id in recognized_speakers else MyAPI.dialogs_unknown_speaker + str(speaker_id)
+                        if speaker_id in recognized_speakers else LdcAPI.dialogs_unknown_speaker + str(speaker_id)
 
-                    line = MyAPI.utterance_to_str(speaker_id=speaker, utterance=utterance)
+                    line = LdcAPI.utterance_to_str(speaker_id=speaker, utterance=utterance)
 
                     file.write("{}\n".format(line))
 
@@ -149,7 +149,7 @@ class MyAPI:
         """
         entries = set()
 
-        with open(MyAPI.prefixes_storage_filepath if filepath is None else filepath, "r") as f:
+        with open(LdcAPI.prefixes_storage_filepath if filepath is None else filepath, "r") as f:
             for line in f.readlines():
                 # split n-gramms.
                 line = line.strip()
@@ -158,7 +158,7 @@ class MyAPI:
         return entries
 
     def write_lexicon(self, rows_iter):
-        with open(MyAPI.prefixes_storage_filepath, "w") as f_out:
+        with open(LdcAPI.prefixes_storage_filepath, "w") as f_out:
             for row in rows_iter:
                 f_out.write("{}\n".format(row))
 
@@ -166,7 +166,7 @@ class MyAPI:
     def write_speakers(speaker_names_list, filepath=None):
         assert(isinstance(speaker_names_list, list))
 
-        filepath = MyAPI.filtered_speakers_filepath if filepath is None else filepath
+        filepath = LdcAPI.filtered_speakers_filepath if filepath is None else filepath
 
         with open(filepath, "w") as f:
             for speaker_name in speaker_names_list:
@@ -178,7 +178,7 @@ class MyAPI:
     def read_speakers(filepath=None):
         assert(isinstance(filepath, str) or filepath is None)
 
-        filepath = MyAPI.filtered_speakers_filepath if filepath is None else filepath
+        filepath = LdcAPI.filtered_speakers_filepath if filepath is None else filepath
 
         speakers = []
         with open(filepath, "r") as f:
@@ -189,11 +189,11 @@ class MyAPI:
 
     @staticmethod
     def _get_meta(line):
-        return line.split(MyAPI.meta_sep)[0]
+        return line.split(LdcAPI.meta_sep)[0]
 
     @staticmethod
     def _get_utterance_or_empty(line):
-        args = line.split(MyAPI.meta_sep)
+        args = line.split(LdcAPI.meta_sep)
         return args[1] if len(args) > 1 else ""
 
     @staticmethod
@@ -204,7 +204,7 @@ class MyAPI:
 
             if isinstance(buffer_line, tuple):
                 assert(len(buffer_line) == 2)
-                buffer_line = MyAPI.utterance_to_str(speaker_id=buffer_line[0], utterance=buffer_line[1])
+                buffer_line = LdcAPI.utterance_to_str(speaker_id=buffer_line[0], utterance=buffer_line[1])
 
             file.write("{}\n".format(buffer_line))
         file.write("\n")
@@ -216,13 +216,13 @@ class MyAPI:
         """
 
         qr_utterance_pair = []
-        for line in MyAPI._read_annotated_dialogs(filepath=dialogs_filepath, desc=desc):
+        for line in LdcAPI._read_annotated_dialogs(filepath=dialogs_filepath, desc=desc):
 
             if line is None:
                 continue
 
             line = line.strip()
-            qr_utterance_pair.append(MyAPI._get_utterance_or_empty(line))
+            qr_utterance_pair.append(LdcAPI._get_utterance_or_empty(line))
 
             # Keep the size of buffer equal 2.
             if len(qr_utterance_pair) > 2:
@@ -232,10 +232,10 @@ class MyAPI:
                 continue
 
             # Parse speaker name.
-            r_speaker_id = MyAPI._get_meta(line)
+            r_speaker_id = LdcAPI._get_meta(line)
 
             # We consider None in the case when the responding speaker is unknown.
-            r_speaker_id = None if MyAPI.dialogs_unknown_speaker in r_speaker_id else r_speaker_id
+            r_speaker_id = None if LdcAPI.dialogs_unknown_speaker in r_speaker_id else r_speaker_id
 
             # We optionally filter buffers first.
             if dialogue_filter_func is not None:
@@ -248,7 +248,7 @@ class MyAPI:
     def write_dataset(dialog_qr_pairs_iter, speakers_set=None, filepath=None):
         assert(isinstance(speakers_set, set) or speakers_set is None)
 
-        filepath = MyAPI.dataset_filepath if filepath is None else filepath
+        filepath = LdcAPI.dataset_filepath if filepath is None else filepath
 
         counter = Counter()
         with open(filepath, "w") as file:
@@ -266,10 +266,10 @@ class MyAPI:
 
                 # We combine lines with the speaker information as it was before.
                 buffer = [None] * 2
-                buffer[0] = MyAPI.dialogs_unknown_speaker + "X" + MyAPI.meta_sep + qr_utterance_pair[0]
-                buffer[1] = r_speaker_id + MyAPI.meta_sep + qr_utterance_pair[1]
+                buffer[0] = LdcAPI.dialogs_unknown_speaker + "X" + LdcAPI.meta_sep + qr_utterance_pair[0]
+                buffer[1] = r_speaker_id + LdcAPI.meta_sep + qr_utterance_pair[1]
 
-                MyAPI.write_dataset_buffer(file=file, buffer=buffer)
+                LdcAPI.write_dataset_buffer(file=file, buffer=buffer)
                 counter["pairs"] += 1
 
         print("Pairs written: {}".format(counter["pairs"]))
@@ -304,8 +304,8 @@ class MyAPI:
 
                 if split_meta:
                     # Separate meta information from the line.
-                    meta = MyAPI._get_meta(line)
-                    text = line[len(meta) + len(MyAPI.meta_sep):]
+                    meta = LdcAPI._get_meta(line)
+                    text = line[len(meta) + len(LdcAPI.meta_sep):]
                     yield meta, text
                 else:
                     yield line
@@ -337,9 +337,9 @@ class MyAPI:
         """ Folding with the even splits of the utterances.
         """
 
-        dialogs_it = MyAPI.iter_dataset_as_dialogs(
-            MyAPI.read_dataset(keep_usep=False, split_meta=True,
-                               dataset_filepath=dataset_filepath, pbar=pbar))
+        dialogs_it = LdcAPI.iter_dataset_as_dialogs(
+            LdcAPI.read_dataset(keep_usep=False, split_meta=True,
+                                dataset_filepath=dataset_filepath, pbar=pbar))
 
         partners_count = Counter()
         for dialog in dialogs_it:

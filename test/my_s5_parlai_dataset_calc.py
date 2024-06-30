@@ -2,9 +2,9 @@ from collections import Counter
 from os import path
 from zipfile import ZipFile
 
-from api.my import MyAPI
+from api.ldc import LdcAPI
 
-my_api = MyAPI()
+
 dataset_names = [
     "dataset_parlai_train_original.txt.zip",
     "dataset_parlai_train_spectrum.txt.zip",
@@ -14,7 +14,7 @@ dataset_names = [
 
 for dataset_name in dataset_names:
     c = Counter()
-    with ZipFile(path.join(MyAPI.books_storage, dataset_name), 'r') as myzip:
+    with ZipFile(path.join(LdcAPI.books_storage, dataset_name), 'r') as myzip:
         prev_line_index = None
         with myzip.open(myzip.filelist[0]) as f:
             for line in f.readlines():

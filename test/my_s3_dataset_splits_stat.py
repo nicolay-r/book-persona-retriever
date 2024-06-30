@@ -1,4 +1,4 @@
-from api.my import MyAPI
+from api.ldc import LdcAPI
 
 
 def calc_dataset_info(fold_index=None):
@@ -8,11 +8,11 @@ def calc_dataset_info(fold_index=None):
     unique_speakers = set()
     dialogs_count = 0
 
-    filepath = MyAPI.dataset_fold_filepath.format(fold_index=fold_index) \
-        if fold_index is not None else MyAPI.dataset_filepath
+    filepath = LdcAPI.dataset_fold_filepath.format(fold_index=fold_index) \
+        if fold_index is not None else LdcAPI.dataset_filepath
 
-    line_it = MyAPI.read_dataset(dataset_filepath=filepath, keep_usep=True, split_meta=True, pbar=False)
-    for dialog in MyAPI.iter_dataset_as_dialogs(dataset_lines_iter=line_it):
+    line_it = LdcAPI.read_dataset(dataset_filepath=filepath, keep_usep=True, split_meta=True, pbar=False)
+    for dialog in LdcAPI.iter_dataset_as_dialogs(dataset_lines_iter=line_it):
         assert(isinstance(dialog, list) and len(dialog) == 2)
 
         speaker_id = dialog[1][0]
@@ -26,8 +26,8 @@ def calc_dataset_info(fold_index=None):
 
 
 folding_names = [None] + \
-                list(MyAPI.dataset_folding_fixed_parts.keys()) + \
-                list(range(MyAPI.dataset_folding_parts))
+                list(LdcAPI.dataset_folding_fixed_parts.keys()) + \
+                list(range(LdcAPI.dataset_folding_parts))
 
 speakers_by_fold = {}
 print("----------------------------------------------------------------")
@@ -58,5 +58,5 @@ def check_intersection(foldings):
 
 
 # Check that we do not have intersections by speakers between folds.
-check_intersection(list(MyAPI.dataset_folding_fixed_parts.keys()))
-check_intersection(list(range(MyAPI.dataset_folding_parts)))
+check_intersection(list(LdcAPI.dataset_folding_fixed_parts.keys()))
+check_intersection(list(range(LdcAPI.dataset_folding_parts)))

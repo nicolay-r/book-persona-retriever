@@ -2,7 +2,7 @@ from os.path import join
 
 from api.ceb import CEBApi
 from api.gd import GuttenbergDialogApi
-from api.my import MyAPI
+from api.ldc import LdcAPI
 from core.dialogue.comments import filter_relevant_text_comments
 from core.utils import create_dir_if_not_exist
 from e_pairs.api_fcp import FcpApi
@@ -16,10 +16,10 @@ from utils_draw import draw_spectrums_stat
 if __name__ == '__main__':
 
     fcp_api = FcpApi(personalities_path=join(DATA_DIR, "personalities.txt"))
-    speaker_spectrums = MyAPI.read_speakers()
+    speaker_spectrums = LdcAPI.read_speakers()
     print("Speakers considered: {}".format(len(speaker_spectrums)))
 
-    my_api = MyAPI()
+    ldc_api = LdcAPI()
     g_api = GuttenbergDialogApi()
     spectrum_cfg = SpectrumConfig()
     speaker_spectrums = annot_spectrums_in_text(
@@ -27,7 +27,7 @@ if __name__ == '__main__':
             is_term_speaker_func=GuttenbergDialogApi.is_character,
             speaker_positions=spectrum_cfg.comment_speaker_positions,
             iter_comments_at_k_func=lambda k: g_api.filter_comment_with_speaker_at_k(
-                book_path_func=my_api.get_book_path, k=k),
+                book_path_func=ldc_api.get_book_path, k=k),
             cast_to_id_or_none=lambda term:
                 CEBApi.speaker_variant_to_speaker(
                     GuttenbergDialogApi.try_parse_character(term, default=""),

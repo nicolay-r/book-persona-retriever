@@ -1,7 +1,7 @@
 from collections import Counter
 from os.path import join
 
-from api.my import MyAPI
+from api.ldc import LdcAPI
 from core.dataset.pairs_iterator import get_dialog_qr_pairs_iter
 from core.plot import draw_hist_plot
 from core.utils_counter import CounterService
@@ -10,8 +10,8 @@ from utils import TEST_DIR
 
 def calc_words_count(fold_index, filter_func):
 
-    filepath = MyAPI.dataset_fold_filepath.format(fold_index=fold_index) \
-        if fold_index is not None else MyAPI.dataset_filepath
+    filepath = LdcAPI.dataset_fold_filepath.format(fold_index=fold_index) \
+        if fold_index is not None else LdcAPI.dataset_filepath
 
     words_count_stat = Counter()
     for _, dialog in get_dialog_qr_pairs_iter(filepath=filepath, desc="Iter dialogues"):
@@ -30,8 +30,8 @@ filters = {
 for f_type, f_func in filters.items():
 
     folding_parts = [None] + \
-                    list(MyAPI.dataset_folding_fixed_parts.keys()) + \
-                    list(range(MyAPI.dataset_folding_parts))
+                    list(LdcAPI.dataset_folding_fixed_parts.keys()) + \
+                    list(range(LdcAPI.dataset_folding_parts))
 
     for data_type in folding_parts:
         c = calc_words_count(data_type, filter_func=f_func)

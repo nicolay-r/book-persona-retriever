@@ -6,7 +6,7 @@ from core.book.utils import iter_paragraphs_with_n_speakers
 from core.dialogue.comments import filter_relevant_text_comments
 
 
-def iter_all_speaker_comments(speakers, my_api, spectrum_cfg):
+def iter_all_speaker_comments(speakers, ldc_api, spectrum_cfg):
     """ This method represent the iterator over the
         whole sources that counted for serving spectrums.
         These text parts dubbed in paper as "comments".
@@ -23,8 +23,8 @@ def iter_all_speaker_comments(speakers, my_api, spectrum_cfg):
             speakers=set(speakers),
             n_speakers=spectrum_cfg.speakers_in_paragraph,
             iter_paragraphs=CEBApi.iter_paragraphs(
-                iter_book_ids=my_api.book_ids_from_directory(),
-                book_by_id_func=my_api.get_book_path),
+                iter_book_ids=ldc_api.book_ids_from_directory(),
+                book_by_id_func=ldc_api.get_book_path),
             paragraph_to_terms=lambda p: CEBApi.separate_character_entries(p.Text).split(),
             cast_to_variant_or_none=lambda term:
             GuttenbergDialogApi.try_parse_character(term, default=None),
@@ -43,6 +43,6 @@ def iter_all_speaker_comments(speakers, my_api, spectrum_cfg):
         cast_to_id_or_none=lambda variant:
         CEBApi.speaker_variant_to_speaker(variant, return_none=True),
         iter_comments_at_k_func=lambda k: g_api.filter_comment_with_speaker_at_k(
-            book_path_func=my_api.get_book_path, k=k))
+            book_path_func=ldc_api.get_book_path, k=k))
 
     return chain(paragraphs_it, comments_it)

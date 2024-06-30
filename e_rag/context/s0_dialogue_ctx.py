@@ -6,7 +6,7 @@ from tqdm import tqdm
 import utils
 from api.ceb import CEBApi
 from api.gd import GuttenbergDialogApi
-from api.my import MyAPI
+from api.ldc import LdcAPI
 from core.book.book_dialog import BookDialogue
 from core.dialogue.speaker_annotation import try_recognize
 from core.dialogue.utils import iter_by_utterances
@@ -123,8 +123,8 @@ se_algorithms = {
     "default": lambda terms: CEBApi.speaker_variant_to_speaker(
         speaker_variant=str(
             try_recognize(gd_api.normalize_terms(terms),
-                          prefix_lexicon=my_api.load_prefix_lexicon_en(),
-                          k_list=my_api.dialogs_recognize_speaker_at_positions,
+                          prefix_lexicon=ldc_api.load_prefix_lexicon_en(),
+                          k_list=ldc_api.dialogs_recognize_speaker_at_positions,
                           is_character_func=GuttenbergDialogApi.is_character)[1]
         ),
         return_none=True),
@@ -143,14 +143,14 @@ parser.add_argument('--output', dest="output", type=str, default=None)
 args = parser.parse_args()
 
 gd_api = GuttenbergDialogApi(dialogues_source=join(utils.PROJECT_DIR, "./data/filtered/en/dialogs.txt"))
-my_api = MyAPI(books_root=args.books_dir)
+ldc_api = LdcAPI(books_root=args.books_dir)
 
 ceb_api = CEBApi(books_root=join(utils.DATA_DIR, "books"), char_map_path=join(utils.DATA_DIR, "chr_map.json"))
 ceb_api.read_char_map()
 
 utterance_segments_iter = iter_by_utterances(
     dialogue_data=gd_api.iter_dialog_segments(
-        book_path_func=my_api.get_book_path, split_meta=True, skip_missed_books=True))
+        book_path_func=ldc_api.get_book_path, split_meta=True, skip_missed_books=True))
 
 CsvService.write(target=join(EMApi.output_dir, f"dialogue-ctx-{args.se_mode}.csv") if args.output is None else args.output,
                  lines_it=iter_content(utterance_segments_iter, se_algo=se_algorithms[args.se_mode]),

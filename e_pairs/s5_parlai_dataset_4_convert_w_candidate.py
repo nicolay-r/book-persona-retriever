@@ -4,7 +4,7 @@ import numpy as np
 import zipstream
 
 from api.ceb import CEBApi
-from api.my import MyAPI
+from api.ldc import LdcAPI
 from core.candidates.clustering import ALOHANegBasedClusteringCandidatesProvider
 from core.candidates.uniform_collection import UniformCandidatesProvider
 from core.dataset.pairs_iterator import common_iter_dialogs
@@ -19,15 +19,15 @@ from utils import DATA_DIR
 
 if __name__ == '__main__':
 
-    my_api = MyAPI()
+    ldc_api = LdcAPI()
     z = zipstream.ZipFile()
 
-    dataset_filepaths = {part_name: my_api.dataset_fold_filepath.format(fold_index=part_name)
-                         for part_name in MyAPI.dataset_folding_fixed_parts}
+    dataset_filepaths = {part_name: ldc_api.dataset_fold_filepath.format(fold_index=part_name)
+                         for part_name in LdcAPI.dataset_folding_fixed_parts}
 
     ceb_api = CEBApi(books_root=join(DATA_DIR, "books"), char_map_path=join(DATA_DIR, "chr_map.json"))
     ceb_api.read_char_map()
-    hla_cfg = HlaExperimentConfig(books_storage=MyAPI.books_storage)
+    hla_cfg = HlaExperimentConfig(books_storage=LdcAPI.books_storage)
     speaker_spectrums = SpectrumIOUtils.read(hla_cfg.hla_prompts_filepath)
     spectrum_cfg = SpectrumConfig()
 
@@ -48,15 +48,15 @@ if __name__ == '__main__':
     CANDIDATES_HLA_CLUSTER = "clustered"
     candidates_provider = {
         CANDIDATES_UNIFORM: lambda fold_index: UniformCandidatesProvider(
-            iter_dialogs=common_iter_dialogs(MyAPI.dataset_fold_filepath.format(fold_index=fold_index)),
-            candidates_limit=MyAPI.parlai_dataset_candidates_limit - 1),
+            iter_dialogs=common_iter_dialogs(LdcAPI.dataset_fold_filepath.format(fold_index=fold_index)),
+            candidates_limit=LdcAPI.parlai_dataset_candidates_limit - 1),
         CANDIDATES_HLA_CLUSTER: lambda fold_index: ALOHANegBasedClusteringCandidatesProvider(
             cache_embeddings_in_memory=True,
-            candidates_limit=MyAPI.parlai_dataset_candidates_limit - 1,
+            candidates_limit=LdcAPI.parlai_dataset_candidates_limit - 1,
             neg_speakers_limit=hla_cfg.hla_neg_set_speakers_limit,
-            dataset_filepath=MyAPI.dataset_filepath,
+            dataset_filepath=LdcAPI.dataset_filepath,
             cluster_filepath=hla_cfg.hla_speaker_clusters_path,
-            sqlite_dialog_db=MyAPI.dataset_dialog_db_fold_path.format(fold_index=fold_index))
+            sqlite_dialog_db=LdcAPI.dataset_dialog_db_fold_path.format(fold_index=fold_index))
     }
 
     for data_fold_type, data_fold_source in dataset_filepaths.items():
@@ -78,7 +78,7 @@ if __name__ == '__main__':
 
                 # There is no need to perform oversampling for non-train dataset type.
                 oversample_factor = None if data_fold_type != "train" else \
-                    my_api.parlai_dataset_train_candidates_oversample_factor
+                    ldc_api.parlai_dataset_train_candidates_oversample_factor
 
                 data_it = provide_formatted_pairs(
                     dialogs_iter=common_iter_dialogs(data_fold_source),
@@ -87,6 +87,6 @@ if __name__ == '__main__':
                     candidates_oversample_factor=oversample_factor)
 
                 inner_filename = '{}.txt'.format("_".join(args))
-                save_zip_stream(target=my_api.parlai_dataset_filepath.format(inner_filename),
+                save_zip_stream(target=ldc_api.parlai_dataset_filepath.format(inner_filename),
                                 inner_filename=inner_filename,
                                 data_it=data_it)

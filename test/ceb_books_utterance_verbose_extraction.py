@@ -3,11 +3,11 @@ from os.path import realpath, dirname, join
 from gutenberg_dialog.pipeline.utils import DialogMetaHelper
 
 from api.gd import GuttenbergDialogApi
-from api.my import MyAPI
+from api.ldc import LdcAPI
 from core.book.book_dialog import BookDialogue
 
 
-my_api = MyAPI()
+ldc_api = LdcAPI()
 books_dialogue = BookDialogue()
 
 lines_to_consider = [
@@ -48,7 +48,7 @@ with open(join(__current_dir, gb_api.dialogues_en), "r") as f:
 
             meta, utterance = args
             book_id, dialog_region = meta.split('.txt')
-            books_dialogue.set_book(book_id=book_id, book_path=my_api.get_book_path(book_id))
+            books_dialogue.set_book(book_id=book_id, book_path=ldc_api.get_book_path(book_id))
 
             # Span of paragraphs.
             l_from, l_to = dialog_region[1:-1].split(":")

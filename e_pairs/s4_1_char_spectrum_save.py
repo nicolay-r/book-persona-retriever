@@ -1,6 +1,6 @@
 from os.path import join
 
-from api.my import MyAPI
+from api.ldc import LdcAPI
 from core.spectrums.io_utils import SpectrumIOUtils
 from core.utils_npz import NpzUtils
 from e_pairs.api_fcp import FcpApi
@@ -19,7 +19,7 @@ if __name__ == '__main__':
     y = NpzUtils.load(spectrum_cfg.speakers)
 
     fcp_api = FcpApi(personalities_path=join(DATA_DIR, "personalities.txt"))
-    hla_cfg = HlaExperimentConfig(books_storage=MyAPI.books_storage)
+    hla_cfg = HlaExperimentConfig(books_storage=LdcAPI.books_storage)
 
     prompts, weights = PROMPT_PRESETS[hla_cfg.hla_spectrum_preset](X_norm, X_diff, fcp_api)
 

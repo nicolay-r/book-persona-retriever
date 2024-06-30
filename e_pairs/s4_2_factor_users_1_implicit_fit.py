@@ -1,7 +1,7 @@
 import pandas as pd
 from tqdm import tqdm
 
-from api.my import MyAPI
+from api.ldc import LdcAPI
 from core.utils_npz import NpzUtils
 from e_pairs.cfg_embeding import PairsExperimentEmbeddingConfig
 from e_pairs.cfg_hla import HlaExperimentConfig
@@ -10,7 +10,7 @@ from embeddings.aloha.matrix import MatrixWrapper
 
 if __name__ == '__main__':
 
-    hla_cfg = HlaExperimentConfig(books_storage=MyAPI.books_storage)
+    hla_cfg = HlaExperimentConfig(books_storage=LdcAPI.books_storage)
     df = pd.read_csv(hla_cfg.hla_melted_data_filepath)
     # NOTE: We force disable GPU support in order to perform NpzUtils.save correctly.
     mw = MatrixWrapper(df, user_col='user', feature_col='feature', value_col="value", use_gpu=False)

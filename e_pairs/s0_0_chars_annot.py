@@ -5,7 +5,7 @@ from os.path import join
 from collections import Counter
 
 from api.ceb import CEBApi
-from api.my import MyAPI
+from api.ldc import LdcAPI
 from utils import DATA_DIR
 
 import sys
@@ -24,7 +24,7 @@ if __name__ == '__main__':
     source_api.read_char_map()
 
     # Target API.
-    target_api = CEBApi(books_root=MyAPI.books_storage_en, char_map_path=join(DATA_DIR, "chr_map.json"))
+    target_api = CEBApi(books_root=LdcAPI.books_storage_en, char_map_path=join(DATA_DIR, "chr_map.json"))
 
     ctr = Counter()
     for book_id in tqdm(source_api.book_ids_from_directory(), desc="Annotating characters", unit="book"):
@@ -47,6 +47,6 @@ if __name__ == '__main__':
         target_api.save_book(book_id=book_id, text=book_text)
 
     if ctr["found"] == 0:
-        print(f"No books were found at: {MyAPI.books_storage_en}")
+        print(f"No books were found at: {LdcAPI.books_storage_en}")
     else:
         print("Found: {}%".format(round(ctr["found"] / (ctr["found"] + ctr["missed"]) * 100), 4))

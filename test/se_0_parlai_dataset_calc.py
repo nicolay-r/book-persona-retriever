@@ -4,7 +4,6 @@ from zipfile import ZipFile
 
 from api.se import SEApi
 
-my_api = SEApi()
 dataset_names = [
     "dataset_parlai_train__hla-cand.txt.zip",
     "dataset_parlai_valid__hla-cand.txt.zip"

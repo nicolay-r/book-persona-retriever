@@ -1,7 +1,7 @@
 import random
 
 # TODO. The code should not depend on API.
-from api.my import MyAPI
+from api.ldc import LdcAPI
 from api.se import SEApi
 
 from core.candidates.base import CandidatesProvider
@@ -21,8 +21,8 @@ def provide_formatted_pairs(dialogs_iter, traits_func, candidates_provider, cand
         else candidates_oversample_factor
 
     # We would like to shuffle the traits to prevent models from overfitting with the particular order.
-    resp_persona_random = random.Random(MyAPI.parlai_dataset_ovesampling_candidates_selection_seed)
-    candidates_random = random.Random(MyAPI.parlai_dataset_ovesampling_candidates_selection_seed)
+    resp_persona_random = random.Random(LdcAPI.parlai_dataset_ovesampling_candidates_selection_seed)
+    candidates_random = random.Random(LdcAPI.parlai_dataset_ovesampling_candidates_selection_seed)
     for dialog_id, dialog in enumerate(dialogs_iter):
         assert(len(dialog) == 2)
 
@@ -41,7 +41,7 @@ def provide_formatted_pairs(dialogs_iter, traits_func, candidates_provider, cand
                 other_candidates = [] if other_candidates is None else other_candidates
                 candidates = other_candidates + [label]
 
-                assert(len(candidates) == MyAPI.parlai_dataset_candidates_limit)
+                assert(len(candidates) == LdcAPI.parlai_dataset_candidates_limit)
 
                 if candidates is None:
                     continue
@@ -54,7 +54,7 @@ def provide_formatted_pairs(dialogs_iter, traits_func, candidates_provider, cand
                                  response=label,
                                  candidates=candidates,
                                  resp_persona_traits=resp_persona_traits_shuffled,
-                                 resp_persona_prefix=MyAPI.parlai_dataset_persona_prefix,
+                                 resp_persona_prefix=LdcAPI.parlai_dataset_persona_prefix,
                                  candidates_random=candidates_random).encode()
             yield b"\n"
 

@@ -6,7 +6,7 @@ import pandas as pd
 from tqdm import tqdm
 
 from api.ceb import CEBApi
-from api.my import MyAPI
+from api.ldc import LdcAPI
 from api.pg19 import PG19Api
 from core.factor.utils import melt_to_csv
 from core.plot import plot_tsne_series
@@ -79,16 +79,16 @@ if __name__ == '__main__':
     factor_path = join(output_dir, "x.speakers-ext-factor.npz")
     NpzUtils.save(data=factors_list, target=factor_path)
     plot_tsne_series(X=NpzUtils.load(factor_path),
-                     y=[__make_group_name(s) if s in MyAPI.predefined_speakers else "_Other"
+                     y=[__make_group_name(s) if s in LdcAPI.predefined_speakers else "_Other"
                         for s in u_speaker_names],
                      perplexies=[5], n_iter=3000,
                      save_png_path=join(output_dir, "tsne.png"),
                      alpha=0.15,
                      palette={
                          "_Other": "gray",
-                         __make_group_name(MyAPI.predefined_speakers[0]): "red",
-                         __make_group_name(MyAPI.predefined_speakers[1]): "blue",
-                         __make_group_name(MyAPI.predefined_speakers[2]): "green",
-                         __make_group_name(MyAPI.predefined_speakers[3]): "orange",
-                         __make_group_name(MyAPI.predefined_speakers[4]): "purple",
+                         __make_group_name(LdcAPI.predefined_speakers[0]): "red",
+                         __make_group_name(LdcAPI.predefined_speakers[1]): "blue",
+                         __make_group_name(LdcAPI.predefined_speakers[2]): "green",
+                         __make_group_name(LdcAPI.predefined_speakers[3]): "orange",
+                         __make_group_name(LdcAPI.predefined_speakers[4]): "purple",
                      })

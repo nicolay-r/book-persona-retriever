@@ -2,7 +2,7 @@ import os
 from os.path import join, exists
 
 from api.ceb import CEBApi
-from api.my import MyAPI
+from api.ldc import LdcAPI
 from core.utils_npz import NpzUtils
 from e_pairs.api_fcp import FcpApi
 from e_pairs.cfg_spectrum import SpectrumConfig
@@ -13,7 +13,7 @@ from utils import DATA_DIR
 
 if __name__ == '__main__':
 
-    my_api = MyAPI()
+    ldc_api = LdcAPI()
     fcp_api = FcpApi(personalities_path=join(DATA_DIR, "personalities.txt"))
     ceb_api = CEBApi(books_root=join(DATA_DIR, "books"), char_map_path=join(DATA_DIR, "chr_map.json"))
     spectrum_cfg = SpectrumConfig()
@@ -22,7 +22,7 @@ if __name__ == '__main__':
     speakers = list(ceb_api.iter_chars())
     print("Speakers considered: {}".format(len(speakers)))
     speaker_spectrums_dict = annot_spectrums_in_text(
-        texts_and_speakervars_iter=iter_all_speaker_comments(speakers=speakers, my_api=my_api, spectrum_cfg=spectrum_cfg),
+        texts_and_speakervars_iter=iter_all_speaker_comments(speakers=speakers, ldc_api=ldc_api, spectrum_cfg=spectrum_cfg),
         rev_spectrums=fcp_api.reversed_spectrums())
 
     print("speaker spectrums dict len:", len(speaker_spectrums_dict))
