@@ -152,5 +152,14 @@ This work has been accomplished as a part of my Research Fellow position at Newc
 You can cite this work as follows:
 
 ```bibtex
-TO BE ADDED
+@proceedings{rusnachenko2024personality,
+  title     = {Personality Profiling for Literary Character Dialogue Agents with Human Level Attributes}
+  authors   = {Rusnachenko, Nicolay and Liang, Huizhi}
+  booktitle = {Proceedings of the 10th International Conference on Machine Learning, Optimization, and Data Science (LOD)},
+  year      = {2024},
+  month     = sep,
+  days      = {22--25},
+  address   = {Castiglione della Pescaia (Grosseto), Tuscany, Italy},
+  publisher = {Springer}
+}
 ```
