@@ -12,6 +12,12 @@ Dialogue Agents with Human Level Attributes (**pre-print**) ](https://www.dropbo
 that has been accepted for *Long Paper* track at
 [LOD-2024](https://lod2024.icas.events/).
 
+<p align="center">
+    <img src="resources/e_pairs_logo.png" width="600"/>
+</p>
+
+> **Figure**: The concept of extracting character-related data (comments) from literature novel book itself 📖 for the character peronsonality profiles construction (downstream workflow)
+
 ## Contents
 * [**Workflow**](#workflow)
     * [Personality Profiling Model](#personality-profiling-model)
