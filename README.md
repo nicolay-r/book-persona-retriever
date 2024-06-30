@@ -13,7 +13,7 @@ that has been accepted for *Long Paper* track at
 [LOD-2024](https://lod2024.icas.events/).
 
 <p align="center">
-    <img src="resources/e_pairs_logo.png" width="600"/>
+    <img src="resources/e_pairs_logo.png" width="1000"/>
 </p>
 
 > **Figure**: The concept of extracting character-related data (comments) from literature novel book itself 📖 for the character peronsonality profiles construction (downstream workflow)
@@ -35,7 +35,7 @@ This repository represents a source code for literature novel book [processing w
 [[paper]](https://arxiv.org/pdf/2004.13980.pdf).
 
 <p align="center">
-    <img src="resources/e_pairs_pipeline_architecture.png" width="1000"/>
+    <img src="resources/e_pairs_pipeline_architecture.png" width="950"/>
 </p>
 
 This workflow relies on **external text processing components**:
