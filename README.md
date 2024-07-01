@@ -72,8 +72,7 @@ For each direction we provide a pipeline (sequence of the separately ordered scr
 # Datasets
 
 * **[LDC](#ldc)**
-  1. **[LDC-400-RP](#ldc-400-rp)**
-  2. **[LDC-400-SR](#ldc-400-sr)**
+  1. **[LDC-400-RP](#ldr-400)**
 
 ## `LDR`
 
