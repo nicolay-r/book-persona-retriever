@@ -72,9 +72,9 @@ For each direction we provide a pipeline (sequence of the separately ordered scr
 # Datasets
 
 * **[LDC](#ldc)**
-  1. **[LDC-400-RP](#ldr-400)**
+  1. **[LDC-400](#ldr-400)**
 
-## `LDR`
+## `LDC`
 
 The common version of the resource dubbed as Literature Dialogue Collection (`LDC`).
 
