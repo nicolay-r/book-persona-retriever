@@ -65,7 +65,6 @@ based on [personalities factorization model](https://github.com/newpro/aloha-cha
 
 The directions this project was aimed at the following research directions:
 * `e_pairs` -- response generation and response prediction for the given **dialogue pairs** aka CONV-turns;
-* `e_se` **[legacy]**  -- extraction of the speakers for utterances in [Subin Jung](https://github.com/SubinJung-CS) thesis work;
 * `e_rag` **[legacy]** -- extraction of utterances and contexts as well as forming character knowledge based for RAG and augmenting Large Languge Models (LLM).
 
 For each direction we provide a pipeline (sequence of the separately ordered scripts) aimed at resource construction and evaluation.
