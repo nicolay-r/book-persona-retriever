@@ -43,15 +43,16 @@ The content of dataset yields of dialogues, with utterances that
 annotated with speakers.
 
 ### Personality Profiling Model
-We adopt adjective-pair lexicon as a source for the 
-**[spectrum-based](https://github.com/tacookson/data/tree/master/fictional-character-personalities) character profiling model**.
-We provide API for collection information on characters and composing their personalities in a form of **output matrices**:
+We adopt [adjective-pair lexicon (FCP-lexicon)](https://github.com/tacookson/data/tree/master/fictional-character-personalities) as a source for the 
+spectrum-based character profiling model.
+We provide API for collecting information about literature characters and 
+compose their personalities in a form of **output matrices**:
 
 <p align="center">
     <img src="resources/e_pairs_spectrum_profiling_model.png" width="1000"/>
 </p>
 
-Each row of the matrix represent **character** and columns related to their **personality traits**.
+Each row of the matrix represent **character**, while columns are related to their **personality traits**.
 There are two type of output personalities (see figure below): (left) **individual** and (right) **inter-dependent / embeddings** 
 based on [personalities factorization model](https://github.com/newpro/aloha-chatbot).
 
