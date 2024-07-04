@@ -1,8 +1,7 @@
 from tqdm import tqdm
 
 from api.ldc import LdcAPI
-from core.utils import chunk_into_n
-from utils import cat_files
+from core.utils import chunk_into_n, cat_files
 
 
 def write_folded_dataset(k, dialog_iter_func, speakers):

@@ -8,6 +8,16 @@ from os.path import exists
 from tqdm import tqdm
 
 
+def cat_files(source_filepaths, target_filepath):
+    assert (isinstance(source_filepaths, list))
+
+    with open(target_filepath, 'w') as outfile:
+        for filename in source_filepaths:
+            with open(filename) as infile:
+                for line in infile:
+                    outfile.write(line)
+
+
 def chunk_into_n(lst, n):
     size = ceil(len(lst) / n)
     return list(

@@ -5,9 +5,10 @@ from os.path import join, isfile
 
 from tqdm import tqdm
 
+from api.utils import range_exclude_middle, range_middle
 from core.book.book_dialog import BookDialogue
 from core.utils import count_files_in_folder
-from utils import range_exclude_middle, range_middle, DATA_DIR
+from utils import DATA_DIR
 
 
 class LdcAPI:
