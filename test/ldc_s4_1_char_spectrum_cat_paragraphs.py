@@ -5,15 +5,14 @@ from api.ceb import CEBApi
 from api.gd import GuttenbergDialogApi
 from api.ldc import LdcAPI
 from core.book.utils import iter_paragraphs_with_n_speakers
-from core.plot import draw_hist_plot
+from core.plot import draw_hist_plot, draw_spectrums_stat
 from core.utils import create_dir_if_not_exist
 from core.utils_counter import CounterService
 from e_pairs.api_fcp import FcpApi
 from e_pairs.cfg_spectrum import SpectrumConfig
+from e_pairs.const import MOST_DISTINCTIVE
 from e_pairs.hla_models.spectrum.annot import annot_spectrums_in_text
-from test.const import MOST_DISTINCTIVE
 from utils import DATA_DIR, TEST_DIR
-from utils_draw import draw_spectrums_stat
 
 
 if __name__ == '__main__':

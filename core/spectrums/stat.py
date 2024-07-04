@@ -43,10 +43,10 @@ def order_traits_by_relevance(trait_inds, x_norm, x_diff):
 def filter_by_non_zero(X, y, z=None, threshold=None, paint_func=None, gt=True):
     """ Filters embedding data by non-zero amount threshold
     """
-    assert(isinstance(X, list))
-    assert(isinstance(threshold, int) or threshold is None)
-    assert(len(X) == len(y))
-    assert(callable(paint_func) or paint_func is None)
+    assert (isinstance(X, list))
+    assert (isinstance(threshold, int) or threshold is None)
+    assert (len(X) == len(y))
+    assert (callable(paint_func) or paint_func is None)
 
     def __fmt_output(X_arg, y_arg):
         return np.array(X_arg), y_arg

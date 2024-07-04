@@ -22,61 +22,6 @@ def colors_from_values(values, palette_name):
     return np.array(palette).take(indices, axis=0)
 
 
-def draw_spectrum_barplot(c, x_name, y_name, val_to_x=lambda v: v, asp_hor=2, asp_ver=8,
-                          val_to_cat_caption=lambda v: 0,
-                          top_bars_count=None, bottom_bars_count=None,
-                          order=True, show=True, save_png_path=None,
-                          colorgradient="coolwarm"):
-    assert(isinstance(c, Counter))
-
-    df_dict = {x_name: [], y_name: [], "count": []}
-
-    if top_bars_count is None and bottom_bars_count is None:
-        # Keep all elements, ordered.
-        items = c.most_common()
-    else:
-        items = []
-        if top_bars_count is not None:
-            # Keep top ordered.
-            items += c.most_common()[:top_bars_count]
-        if bottom_bars_count is not None:
-            # Keep bottom ordered.
-            items += c.most_common()[-bottom_bars_count:]
-
-    k_used = set()
-    for k, v in set(items):
-
-        # Consider keys only once.
-        if k in k_used:
-            continue
-        k_used.add(k)
-
-        df_dict[x_name].append(val_to_x(k))
-        df_dict[y_name].append(val_to_cat_caption(k))
-        df_dict["count"].append(v)
-
-    df = pd.DataFrame(df_dict)
-
-    if order:
-        df = df.sort_values("count", ascending=False)
-
-    ax = sns.barplot(df, x="count", y=y_name, width=1,
-                     palette=colors_from_values(df["count"], colorgradient))
-
-    ax.xaxis.set_major_formatter(ticker.ScalarFormatter())
-
-    if show:
-        plt.show()
-
-    if save_png_path is not None:
-        # And saving the output image.
-        plt.gcf().set_size_inches(asp_hor, asp_ver)
-        print("Saving: {}".format(save_png_path))
-        plt.savefig(save_png_path, bbox_inches='tight', dpi=200)
-
-    plt.clf()
-
-
 def __hist_fix_x_axis(min_val, max_val, bins=None):
     val_width = max_val - min_val
     n_bins = abs(max_val - min_val) if bins is None else bins
@@ -158,3 +103,97 @@ def plot_tsne_series(X, y=None, perplexies=[5], n_iter=1000, alpha=0.1, palette=
         plt.gcf().set_size_inches(8, 6)
         print("Saving: {}".format(save_png_path))
         plt.savefig(save_png_path, bbox_inches='tight', dpi=200)
+
+
+def draw_spectrums_stat(speaker_spectrum_counters, save_png_filepath, fcp_api, asp_hor=2, asp_ver=8,
+                        spectrums_keep=None, spectrums_exclude=None, top_bars_count=None, bottom_bars_count=None):
+    """ Drawing based on counter.
+    """
+
+    def bap_to_number(bap):
+        return bap.split('-')[0]
+
+    s_counter = Counter()
+    for spectrum_ctr in speaker_spectrum_counters:
+        for spectrum_name, value in spectrum_ctr.items():
+
+            # Optional filtering.
+            # "BAP56" -> "56"
+            spectrum_int = int(bap_to_number(spectrum_name)[3:])
+            if spectrums_keep is not None:
+                if spectrum_int not in spectrums_keep:
+                    continue
+            if spectrums_exclude is not None:
+                if spectrum_int in spectrums_exclude:
+                    continue
+
+            s_counter[spectrum_name] += value if 'high' in spectrum_name else -value
+
+    if len(s_counter) != 0:
+        draw_spectrum_barplot(s_counter,
+                              x_name="bap",
+                              y_name="cat",
+                              val_to_x=lambda k: int(''.join([ch for ch in k if ch.isdigit()])),
+                              # BAP + meaning
+                              val_to_cat_caption=lambda k: bap_to_number(k) + ' ' + str(fcp_api.find_by_id(bap_to_number(k))),
+                              top_bars_count=top_bars_count,
+                              bottom_bars_count=bottom_bars_count,
+                              asp_ver=asp_ver,
+                              asp_hor=asp_hor,
+                              show=False,
+                              save_png_path=save_png_filepath)
+
+
+def draw_spectrum_barplot(c, x_name, y_name, val_to_x=lambda v: v, asp_hor=2, asp_ver=8,
+                          val_to_cat_caption=lambda v: 0,
+                          top_bars_count=None, bottom_bars_count=None,
+                          order=True, show=True, save_png_path=None,
+                          colorgradient="coolwarm"):
+    assert(isinstance(c, Counter))
+
+    df_dict = {x_name: [], y_name: [], "count": []}
+
+    if top_bars_count is None and bottom_bars_count is None:
+        # Keep all elements, ordered.
+        items = c.most_common()
+    else:
+        items = []
+        if top_bars_count is not None:
+            # Keep top ordered.
+            items += c.most_common()[:top_bars_count]
+        if bottom_bars_count is not None:
+            # Keep bottom ordered.
+            items += c.most_common()[-bottom_bars_count:]
+
+    k_used = set()
+    for k, v in set(items):
+
+        # Consider keys only once.
+        if k in k_used:
+            continue
+        k_used.add(k)
+
+        df_dict[x_name].append(val_to_x(k))
+        df_dict[y_name].append(val_to_cat_caption(k))
+        df_dict["count"].append(v)
+
+    df = pd.DataFrame(df_dict)
+
+    if order:
+        df = df.sort_values("count", ascending=False)
+
+    ax = sns.barplot(df, x="count", y=y_name, width=1,
+                     palette=colors_from_values(df["count"], colorgradient))
+
+    ax.xaxis.set_major_formatter(ticker.ScalarFormatter())
+
+    if show:
+        plt.show()
+
+    if save_png_path is not None:
+        # And saving the output image.
+        plt.gcf().set_size_inches(asp_hor, asp_ver)
+        print("Saving: {}".format(save_png_path))
+        plt.savefig(save_png_path, bbox_inches='tight', dpi=200)
+
+    plt.clf()

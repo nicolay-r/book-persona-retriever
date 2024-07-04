@@ -17,5 +17,7 @@ def __tsne_plot(X, save_prefix):
                      save_png_path=png_path)
 
 
-__tsne_plot(X=list(NpzUtils.load(LdcAPI.dataset_st_embedding_query)), save_prefix="dataset_query")
-__tsne_plot(X=list(NpzUtils.load(LdcAPI.dataset_st_embedding_response)), save_prefix="dataset_response")
+if __name__ == '__main__':
+
+    __tsne_plot(X=list(NpzUtils.load(LdcAPI.dataset_st_embedding_query)), save_prefix="dataset_query")
+    __tsne_plot(X=list(NpzUtils.load(LdcAPI.dataset_st_embedding_response)), save_prefix="dataset_response")

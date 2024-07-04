@@ -50,33 +50,36 @@ def calc_annotated_dialogs_stat(iter_dialogs_and_speakers):
     }
 
 
-ldc_api = LdcAPI()
-gd_api = GuttenbergDialogApi()
+if __name__ == '__main__':
 
-stat = calc_annotated_dialogs_stat(
-    iter_dialogs_and_speakers=iter_speaker_annotated_dialogs(
-        dialog_segments_iter_func=gd_api.iter_dialog_segments(
-            book_path_func=ldc_api.get_book_path,
-            split_meta=True),
-        prefix_lexicon=ldc_api.load_prefix_lexicon_en(),
-        recognize_at_positions=ldc_api.dialogs_recognize_speaker_at_positions)
-)
+    # Initialize API.
+    ldc_api = LdcAPI()
+    gd_api = GuttenbergDialogApi()
 
-print("original dialogs count: {}".format(stat["dialogs"]))
-print("recognized per utterance: {}%".format(str(round(100.0 * stat["recognized"]/stat["utterances"], 2))))
-print("recognized speakers per dialogs: {}".format(str(round(stat["recognized"]/stat["dialogs"], 2))))
-print("utterances count: {}".format(str(stat["utterances"])))
-print("utterances per dialog: {}".format(str(round(stat["utterances"]/stat["dialogs"], 2))))
-print("Total speakers: {}".format(len(stat["speakers_uc_stat"])))
+    stat = calc_annotated_dialogs_stat(
+        iter_dialogs_and_speakers=iter_speaker_annotated_dialogs(
+            dialog_segments_iter_func=gd_api.iter_dialog_segments(
+                book_path_func=ldc_api.get_book_path,
+                split_meta=True),
+            prefix_lexicon=ldc_api.load_prefix_lexicon_en(),
+            recognize_at_positions=ldc_api.dialogs_recognize_speaker_at_positions)
+    )
+
+    print("original dialogs count: {}".format(stat["dialogs"]))
+    print("recognized per utterance: {}%".format(str(round(100.0 * stat["recognized"]/stat["utterances"], 2))))
+    print("recognized speakers per dialogs: {}".format(str(round(stat["recognized"]/stat["dialogs"], 2))))
+    print("utterances count: {}".format(str(stat["utterances"])))
+    print("utterances per dialog: {}".format(str(round(stat["utterances"]/stat["dialogs"], 2))))
+    print("Total speakers: {}".format(len(stat["speakers_uc_stat"])))
 
 
-df_dict = {"utts": []}
-for k, v in stat["speakers_uc_stat"].items():
-    df_dict["utts"].append(v)
-speaker_utts_df = pd.DataFrame(df_dict)
+    df_dict = {"utts": []}
+    for k, v in stat["speakers_uc_stat"].items():
+        df_dict["utts"].append(v)
+    speaker_utts_df = pd.DataFrame(df_dict)
 
-g = sns.displot(speaker_utts_df, x="utts", kde=True)
+    g = sns.displot(speaker_utts_df, x="utts", kde=True)
 
-#plt.ylim(0, 2500)
-plt.xlim(0, 25)
-plt.show()
+    #plt.ylim(0, 2500)
+    plt.xlim(0, 25)
+    plt.show()

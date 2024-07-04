@@ -2,13 +2,13 @@ import os
 from os.path import join, exists
 
 from api.ldc import LdcAPI
+from core.plot import draw_spectrums_stat
 from core.utils_npz import NpzUtils
 from e_pairs.api_fcp import FcpApi
 from e_pairs.cfg_spectrum import SpectrumConfig
 from e_pairs.comments.default import iter_all_speaker_comments
+from e_pairs.const import MOST_DISTINCTIVE
 from e_pairs.hla_models.spectrum.annot import annot_spectrums_in_text, annot_to_min_max_grouped
-from test.const import MOST_DISTINCTIVE
-from test.utils_draw import draw_spectrums_stat
 from utils import DATA_DIR
 
 
