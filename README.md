@@ -63,11 +63,9 @@ based on [personalities factorization model](https://github.com/newpro/aloha-cha
 
 ## Applications 
 
-The directions this project was aimed at the following research directions:
-* `e_pairs` -- response generation and response prediction for the given **dialogue pairs** aka CONV-turns;
-* `e_rag` **[legacy]** -- extraction of utterances and contexts as well as forming character knowledge based for RAG and augmenting Large Languge Models (LLM).
+> **Updated 04/07/2024:** The complete list of applications could be found at https://github.com/nicolay-r/book-persona-retriever/tree/complete-edition
 
-For each direction we provide a pipeline (sequence of the separately ordered scripts) aimed at resource construction and evaluation.
+* `e_pairs` -- response generation and response prediction for the given **dialogue pairs** aka CONV-turns
 
 # Datasets
 
