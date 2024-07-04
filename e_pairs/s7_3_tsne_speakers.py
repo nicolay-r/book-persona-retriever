@@ -21,9 +21,7 @@ def get_book_id(v):
 
 
 def __make_group_name(v):
-    return ceb_api.get_char_names(v)[0] + " " + \
-           '"{}"'.format(pg19.find_book_title(get_book_id(v)))
-           #" [{}]".format(v)
+    return ceb_api.get_char_names(v)[0] + " " + '"{}"'.format(pg19.find_book_title(get_book_id(v)))
 
 
 if __name__ == '__main__':

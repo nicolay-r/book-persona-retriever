@@ -13,8 +13,8 @@ class PG19Api:
         self.__pg19_titles.columns = ["id", "title", "year", "link"]
 
     def find_book_title(self, book_id):
-        assert(isinstance(book_id, str))
-        assert(self.__pg19_titles is not None)
+        assert (isinstance(book_id, str))
+        assert (self.__pg19_titles is not None)
         series = self.__pg19_titles[self.__pg19_titles["id"] == int(book_id)]["title"]
         return series.iloc[0] if len(series) > 0 else None
 

@@ -54,15 +54,11 @@ class LdcAPI:
     parlai_dataset_ovesampling_candidates_selection_seed = 42
     parlai_dataset_filepath = join(books_storage, "./dataset_parlai_{}.zip")
     parlai_charmask_template = "_"      # We perform character masking for the ParlAI dataset of utterances.
-    parlai_dataset_train_candidates_oversample_factor = 5   # In Aloha Paper, authors end up dealing with 1M dialogue lines.
+    parlai_dataset_train_candidates_oversample_factor = 5   # In ALOHA paper, authors end up dealing with 1M dialogue lines.
                                                             # For the similar amount of speakers in books, we deal with ~40K
                                                             # lines by default. Hence we introduce oversampling for
                                                             # candidate-selective approach to get closer to experiments in
                                                             # ALOHA paper.
-
-
-    # Set of the predefined (selected speakers)
-    # predefined_speakers = ['126_2', '429_0', '764_5', '1282_3', '330_0']
 
     # 507_9. Bartle Massey -- The schoolteacher and Adam’s best friend. Unbeknownst to his friends, not only does Mr. Massey care deeply for his students, but he exhibits a patience with them that he seldom shows in the company of friends. Mr. Massey rails against the stupidity of women and says everything twice. During Hetty’s trial, he is a tactful comfort to Adam because he is able to see when it is best not to speak.I
     # 139_1 The Lost World by Arthur Conan Doyle ['Summerlee', 'Mr. Summerlee', 'SUMMERLEE'] UNK https://arthurconandoyle.co.uk/character/professor-summerlee-from-the-professor-challenger-stories
@@ -70,7 +66,6 @@ class LdcAPI:
     # 155_21 The Moonstone by Wilkie Collins ['Sergeant', 'Mr. Cuff', 'Sergeant Cuff'] UNK https://www.litcharts.com/lit/the-moonstone/characters/sergeant-cuff#:~:text=A%20%E2%80%9Crenowned%20and%20capable%E2%80%9D%20detective,%2C%20Franklin%20Blake%2C%20and%20Mr.
     # 507_3 Soldiers of Fortune by Richard Harding Davis ['MacWilliams', 'Mr. MacWilliams'] https://www.theatlantic.com/magazine/archive/1897/12/mr-daviss-soldiers-of-fortune/636194/
     predefined_speakers = ['507_3', '139_1', '1257_9', '155_21', '403_3']
-
 
     # separator in line between meta information and the actual content
     meta_sep = ": "
