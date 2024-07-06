@@ -74,9 +74,11 @@ based on [personalities factorization model](https://github.com/newpro/aloha-cha
 
 ## `LDC`
 
-The common version of the resource dubbed as Literature Dialogue Collection (`LDC`).
+Literature Dialogue Collection (`LDC`) represent a processed collection of the 13K books from [Project Gutenberg](https://www.gutenberg.org/).
+As for the source of the related books, we utilized the following list from [the following studies](https://github.com/naoya-i/charembench).
+Due to the [license specifics](https://www.gutenberg.org/policy/license.html) for the Project Gutenberg content, the complete edition of this LDC is prohibited.
+Therefore, this project shares the downloading scripts as well as series of scripts at `e_pairs` dir aimed at LDC construction.
 
-It consists of dialogues extracted from 17K books of the [Project Gutenberg](https://www.gutenberg.org/) platform.
 This resource could be automatically constructed using the following steps:
 1. [Downloading](download_data.py) all the necessary books 📚 and resources (Downloading takes: **~3.5 hours** ☕)
 2. Executing the scripts from `e_pairs` directory.
