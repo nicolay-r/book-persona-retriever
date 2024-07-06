@@ -16,6 +16,7 @@ that has been accepted for *Long Paper* track at
 * [**Workflow**](#workflow)
     * [Personality Profiling Model](#personality-profiling-model)
     * [Applications](#applications)
+    * ⚠️ [Limitations](#limitations)
 * [**Datasets**](#datasets)
 * [**Experiments**](#experiments)
 * [Organizations](#experiments)
@@ -66,6 +67,12 @@ based on [personalities factorization model](https://github.com/newpro/aloha-cha
 > **Updated 04/07/2024:** The complete list of applications could be found at https://github.com/nicolay-r/book-persona-retriever/tree/complete-edition
 
 * `e_pairs` -- response generation and response prediction for the given **dialogue pairs** aka CONV-turns
+
+## Limitations
+
+There are following limitations of the proposed system within its present implementation:
+1. **NER** -- due to the focus of the `e_pairs` applicatio towards LDC construction, we adopt **already pre-annotated** speakers **with their name variations** (Coreference Resolution).
+If you wish to address on the related limitation, there is a need to provide [the related support here](https://github.com/nicolay-r/book-persona-retriever/blob/master/e_pairs/s0_0_chars_annot.py).
 
 # Datasets
 
