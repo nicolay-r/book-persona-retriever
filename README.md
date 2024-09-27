@@ -2,6 +2,8 @@
 ![](https://img.shields.io/badge/Python-3.10-lightgreen.svg)
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/nicolay-r/deep-book-processing/blob/master/parlai_gutenberg_experiments.ipynb)
 [![twitter](https://img.shields.io/twitter/url/https/shields.io.svg?style=social)](https://x.com/nicolayr_/status/1801009815784677862)
+[![Youtube badge](https://img.shields.io/badge/-Youtube-Cc4c4c?style=flat-square&logo=Youtube&logoColor=white&link=https://twitter.com/nicolayr_)](https://youtu.be/UQQsXfZyjjc)
+
 
 This repository represents source code 
 for the *literature 📚 character personality formation* **workflow** which is 
@@ -11,6 +13,10 @@ described in paper
 Dialogue Agents with Human Level Attributes (**pre-print**) ](https://www.dropbox.com/scl/fi/0c2axh97hadolwphgu7it/rusnachenko2024personality.pdf?rlkey=g2yyzv01th2rjt4o1oky0q8zc&st=omssztha&dl=1)
 that has been accepted for *Long Paper* track at
 [LOD-2024](https://lod2024.icas.events/).
+
+[![](https://markdown-videos-api.jorgenkh.no/youtube/UQQsXfZyjjc)](https://youtu.be/UQQsXfZyjjc)
+> **Update 26/09/2024**: The 📹 @ YouTube that presents the paper concepts is out:
+
 
 ## Contents
 * [**Workflow**](#workflow)
