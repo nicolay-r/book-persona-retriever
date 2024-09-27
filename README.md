@@ -15,7 +15,7 @@ that has been accepted for *Long Paper* track at
 [LOD-2024](https://lod2024.icas.events/).
 
 [![](https://markdown-videos-api.jorgenkh.no/youtube/UQQsXfZyjjc)](https://youtu.be/UQQsXfZyjjc)
-> **Update 26/09/2024**: The 📹 @ YouTube that presents the paper concepts is out:
+> **Update 26/09/2024**: The 📹 @ YouTube that presents the paper concepts is out 🥳
 
 
 ## Contents
