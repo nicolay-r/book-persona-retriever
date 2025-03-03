@@ -150,14 +150,15 @@ This work has been accomplished as a part of my Research Fellow position at Newc
 You can cite this work as follows:
 
 ```bibtex
-@proceedings{rusnachenko2024personality,
-  title     = {Personality Profiling for Literary Character Dialogue Agents with Human Level Attributes}
-  authors   = {Rusnachenko, Nicolay and Liang, Huizhi}
-  booktitle = {Proceedings of the 10th International Conference on Machine Learning, Optimization, and Data Science (LOD)},
-  year      = {2024},
-  month     = sep,
-  days      = {22--25},
-  address   = {Castiglione della Pescaia (Grosseto), Tuscany, Italy},
-  publisher = {Springer}
+@InProceedings{10.1007/978-3-031-82484-5_18,
+   author="Rusnachenko, Nicolay and Liang, Huizhi",
+   editor="Nicosia, Giuseppe and Ojha, Varun and Giesselbach, Sven and Pardalos, M. Panos and Umeton, Renato",
+   title="Personality Profiling for Literary Character Dialogue Agents with Human Level Attributes",
+   booktitle="Machine Learning, Optimization, and Data Science",
+   year="2025",
+   publisher="Springer Nature Switzerland",
+   address="Cham",
+   pages="240--254",
+   isbn="978-3-031-82484-5"
 }
 ```
