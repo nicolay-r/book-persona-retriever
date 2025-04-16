@@ -10,7 +10,7 @@ for the *literature 📚 character personality formation* **workflow** which is
 🔥 **solely relies on book content only** 🔥, 
 described in paper 
 [Personality Profiling for Literary Character
-Dialogue Agents with Human Level Attributes (**pre-print**) ](https://link.springer.com/chapter/10.1007/978-3-031-82484-5_18)
+Dialogue Agents with Human Level Attributes](https://link.springer.com/chapter/10.1007/978-3-031-82484-5_18)
 that has been accepted for *Long Paper* track at
 [LOD-2024](https://lod2024.icas.events/).
 
